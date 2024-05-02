@@ -32,7 +32,9 @@
 #include "E2P.h"
 #include "HW_pins.h"
 #include "gprs.h"
+#include "gps.h"
 #include "PC_Cmds.h"
+#include "Web_Comm.h"
 #include "main.h"
 #include "_common.h"
 #include "_debug.h"
@@ -46,6 +48,8 @@ extern display_tx_t display_tx;
 extern volatile gprs_rx_data_buff_t gprs_rx_buff;
 extern volatile gprs_tx_data_buff_t gprs_tx_buff;
 extern volatile gprs_rx_isr_handler_t gprs_rx_isr_handler;
+
+extern gps_data_t gps_data;
 
 extern time_stamp_t time_stamp;
 extern measurements_t measurements;
@@ -66,9 +70,11 @@ extern sys_mode_t System_mode;
 
 char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 
+unsigned int upload_time = 0;
+
 int main(void)
 {
-    static unsigned int upload_time = 0;
+    // static unsigned int upload_time = 0;
 
 	// Initialize clock and peripherals //
     vMAIN_InitClockPeripherals();
@@ -111,7 +117,9 @@ int main(void)
 			//vInput_PollingRead();
             // if(!System_mode)
             {
-                TCP_Handler();
+                // TCP_Handler();
+                // gps_handler();
+                manage_gps_gprs();
             }
 		}
 
@@ -165,6 +173,8 @@ void update_ram_data(void)
 		get_present_time(&ram_data.ram_time);
 		// update_rtc(&dummyDateBuff[0], 0);
 #endif
+        ram_data.Latitude = gps_data.Latitude;
+        ram_data.Longitude = gps_data.Longitude;
 
 #ifdef DEBUG_EPOCHTIME
     // uint32_t ET = 0;

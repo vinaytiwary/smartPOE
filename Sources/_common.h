@@ -29,4 +29,6 @@ void generateRandomKey(int length, char *key);
 
 unsigned int count_doubleSquareBracket(char *arr, unsigned int length);
 
+unsigned int count_comma(char *arr, uint16_t max_len);
+
 #endif /* SOURCES__COMMON_H_ */

@@ -21,6 +21,7 @@ ORDERED_OBJS += \
 "./Sources/SPI.obj" \
 "./Sources/SysTick_Timer.obj" \
 "./Sources/UartCore.obj" \
+"./Sources/Web_Comm.obj" \
 "./Sources/_common.obj" \
 "./Sources/delay.obj" \
 "./Sources/flashCore.obj" \
@@ -174,9 +175,9 @@ Telecom_IoT_v2_00.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "tm4c1233e6pz_startup_ccs.obj" "Sources\ADC_Core.obj" "Sources\Clock.obj" "Sources\DS3231.obj" "Sources\Display.obj" "Sources\E2P.obj" "Sources\IO_cntrl.obj" "Sources\PC_Cmds.obj" "Sources\SPI.obj" "Sources\SysTick_Timer.obj" "Sources\UartCore.obj" "Sources\_common.obj" "Sources\delay.obj" "Sources\flashCore.obj" "Sources\flash_logger.obj" "Sources\gprs.obj" "Sources\gps.obj" "Sources\main.obj" 
+	-$(RM) "tm4c1233e6pz_startup_ccs.obj" "Sources\ADC_Core.obj" "Sources\Clock.obj" "Sources\DS3231.obj" "Sources\Display.obj" "Sources\E2P.obj" "Sources\IO_cntrl.obj" "Sources\PC_Cmds.obj" "Sources\SPI.obj" "Sources\SysTick_Timer.obj" "Sources\UartCore.obj" "Sources\Web_Comm.obj" "Sources\_common.obj" "Sources\delay.obj" "Sources\flashCore.obj" "Sources\flash_logger.obj" "Sources\gprs.obj" "Sources\gps.obj" "Sources\main.obj" 
 	-$(RM) "tm4c1233e6pz_startup_ccs.d" 
-	-$(RM) "Sources\ADC_Core.d" "Sources\Clock.d" "Sources\DS3231.d" "Sources\Display.d" "Sources\E2P.d" "Sources\IO_cntrl.d" "Sources\PC_Cmds.d" "Sources\SPI.d" "Sources\SysTick_Timer.d" "Sources\UartCore.d" "Sources\_common.d" "Sources\delay.d" "Sources\flashCore.d" "Sources\flash_logger.d" "Sources\gprs.d" "Sources\gps.d" "Sources\main.d" 
+	-$(RM) "Sources\ADC_Core.d" "Sources\Clock.d" "Sources\DS3231.d" "Sources\Display.d" "Sources\E2P.d" "Sources\IO_cntrl.d" "Sources\PC_Cmds.d" "Sources\SPI.d" "Sources\SysTick_Timer.d" "Sources\UartCore.d" "Sources\Web_Comm.d" "Sources\_common.d" "Sources\delay.d" "Sources\flashCore.d" "Sources\flash_logger.d" "Sources\gprs.d" "Sources\gps.d" "Sources\main.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

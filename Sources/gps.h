@@ -12,6 +12,8 @@
 
 #include "_config.h"
 
+// #define GNS_PKT_EN	//PP(14-02-2023): this is declared here now.
+
 #define LAT_LEN						(11)			// No NULL always use memcpy
 #define LONG_LEN					(12)			// No NULL always use memcpy
 

@@ -31,6 +31,8 @@ typedef struct
 void vPERIPH_SystickInit(void);
 void vMAIN_DelayMS(uint32_t u32Value);
 
+uint32_t my_millis(void);
+
 #ifdef __cplusplus
 extern "C" {
 #endif

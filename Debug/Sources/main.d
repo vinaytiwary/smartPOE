@@ -53,9 +53,11 @@ Sources/main.obj: ../Sources/Display.h
 Sources/main.obj: ../Sources/E2P.h
 Sources/main.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
 Sources/main.obj: ../Sources/gprs.h
+Sources/main.obj: ../Sources/gps.h
 Sources/main.obj: ../Sources/PC_Cmds.h
-Sources/main.obj: ../Sources/main.h
+Sources/main.obj: ../Sources/Web_Comm.h
 Sources/main.obj: ../Sources/_common.h
+Sources/main.obj: ../Sources/main.h
 Sources/main.obj: ../Sources/_debug.h
 
 ../Sources/main.cpp:
@@ -164,11 +166,15 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 
 ../Sources/gprs.h:
 
+../Sources/gps.h:
+
 ../Sources/PC_Cmds.h:
 
-../Sources/main.h:
+../Sources/Web_Comm.h:
 
 ../Sources/_common.h:
+
+../Sources/main.h:
 
 ../Sources/_debug.h:
 

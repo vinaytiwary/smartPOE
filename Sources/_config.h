@@ -19,6 +19,7 @@
 //#include "evse_io_exp.h"
 
 // #define NEW_BOARD
+#define WEB_COMMS_SCHEDULAR_TIME (50)
 
 //************************ CLOCK ********************//
 #define CLOCK_CONFIGURATION         (SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ)
@@ -51,5 +52,8 @@
 #define EARTH_DETECT_EN
 #define OFFLINE_MODE_EN
 // #define UART_TX_IRQ_EN
+#define USE_NETCLOSE
+// #define CHECKSTR_EXP
+
 
 #endif /* SOURCES__CONFIG_H_ */

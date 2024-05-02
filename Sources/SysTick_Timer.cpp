@@ -30,6 +30,7 @@
 
 volatile uint32_t u32DelayCounter;
 scheduler_t scheduler;
+volatile uint32_t millis_cnt = 0;
 
 extern volatile double ADC_RAW_MAX;
 extern volatile EXTI_cnt_t EXTI_cnt;
@@ -65,6 +66,8 @@ void SysTickIntHandler(void)
     {
         u32DelayCounter--;
     } //End of if
+
+    millis_cnt++;   //unsigned variable. (uint32_t) should overflow to 0 again after reaching 0xFFFF_FFFF so no need of protection conditon?
 
     // ADC_RAW = readADC(MCU_VAC_ADC);
     // if(ADC_RAW > ADC_RAW_MAX)
@@ -158,3 +161,18 @@ void vMAIN_DelayMS(uint32_t u32Value)
         // wait till delay counter reaches to zero //
     }
 } // End of DelayMS
+
+uint32_t my_millis(void)
+{
+	uint32_t m;
+    m = millis_cnt;
+	// uint8_t oldSREG = SREG;
+
+	// disable interrupts while we read timer0_millis or we might get an
+	// inconsistent value (e.g. in the middle of a write to timer0_millis)
+	// cli();
+	// m = timer0_millis;
+	// SREG = oldSREG;
+
+	return m;
+}

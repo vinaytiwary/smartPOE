@@ -207,3 +207,22 @@ unsigned int count_doubleSquareBracket(char *arr,unsigned int length)
     }
     return count;
 }
+
+unsigned int count_comma (char *arr, uint16_t max_len)
+{
+  	unsigned int i, cnt = 0;
+  	for (i = 0; i <= strlen (arr); i++)
+	{
+		if((i >= max_len) /*&& !cnt*/)
+	    {
+	    	break;
+	    }
+	    
+	    if (arr[i] == ',')
+		{
+		  cnt++;
+		}
+    }
+
+  	return cnt;
+}

@@ -16,6 +16,7 @@ CPP_SRCS += \
 ../Sources/SPI.cpp \
 ../Sources/SysTick_Timer.cpp \
 ../Sources/UartCore.cpp \
+../Sources/Web_Comm.cpp \
 ../Sources/_common.cpp \
 ../Sources/delay.cpp \
 ../Sources/flashCore.cpp \
@@ -35,6 +36,7 @@ OBJS += \
 ./Sources/SPI.obj \
 ./Sources/SysTick_Timer.obj \
 ./Sources/UartCore.obj \
+./Sources/Web_Comm.obj \
 ./Sources/_common.obj \
 ./Sources/delay.obj \
 ./Sources/flashCore.obj \
@@ -54,6 +56,7 @@ CPP_DEPS += \
 ./Sources/SPI.d \
 ./Sources/SysTick_Timer.d \
 ./Sources/UartCore.d \
+./Sources/Web_Comm.d \
 ./Sources/_common.d \
 ./Sources/delay.d \
 ./Sources/flashCore.d \
@@ -73,6 +76,7 @@ OBJS__QUOTED += \
 "Sources\SPI.obj" \
 "Sources\SysTick_Timer.obj" \
 "Sources\UartCore.obj" \
+"Sources\Web_Comm.obj" \
 "Sources\_common.obj" \
 "Sources\delay.obj" \
 "Sources\flashCore.obj" \
@@ -92,6 +96,7 @@ CPP_DEPS__QUOTED += \
 "Sources\SPI.d" \
 "Sources\SysTick_Timer.d" \
 "Sources\UartCore.d" \
+"Sources\Web_Comm.d" \
 "Sources\_common.d" \
 "Sources\delay.d" \
 "Sources\flashCore.d" \
@@ -111,6 +116,7 @@ CPP_SRCS__QUOTED += \
 "../Sources/SPI.cpp" \
 "../Sources/SysTick_Timer.cpp" \
 "../Sources/UartCore.cpp" \
+"../Sources/Web_Comm.cpp" \
 "../Sources/_common.cpp" \
 "../Sources/delay.cpp" \
 "../Sources/flashCore.cpp" \

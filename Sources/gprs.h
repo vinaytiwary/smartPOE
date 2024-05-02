@@ -36,6 +36,10 @@
 #define MIN_NETWORK_STRENGTH_DB     (2)
 #define MAX_NETWORK_STRENGTH_DB     (30)
 
+#define RETRY_CNT (3)
+// #define ATE0_TIMEOUT	(200/GPRS_STATE_MC_TIME)
+#define ATE0_TIMEOUT	(500/GPRS_STATE_MC_TIME)
+
 #define GSM_WARMUP_SECS         ((10*1000)/GPRS_STATE_MC_TIME)
 
 #define GPRS_CONN_RETRY_TIME    (10000/GPRS_STATE_MC_TIME)      //10Sec
@@ -108,14 +112,26 @@ typedef enum
 
 typedef enum
 {
+    WS_DISCON_PASS,
+    WS_DISCON_FAIL,
+    WS_DISCON_IN_PRG
+}WS_discon_status_t;
+
+typedef enum
+{
+    TCP_DISCON_PASS,
+    TCP_DISCON_FAIL,
+    TCP_DISCON_IN_PRG
+}TCP_discon_status_t;
+
+typedef enum
+{
     TCP_CIPSEND_CMD,
     TCP_CIPSEND_RSP,
     TCP_SEND_PACKET_CMD,
     TCP_SEND_PACKET_RSP,
     TCP_SEND_PACKET_RSP_1
 }tcp_packet_state_t;
-
-
 
 typedef enum
 {
@@ -145,6 +161,8 @@ typedef enum
     GPRS_TCP_CONNECT,
     GPRS_WEBSOCKET_CONNECT,
     GPRS_PING,
+    GPRS_WEBSOCKET_DISCONNECT,
+	GPRS_TCP_DISCONNECT,
     GPRS_PREPARE_LOGS,
     GPRS_LOGS_UPLOAD,
     GPRS_SESSION_IDLE,
@@ -172,12 +190,12 @@ typedef enum
 
 typedef enum
 {
-        GPRS_CONNCT_CMD_CCLK,
-        GPRS_CONNCT_RSP_CCLK,
-        GPRS_CONNCT_CMD_READ_NETOPEN,
-        GPRS_CONNCT_RSP_READ_NETOPEN,
-        GPRS_CONNCT_CMD_NETOPEN,
-        GPRS_CONNCT_RSP_NETOPEN,
+    GPRS_CONNCT_CMD_CCLK,
+    GPRS_CONNCT_RSP_CCLK,
+    GPRS_CONNCT_CMD_READ_NETOPEN,
+    GPRS_CONNCT_RSP_READ_NETOPEN,
+    GPRS_CONNCT_CMD_NETOPEN,
+    GPRS_CONNCT_RSP_NETOPEN,
 }gprs_connect_state_t;
 
 typedef enum
@@ -202,6 +220,26 @@ typedef enum
     GPRS_WEBSOCKET_CONNCT_RSP,
     GPRS_WEBSOCKET_CONNCT_RSP_1
 }gprs_websocket_connect_t;
+
+typedef enum
+{
+    GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND,
+    GPRS_WEBSOCKET_DISCONNCT_RSP_CIPSEND,
+    GPRS_WEBSOCKET_DISCONNCT_CMD,
+    GPRS_WEBSOCKET_DISCONNCT_RSP,
+    GPRS_WEBSOCKET_DISCONNCT_RSP_1,
+}tcp_webskt_disconnect_states_t;
+
+typedef enum
+{
+    GPRS_TCP_CMD_CIPCLOSE,
+	GPRS_TCP_RSP_CIPCLOSE,
+    GPRS_TCP_RSP_1_CIPCLOSE,
+#ifdef USE_NETCLOSE
+    GPRS_TCP_CMD_NETCLOSE,
+    GPRS_TCP_RSP_NETCLOSE,
+#endif  //USE_NETCLOSE
+}tcp_disconnct_states_t;
 
 typedef enum
 {
@@ -288,11 +326,15 @@ typedef struct
     gprs_tcp_state_t gprs_tcp_state;
     gprs_websocket_connect_t gprs_websocket_connect;
     tcp_packet_state_t tcp_packet_state;
+    tcp_webskt_disconnect_states_t tcp_webskt_disconnect_states;
+    tcp_disconnct_states_t tcp_disconnct_states;
     upload_data_t upload_data;
     unsigned char network_strength;
     unsigned char connect_sts;
     unsigned char tcp_sts;
     unsigned char websocket_sts;
+    gprs_status_t NW_connSts;
+	gprs_status_t serverConn_Sts;
 //    char errcode;
     unsigned int gprs_rx_buff_len;
     //unsigned int data_length;
@@ -320,9 +362,11 @@ tcp_status_t tcp_connect(void);
 //tcp_status_t tcp_send(char *, int);
 tcp_packet_status_t tcp_send(char *data_str, int len);
 websckt_sts_t websckt_connect(void);
+WS_discon_status_t websckt_disconnect();
+TCP_discon_status_t tcp_disconnect();
 int get_rx_data(char *copy_here);
-char check_string(const char *, char *, int *);
-char check_string_nobuf(const char *);
+char check_string(const char *str, char *copy_here, int* numbytes);
+char check_string_nobuf(const char *str);
 //char getGPRSConfigErrSts(void);
 //void setGPRSConfigErrSts(char sts);
 void setREQmode(gprs_status_t sts);
@@ -349,6 +393,10 @@ void set_gprs_connct_sts(uint8_t sts);
 uint8_t get_gprs_connct_sts(void);
 uint8_t get_pkt_recv(void);
 void set_pkt_recv(uint8_t pktRecv);
-//void prepare_websckt_data(char *ip, int *port, char *path);
+void setNWstatus(gprs_status_t sts);
+gprs_status_t getNW_status(void);
+void setServerStatus(gprs_status_t sts);
+gprs_status_t getServerStatus(void);
+// void prepare_websckt_data(char *ip, int *port, char *path);
 
 #endif /* SOURCES_GPRS_H_ */
