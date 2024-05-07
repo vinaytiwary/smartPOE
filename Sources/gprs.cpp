@@ -38,8 +38,10 @@ extern Alarms_t Alarms;
 
 uint8_t dummy_json_string[390];
 
-uint8_t JSON_Tx_Buff[500];
-uint8_t JSON_Rx_Buff[500];
+// uint8_t JSON_Tx_Buff[500];
+// uint8_t JSON_Rx_Buff[500];
+uint8_t JSON_Tx_Buff[513];
+uint8_t JSON_Rx_Buff[513];
 
 void TCP_Handler(void)
 {

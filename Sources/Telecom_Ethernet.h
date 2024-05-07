@@ -12,8 +12,15 @@
 
 #ifdef ETHERNET_EN
 
-#define ETHER_TX_BUFFER_MAX  (500)
-#define ETHER_RX_BUFFER_MAX  (128)
+// #define ETHER_TX_BUFFER_MAX  (500)
+// #define ETHER_RX_BUFFER_MAX  (128)
+// // #define ETHER_RX_BUFFER_MAX  (500)
+
+#define ETHER_TX_BUFFER_MAX  (513)
+#define ETHER_RX_BUFFER_MAX  (513)
+
+// #define ETHER_TX_BUFFER_MAX  (2600)
+// #define ETHER_RX_BUFFER_MAX  (2600)
 
 #define ETHER_CONN_RETRY_TIME    (10000/GPRS_STATE_MC_TIME)
 
@@ -24,6 +31,7 @@ typedef enum
     ETHER_TCP_CONN,
     ETHER_WS_CONN,
     ETHER_PING,
+    ETHER_PREPARE_LOGS,
     ETHER_LOG_UPLOAD,
     ETHER_SESSION_IDLE,
 }ethernet_state_t;

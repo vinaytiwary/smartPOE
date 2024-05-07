@@ -28,6 +28,7 @@
 #include <Sources/UIPEthernet/UIPClient.h>
 #include <Sources/UIPEthernet/UIPEthernet.h>
 #include "gprs.h"
+#include "main.h"
 
 UIPClient client,Eclient;
 volatile ethernet_rx_buff_t ethernet_rx_buff;//,ethernet_resp_buff;
@@ -40,6 +41,11 @@ uint8_t ether_network_sts;
 // extern system_info_t system_info;
 extern cloud_config_t cloud_config;
 extern gprs_t gprs;
+
+extern uint8_t JSON_Tx_Buff[513];
+extern uint8_t JSON_Rx_Buff[513];
+
+extern Alarms_t Alarms;
 
 void vETHERNETSPIInit(void)
 {
@@ -108,6 +114,7 @@ void ethernet_handler(void)
     static uint8_t ether_ws_sts = FALSE;
     char status = 0;
     uint8_t dhcp_sts = 0;
+    static unsigned int TCP_indx = 0;
     switch(ethernet_state)
     {
         case ETHER_INIT:
@@ -240,17 +247,45 @@ void ethernet_handler(void)
         }
         break;
 
+        case ETHER_PREPARE_LOGS:
+        {
+            TCP_indx = prepare_JSON_pckt();
+            // TCP_indx = websocket_packet(dummy_json_string);
+            // setREQmode(AVBL);
+
+#ifdef DEBUG_TCP_HANDLER
+            // UWriteString((char*)"\nTCP_indx=", DBG_UART);
+            // UWriteInt(TCP_indx,DBG_UART);
+            // UWriteString((char*)"\nTCP_buff=", DBG_UART);
+            // UWriteBytes((unsigned char*)JSON_Tx_Buff,TCP_indx,DBG_UART);
+
+            vUART_SendStr(UART_PC,"\nTCP_indx=");
+            vUART_SendInt(UART_PC, TCP_indx);
+            vUART_SendStr(UART_PC, "\nTCP_buff=");
+            vUART_SendBytes(UART_PC, JSON_Tx_Buff, TCP_indx);
+#endif
+            ethernet_state = ETHER_LOG_UPLOAD;
+        }
+        break;
+
         case ETHER_LOG_UPLOAD:
         {
             if(getREQmode() == AVBL)
             {
-                status = ether_tcp_send((char *)ethernet_tx_buff.buffer, ethernet_tx_buff.index);
+                // status = ether_tcp_send((char *)ethernet_tx_buff.buffer, ethernet_tx_buff.index);
+                status = ether_tcp_send((char *)JSON_Tx_Buff,TCP_indx);
 
                 if(status == ETHER_TCP_SEND_PASS)         //pending
                 {
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nTCP_SEND_PASS");
 #endif
+                    if(/* Alarms.Power_ON || */ ((getRAM_Alarm() & (1 << POWER_ON_BIT)) == (1 << POWER_ON_BIT)))
+                    {
+                        Alarms.Power_ON = false;
+                        setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
+                    }
+
                     ethernet_state = ETHER_SESSION_IDLE;
                     //flushTxBuffer(LTE_UART);
                     //ethernet_tx_buff.index = 0;
@@ -293,6 +328,8 @@ void ethernet_handler(void)
 #endif
                 // PP commented on 03-05-24, this is evse relevant function:
                 // OCPP_Server_Query_Message();
+
+                TCP_indx = prepare_JSON_pckt();
                 set_pending_request(0);
             }
             else if(getREQmode() == AVBL)
@@ -412,6 +449,10 @@ ether_ws_sts_t ws_connect(void)
 {
     static ether_ws_cmd_t ether_ws_cmd = ETHER_WS_CMD;
     ether_ws_sts_t sts = ETHER_WS_CON_PRG;
+#ifdef DEBUG_ETHERNET
+    vUART_SendStr(UART_PC,"\nWC:");
+    vUART_SendInt(UART_PC, ether_ws_cmd);
+#endif
     switch(ether_ws_cmd)
     {
         case ETHER_WS_CMD:
@@ -505,6 +546,10 @@ ether_ping_status_t ether_ping_send(void )
 {
     ether_ping_status_t sts = ETHER_PING_IN_PRG;
     static ether_ping_cmd_t ether_ping_cmd = ETHER_PING_CMD;
+#ifdef DEBUG_ETHERNET
+    vUART_SendStr(UART_PC,"\nPS:");
+    vUART_SendInt(UART_PC, ether_ping_cmd);
+#endif
     switch(ether_ping_cmd)
     {
         case ETHER_PING_CMD:
@@ -687,12 +732,14 @@ char ether_valid_code(char *tmpstr)
 
 void flush_ether_rx_buff(void)
 {
-    memset((void *)&ethernet_rx_buff,0,sizeof(gprs_rx_data_buff_t));
+    // memset((void *)&ethernet_rx_buff,0,sizeof(gprs_rx_data_buff_t));
+    memset((void *)&ethernet_rx_buff,0,sizeof(ethernet_rx_buff_t));
 }
 
 void flush_ether_tx_buff(void)
 {
-    memset((void *)&ethernet_tx_buff,0,sizeof(gprs_tx_data_buff_t));
+    // memset((void *)&ethernet_tx_buff,0,sizeof(gprs_tx_data_buff_t));
+    memset((void *)&ethernet_tx_buff,0,sizeof(ethernet_tx_buff_t));
 }
 
 ether_tcp_packet_status_t ether_tcp_send(char *data_str, int len)
@@ -943,7 +990,8 @@ void check_ethernet_message(void)
     uint8_t *result;
     uint8_t shift_bytes = 0;
     static uint8_t retry_coun = 0;
-    char temp_buff[550];
+    // char temp_buff[550];
+    char temp_buff[ETHER_RX_BUFFER_MAX];
     uint16_t size = 0;
     // uint16_t len = 0;
     size = client.available();
@@ -970,6 +1018,8 @@ void check_ethernet_message(void)
                 vUART_SendStr(UART_PC, "\nB");
 #endif
                 client.read((uint8_t*)temp_buff, size);
+                // client.read((uint8_t*)temp_buff, RX_BUFFER_MAX);
+               
                 memcpy((void *)&ethernet_rx_buff.buffer[ethernet_rx_buff.index],temp_buff,size);
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC, "\ntcp_recv_len:");
@@ -1063,6 +1113,7 @@ void check_ethernet_message(void)
         if (result)
         {
             // GPRS_OCPP_CMS_DATA_Filter();
+            ethernet_rx_buff.locked = LOCKED;
 #ifdef DEBUG_ETHERNET
            vUART_SendStr(UART_PC, "\nresult:");
            vUART_SendStr(UART_PC, (const uint8_t*) result);
