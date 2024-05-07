@@ -55,5 +55,7 @@
 #define USE_NETCLOSE
 // #define CHECKSTR_EXP
 
+#define ETHERNET_EN
+
 
 #endif /* SOURCES__CONFIG_H_ */

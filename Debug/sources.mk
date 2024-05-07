@@ -113,4 +113,7 @@ PDE_DEPS__QUOTED :=
 SUBDIRS := \
 . \
 Sources \
+Sources/UIPEthernet \
+Sources/UIPEthernet/mbed \
+Sources/UIPEthernet/utility \
 

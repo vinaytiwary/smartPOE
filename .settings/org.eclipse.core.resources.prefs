@@ -1,4 +1,10 @@
 eclipse.preferences.version=1
+encoding//Debug/Sources/UIPEthernet/mbed/subdir_rules.mk=UTF-8
+encoding//Debug/Sources/UIPEthernet/mbed/subdir_vars.mk=UTF-8
+encoding//Debug/Sources/UIPEthernet/subdir_rules.mk=UTF-8
+encoding//Debug/Sources/UIPEthernet/subdir_vars.mk=UTF-8
+encoding//Debug/Sources/UIPEthernet/utility/subdir_rules.mk=UTF-8
+encoding//Debug/Sources/UIPEthernet/utility/subdir_vars.mk=UTF-8
 encoding//Debug/Sources/subdir_rules.mk=UTF-8
 encoding//Debug/Sources/subdir_vars.mk=UTF-8
 encoding//Debug/makefile=UTF-8

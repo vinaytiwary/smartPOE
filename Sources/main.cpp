@@ -35,9 +35,15 @@
 #include "gps.h"
 #include "PC_Cmds.h"
 #include "Web_Comm.h"
+#include "Telecom_Ethernet.h"
 #include "main.h"
 #include "_common.h"
 #include "_debug.h"
+
+#ifdef ETHERNET_EN
+#include "Sources/UIPEthernet/UIPEthernet.h"
+#include <Sources/UIPEthernet/ethernet_comp.h>
+#endif
 
 extern scheduler_t scheduler;
 
@@ -80,6 +86,10 @@ int main(void)
     vMAIN_InitClockPeripherals();
 	init_config();
 
+#ifdef ETHERNET_EN
+    ethernet_init();
+#endif
+
 	// update_rtc(&dummyDateBuff[0], 0);
 	IntMasterEnable();
 
@@ -101,7 +111,9 @@ int main(void)
 		if(scheduler.flg10ms == HIGH)
         {
             scheduler.flg10ms = LOW;
-
+#ifdef ETHERNET_EN
+            check_ethernet_message();
+#endif  //ETHERNET_EN
 		}
 
 		if(scheduler.flg20ms == HIGH)
@@ -117,9 +129,13 @@ int main(void)
 			//vInput_PollingRead();
             // if(!System_mode)
             {
+#ifndef ETHERNET_EN
                 // TCP_Handler();
                 // gps_handler();
                 manage_gps_gprs();
+#else 
+                ethernet_handler();
+#endif  //ETHERNET_EN
             }
 		}
 
@@ -274,7 +290,10 @@ void vMAIN_InitClockPeripherals(void)
 #endif
 	vRTCI2CInit(); 
 	vPERIPH_E2PInit();
+    vETHERNETSPIInit();
+
 	memset(&ram_data, 0, sizeof(ram_data_t));
+
 }
 
 void write_defaults(uint32_t addr)
@@ -374,7 +393,8 @@ void write_defaults(uint32_t addr)
 //////////////////////////////////////////////////////////////////////DeviceId//////////////////////////////////////////////////////////////////////////////////
 
             memset(&e2p_device_info, 0, sizeof(e2p_device_info_t));
-            memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
+            // memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
+            memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
             e2p_write_device_cfg();
 /////////////////////////////////////////////////////////////////////FixLocation/////////////////////////////////////////////////////////////////////////////////
 

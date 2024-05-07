@@ -42,6 +42,10 @@ extern volatile Rx_Buff_t pc_uart_rx, display_uart_rx;
 extern gprs_t gprs;
 extern ram_data_t ram_data;
 
+#ifdef ETHERNET_EN
+extern volatile unsigned long  _millis;
+#endif
+
 void vPERIPH_SystickInit(void)
 {
     //Systick Timer Configuration //
@@ -68,6 +72,13 @@ void SysTickIntHandler(void)
     } //End of if
 
     millis_cnt++;   //unsigned variable. (uint32_t) should overflow to 0 again after reaching 0xFFFF_FFFF so no need of protection conditon?
+
+#ifdef ETHERNET_EN
+    if(_millis < 0xFFFFFFFF)
+    {
+        _millis++;
+    }
+#endif
 
     // ADC_RAW = readADC(MCU_VAC_ADC);
     // if(ADC_RAW > ADC_RAW_MAX)

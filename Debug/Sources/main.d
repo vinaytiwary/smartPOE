@@ -57,8 +57,46 @@ Sources/main.obj: ../Sources/gps.h
 Sources/main.obj: ../Sources/PC_Cmds.h
 Sources/main.obj: ../Sources/Web_Comm.h
 Sources/main.obj: ../Sources/_common.h
+Sources/main.obj: ../Sources/Telecom_Ethernet.h
 Sources/main.obj: ../Sources/main.h
 Sources/main.obj: ../Sources/_debug.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/ethernet_comp.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/Enc28J60Network.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/mempool.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/inttypes.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/inttypes.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/machine/_inttypes.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/mempool_conf.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uipethernet-conf.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uipopt.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uip-conf.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/enc28j60.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/Dhcp.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPUdp.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdio.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/WString.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h
+Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Udp.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/IPAddress.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/WString.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uip.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPClient.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Client.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/IPAddress.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/logging.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPServer.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h
+Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Server.h
 
 ../Sources/main.cpp:
 
@@ -174,7 +212,83 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 
 ../Sources/_common.h:
 
+../Sources/Telecom_Ethernet.h:
+
 ../Sources/main.h:
 
 ../Sources/_debug.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/ethernet_comp.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/Enc28J60Network.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/mempool.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/inttypes.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/inttypes.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/machine/_inttypes.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/mempool_conf.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uipethernet-conf.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uipopt.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uip-conf.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/enc28j60.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/Dhcp.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPUdp.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdio.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/WString.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Udp.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/IPAddress.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/WString.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/uip.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPClient.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Client.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/IPAddress.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/logging.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPServer.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Print.h:
+
+D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Server.h:
 

@@ -226,3 +226,21 @@ unsigned int count_comma (char *arr, uint16_t max_len)
 
   	return cnt;
 }
+
+char *my_strstr(const char *haystack, const char *needle, int haystack_len)
+{
+    size_t  needle_len;
+
+    needle_len = strlen(needle);
+    //while (*haystack)
+    while(haystack_len--)
+    {
+        if (*haystack == *needle)
+        {
+            if (!strncmp(haystack, needle, needle_len))
+                    return ((char *)haystack);
+        }
+        haystack++;
+    }
+    return (NULL);
+}

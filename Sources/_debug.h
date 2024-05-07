@@ -38,4 +38,6 @@
 
 #define DEBUG_WEBB_COMM
 
+#define DEBUG_ETHERNET
+
 #endif /* SOURCES__DEBUG_H_ */

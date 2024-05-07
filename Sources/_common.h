@@ -31,4 +31,6 @@ unsigned int count_doubleSquareBracket(char *arr, unsigned int length);
 
 unsigned int count_comma(char *arr, uint16_t max_len);
 
+char *my_strstr(const char *haystack, const char *needle, int haystack_len);
+
 #endif /* SOURCES__COMMON_H_ */

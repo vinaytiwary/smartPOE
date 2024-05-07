@@ -15,6 +15,7 @@ CPP_SRCS += \
 ../Sources/PC_Cmds.cpp \
 ../Sources/SPI.cpp \
 ../Sources/SysTick_Timer.cpp \
+../Sources/Telecom_Ethernet.cpp \
 ../Sources/UartCore.cpp \
 ../Sources/Web_Comm.cpp \
 ../Sources/_common.cpp \
@@ -35,6 +36,7 @@ OBJS += \
 ./Sources/PC_Cmds.obj \
 ./Sources/SPI.obj \
 ./Sources/SysTick_Timer.obj \
+./Sources/Telecom_Ethernet.obj \
 ./Sources/UartCore.obj \
 ./Sources/Web_Comm.obj \
 ./Sources/_common.obj \
@@ -55,6 +57,7 @@ CPP_DEPS += \
 ./Sources/PC_Cmds.d \
 ./Sources/SPI.d \
 ./Sources/SysTick_Timer.d \
+./Sources/Telecom_Ethernet.d \
 ./Sources/UartCore.d \
 ./Sources/Web_Comm.d \
 ./Sources/_common.d \
@@ -75,6 +78,7 @@ OBJS__QUOTED += \
 "Sources\PC_Cmds.obj" \
 "Sources\SPI.obj" \
 "Sources\SysTick_Timer.obj" \
+"Sources\Telecom_Ethernet.obj" \
 "Sources\UartCore.obj" \
 "Sources\Web_Comm.obj" \
 "Sources\_common.obj" \
@@ -95,6 +99,7 @@ CPP_DEPS__QUOTED += \
 "Sources\PC_Cmds.d" \
 "Sources\SPI.d" \
 "Sources\SysTick_Timer.d" \
+"Sources\Telecom_Ethernet.d" \
 "Sources\UartCore.d" \
 "Sources\Web_Comm.d" \
 "Sources\_common.d" \
@@ -115,6 +120,7 @@ CPP_SRCS__QUOTED += \
 "../Sources/PC_Cmds.cpp" \
 "../Sources/SPI.cpp" \
 "../Sources/SysTick_Timer.cpp" \
+"../Sources/Telecom_Ethernet.cpp" \
 "../Sources/UartCore.cpp" \
 "../Sources/Web_Comm.cpp" \
 "../Sources/_common.cpp" \
