@@ -8,9 +8,11 @@
 #ifndef SOURCES_GPS_H_
 #define SOURCES_GPS_H_
 
-#include "gprs.h"
-
 #include "_config.h"
+
+// #ifndef ETHERNET_EN
+
+#include "gprs.h"
 
 // #define GNS_PKT_EN	//PP(14-02-2023): this is declared here now.
 
@@ -129,6 +131,6 @@ bool get_location(void);
 gps_status_t get_gps_status();
 void set_gps_status(gps_status_t);
 
-
+// #endif 	// ifNOTdef ETHERNET_EN
 
 #endif /* SOURCES_GPS_H_ */

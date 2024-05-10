@@ -106,11 +106,12 @@ void ethernet_init(void)
 //    set_ethernet_connct_sts(TRUE);
     //return sts;
 }
-#endif
+#endif  //ETHERNET_EN
 
 void ethernet_handler(void)
 {
     //static ethernet_state_t ethernet_state = ETHER_INIT;
+    static uint32_t start_millis = 0;
     static uint8_t ether_ws_sts = FALSE;
     char status = 0;
     uint8_t dhcp_sts = 0;
@@ -119,6 +120,7 @@ void ethernet_handler(void)
     {
         case ETHER_INIT:
         {
+            start_millis = my_millis();
             ethernet_state = ETHER_DHCP_CONN;
             ether_ws_sts = FALSE;
             set_ethernet_NWstatus(FALSE);
@@ -132,24 +134,27 @@ void ethernet_handler(void)
 
         case ETHER_DHCP_CONN:
         {
-#ifdef DEBUG_ETHERNET
-            vUART_SendStr(UART_PC,"\neDHCP");
-#endif
+// #ifdef DEBUG_ETHERNET
+//             vUART_SendStr(UART_PC,"\neDHCP:");
+//             vUART_SendInt(UART_PC, ((my_millis() - start_millis)/1000));
+// #endif
             dhcp_sts = Ethernet.dhcp_handler();
             // dhcp_sts = request_DHCP_lease();
             if(dhcp_sts)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\ndhcp_pass");
+                vUART_SendStr(UART_PC,"\ndhcp_pass:");
+                vUART_SendInt(UART_PC, ((my_millis() - start_millis)/1000));
 #endif
                 set_ethernet_connct_sts(TRUE);
                 ethernet_state = ETHER_TCP_CONN;
             }
             else
             {
-#ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\ndhcp_f");
-#endif
+// #ifdef DEBUG_ETHERNET
+//                 vUART_SendStr(UART_PC,"\ndhcp_f:");
+//                 vUART_SendInt(UART_PC, ((my_millis() - start_millis)/1000));
+// #endif
                 // _dhcp_state = STATE_DHCP_START;
                 set_ethernet_NWstatus(FALSE);
                 set_ethernet_connct_sts(FALSE);
@@ -561,7 +566,8 @@ ether_ping_status_t ether_ping_send(void )
             flush_ether_rx_buff();
             ether_ping_cmd = ETHER_PING_RSP;
 #ifdef DEBUG_ETHERNET
-            vUART_SendStr(UART_PC,"\nping_snd:cmd");
+            vUART_SendStr(UART_PC,"\nping_snd:cmd:");
+            vUART_SendStr(UART_PC, (uint8_t*)buff);
 #endif
         }
         break;
@@ -575,7 +581,12 @@ ether_ping_status_t ether_ping_send(void )
             {
                 ethernet_rx_buff.locked = UNLOCKED;
                 //uint8_t size = client.available();
-
+#ifdef DEBUG_ETHERNET
+                vUART_SendStr(UART_PC,"\nPSR:");
+                vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+                vUART_SendChr(UART_PC, ',');
+                vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+#endif
                 //size = client.read((uint8_t *)&ethernet_rx_buff.buffer,size);
                 //ethernet_rx_buff.index += size;
                 if(ethernet_pong_received((uint8_t *)ethernet_rx_buff.buffer))
@@ -604,12 +615,18 @@ ether_ping_status_t ether_ping_send(void )
             }
             else
             {
+#ifdef DEBUG_ETHERNET
+                vUART_SendStr(UART_PC,"\nPSW:");
+                vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+                vUART_SendChr(UART_PC, ',');
+                vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+#endif
                 if(++timeout >= ((10*1000)/50))
                 {
                     timeout = 0;
-// #ifdef DEBUG_ETHERNET
-// vUART_SendStr(UART_PC,"\nping:rsp:to");
-// #endif
+#ifdef DEBUG_ETHERNET
+                    vUART_SendStr(UART_PC,"\nping:rsp:to");
+#endif
                     ether_ping_cmd = ETHER_PING_CMD;
                     if(++retry_cnt >= 3)
                     {

@@ -13,6 +13,8 @@
 #include <math.h>
 
 #include "_config.h"
+
+// #ifndef ETHERNET_EN
 #include "gps.h"
 #include "gprs.h"
 #include "UartCore.h"
@@ -1450,4 +1452,5 @@ void set_gps_status(gps_status_t sts)
 {
     gps.gps_status = sts;
 }
+// #endif  // ifNOTdef ETHERNET_EN
 

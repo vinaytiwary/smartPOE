@@ -43,7 +43,7 @@
 #ifdef ETHERNET_EN
 #include "Sources/UIPEthernet/UIPEthernet.h"
 #include <Sources/UIPEthernet/ethernet_comp.h>
-#endif
+#endif  // ETHERNET_EN
 
 extern scheduler_t scheduler;
 
@@ -88,7 +88,7 @@ int main(void)
 
 #ifdef ETHERNET_EN
     ethernet_init();
-#endif
+#endif  // ETHERNET_EN
 
 	// update_rtc(&dummyDateBuff[0], 0);
 	IntMasterEnable();
@@ -290,7 +290,9 @@ void vMAIN_InitClockPeripherals(void)
 #endif
 	vRTCI2CInit(); 
 	vPERIPH_E2PInit();
+#ifdef ETHERNET_EN
     vETHERNETSPIInit();
+#endif  //ETHERNET_EN
 
 	memset(&ram_data, 0, sizeof(ram_data_t));
 

@@ -43,6 +43,8 @@ uint8_t dummy_json_string[390];
 uint8_t JSON_Tx_Buff[513];
 uint8_t JSON_Rx_Buff[513];
 
+#ifndef ETHERNET_EN
+
 void TCP_Handler(void)
 {
     char status = 0;
@@ -3665,6 +3667,8 @@ char respos_recvd(char *buff)
     }
 }
 
+#endif  //ifNOTdef ETHERNET_EN
+
 void generateMaskKey(uint8_t maskKey[4])
 {
     int i=0;
@@ -3939,6 +3943,7 @@ char check_string_nobuf(const char *str)
 
 }
 
+// #ifndef ETHERNET_EN
 void setREQmode(gprs_status_t sts)
 {
     gprs.send_request = sts;
@@ -4013,6 +4018,7 @@ gprs_status_t getServerStatus(void)
 {
     return gprs.serverConn_Sts;
 }
+// #endif  // ifNOTdef ETHERNET_EN
 
 
 

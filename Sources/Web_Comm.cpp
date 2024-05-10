@@ -8,6 +8,8 @@
 #include "Web_Comm.h"
 #include "_config.h"
 
+#ifndef ETHERNET_EN
+
 #include "gprs.h"
 #include "UartCore.h"
 
@@ -296,6 +298,8 @@ void manage_gps_gprs(void)
 }
 
 #endif  // if 0
+
+#endif  //ifNOTdef ETHERNET_EN
 
 
 

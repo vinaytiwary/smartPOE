@@ -8,6 +8,9 @@
 #ifndef SOURCES_GPRS_H_
 #define SOURCES_GPRS_H_
 
+#include <stdint.h>
+#include "_config.h"
+
 #define YEAR_OFFSET     (10)
 
 #define GPRS_STATE_MC_TIME      (50)
@@ -90,6 +93,12 @@ typedef enum
 
 typedef enum
 {
+    REQUEST,
+    RESPONSE
+}upload_data_t;
+
+typedef enum
+{
     CON_OK,
     CON_FAIL,
     CON_IN_PRG
@@ -146,12 +155,6 @@ typedef enum
     WEBSOCKET_FAIL,
     WEBSOCKET_IN_PRG
 }websckt_sts_t;
-
-typedef enum
-{
-    REQUEST,
-    RESPONSE
-}upload_data_t;
 
 typedef enum
 {

@@ -12,6 +12,8 @@
 #include "_config.h"
 #include "_common.h"
 
+#ifndef ETHERNET_EN
+
 #if 0
 #define WEB_STATE_MC_TIME   (50)
 
@@ -64,4 +66,6 @@ typedef enum
 void manage_gps_gprs(void);
 
 #endif  //if 0
+#endif 	// ifNOTdef ETHERNET_EN
+
 #endif /* SOURCES_WEB_COMM_H_ */

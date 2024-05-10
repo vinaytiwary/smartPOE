@@ -40,13 +40,13 @@ Sources/_common.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/incl
 Sources/_common.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h
 Sources/_common.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdlib.h
 Sources/_common.obj: ../Sources/gprs.h
-Sources/_common.obj: ../Sources/_debug.h
 Sources/_common.obj: ../Sources/_config.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
+Sources/_common.obj: ../Sources/_debug.h
 Sources/_common.obj: ../Sources/_common.h
 
 ../Sources/_common.cpp:
@@ -129,8 +129,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdlib.h:
 
 ../Sources/gprs.h:
 
-../Sources/_debug.h:
-
 ../Sources/_config.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h:
@@ -142,6 +140,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
+
+../Sources/_debug.h:
 
 ../Sources/_common.h:
 
