@@ -135,6 +135,7 @@ int main(void)
                 manage_gps_gprs();
 #else 
                 ethernet_handler();
+                gps_handler();
 #endif  //ETHERNET_EN
             }
 		}

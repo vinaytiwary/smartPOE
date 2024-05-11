@@ -299,6 +299,8 @@ void manage_gps_gprs(void)
 
 #endif  // if 0
 
+
+
 #endif  //ifNOTdef ETHERNET_EN
 
 

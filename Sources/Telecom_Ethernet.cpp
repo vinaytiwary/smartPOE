@@ -30,14 +30,17 @@
 #include "gprs.h"
 #include "main.h"
 
+
+Telecom_Ethernet_t Telecom_Ethernet;
 UIPClient client,Eclient;
 volatile ethernet_rx_buff_t ethernet_rx_buff;//,ethernet_resp_buff;
 volatile ethernet_tx_buff_t ethernet_tx_buff;
 // extern volatile gprs_rx_data_buff_t gprs_rx_buff,gprs_resp_rx_buff;
 // extern volatile gprs_tx_data_buff_t gprs_tx_buff;
-ethernet_state_t ethernet_state = ETHER_INIT;
-uint8_t ether_connect_sts;
-uint8_t ether_network_sts;
+
+// ethernet_state_t ethernet_state = ETHER_INIT;
+// uint8_t ether_connect_sts;
+// uint8_t ether_network_sts;
 // extern system_info_t system_info;
 extern cloud_config_t cloud_config;
 extern gprs_t gprs;
@@ -116,12 +119,14 @@ void ethernet_handler(void)
     char status = 0;
     uint8_t dhcp_sts = 0;
     static unsigned int TCP_indx = 0;
-    switch(ethernet_state)
+    // switch(ethernet_state)
+    switch(Telecom_Ethernet.ethernet_state)
     {
         case ETHER_INIT:
         {
             start_millis = my_millis();
-            ethernet_state = ETHER_DHCP_CONN;
+            // ethernet_state = ETHER_DHCP_CONN;
+            Telecom_Ethernet.ethernet_state = ETHER_DHCP_CONN;
             ether_ws_sts = FALSE;
             set_ethernet_NWstatus(FALSE);
             set_ethernet_connct_sts(FALSE);
@@ -147,7 +152,8 @@ void ethernet_handler(void)
                 vUART_SendInt(UART_PC, ((my_millis() - start_millis)/1000));
 #endif
                 set_ethernet_connct_sts(TRUE);
-                ethernet_state = ETHER_TCP_CONN;
+                // ethernet_state = ETHER_TCP_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
             }
             else
             {
@@ -159,7 +165,8 @@ void ethernet_handler(void)
                 set_ethernet_NWstatus(FALSE);
                 set_ethernet_connct_sts(FALSE);
 
-                ethernet_state = ETHER_DHCP_CONN;
+                // ethernet_state = ETHER_DHCP_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_DHCP_CONN;
             }
         }
         break;
@@ -170,7 +177,8 @@ void ethernet_handler(void)
             ether_tcp_sts_t sts = ether_tcp_connect();
             if(sts == ETHER_TCP_ALREADY_CONN)
             {
-                ethernet_state = ETHER_PING;
+                // ethernet_state = ETHER_PING;
+                Telecom_Ethernet.ethernet_state = ETHER_PING;
                 set_ethernet_connct_sts(TRUE);
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\nether_tcp_conn:ak");
@@ -181,7 +189,8 @@ void ethernet_handler(void)
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\nether_tcp_conn:k");
 #endif
-                ethernet_state = ETHER_WS_CONN;
+                // ethernet_state = ETHER_WS_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_WS_CONN;
                 set_ethernet_connct_sts(TRUE);
             }
             else if(sts == ETHER_TCP_CON_FAIL)
@@ -193,7 +202,8 @@ void ethernet_handler(void)
                 set_ethernet_connct_sts(FALSE);
 
                 // _dhcp_state = STATE_DHCP_START;
-                ethernet_state = ETHER_DHCP_CONN;
+                // ethernet_state = ETHER_DHCP_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_DHCP_CONN;
             }
         }
         break;
@@ -206,7 +216,8 @@ void ethernet_handler(void)
                 set_ethernet_connct_sts(TRUE);
 
                 ether_ws_sts = TRUE;
-                ethernet_state = ETHER_PING;
+                // ethernet_state = ETHER_PING;
+                Telecom_Ethernet.ethernet_state = ETHER_PING;
             }
             else if(ws_connect() == ETHER_WS_CON_FAIL)
             {
@@ -218,7 +229,8 @@ void ethernet_handler(void)
                 ether_ws_sts = FALSE;
                 // _dhcp_state = STATE_DHCP_START;
                 set_ethernet_connct_sts(FALSE);
-                ethernet_state = ETHER_TCP_CONN;
+                // ethernet_state = ETHER_TCP_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
             }
         }
         break;
@@ -234,7 +246,8 @@ void ethernet_handler(void)
                 set_ethernet_NWstatus(TRUE);
                 set_ethernet_connct_sts(TRUE);
 
-                ethernet_state = ETHER_SESSION_IDLE;
+                // ethernet_state = ETHER_SESSION_IDLE;
+                Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
             }
             else if(ether_ping_send() == ETHER_PING_FAIL)
             {
@@ -246,7 +259,8 @@ void ethernet_handler(void)
 
                 //_dhcp_state = STATE_DHCP_START;
                 set_ethernet_connct_sts(FALSE);
-                ethernet_state = ETHER_TCP_CONN;
+                // ethernet_state = ETHER_TCP_CONN;
+                Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
             }
 
         }
@@ -269,7 +283,8 @@ void ethernet_handler(void)
             vUART_SendStr(UART_PC, "\nTCP_buff=");
             vUART_SendBytes(UART_PC, JSON_Tx_Buff, TCP_indx);
 #endif
-            ethernet_state = ETHER_LOG_UPLOAD;
+            // ethernet_state = ETHER_LOG_UPLOAD;
+            Telecom_Ethernet.ethernet_state = ETHER_LOG_UPLOAD;
         }
         break;
 
@@ -291,7 +306,8 @@ void ethernet_handler(void)
                         setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
                     }
 
-                    ethernet_state = ETHER_SESSION_IDLE;
+                    // ethernet_state = ETHER_SESSION_IDLE;
+                    Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
                     //flushTxBuffer(LTE_UART);
                     //ethernet_tx_buff.index = 0;
                     setREQmode(NOT_AVBL);
@@ -301,7 +317,8 @@ void ethernet_handler(void)
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nTCP_SEND_FAIL");
 #endif
-                    ethernet_state = ETHER_TCP_CONN;
+                    // ethernet_state = ETHER_TCP_CONN;
+                    Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
                     //setREQmode(NOT_AVBL);
                 }
                 // else if(status == TCP_SEND_IN_PRG)
@@ -347,20 +364,23 @@ void ethernet_handler(void)
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nUPLOADING_LOGS");
 #endif
-                    ethernet_state = ETHER_LOG_UPLOAD;
+                    // ethernet_state = ETHER_LOG_UPLOAD;
+                    Telecom_Ethernet.ethernet_state = ETHER_LOG_UPLOAD;
                 }
                 else
                 {
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nWS_NOT_AVBL");
 #endif
-                    ethernet_state = ETHER_TCP_CONN;
+                    // ethernet_state = ETHER_TCP_CONN;
+                    Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
                 }
             }
             else if(retry_time++ > ETHER_CONN_RETRY_TIME)
             {
                 retry_time = 0;
-                ethernet_state = ETHER_PING;
+                // ethernet_state = ETHER_PING;
+                Telecom_Ethernet.ethernet_state = ETHER_PING;
             }
             // else
             // {
@@ -983,20 +1003,24 @@ char ether_respos_recvd(char *buff)
 
 void set_ethernet_connct_sts(uint8_t sts)
 {
-    ether_connect_sts = sts;
+    // ether_connect_sts = sts;
+    Telecom_Ethernet.ether_connect_sts = sts;
 }
 uint8_t get_ethernet_connct_sts(void)
 {
-    return ether_connect_sts;
+    // return ether_connect_sts;
+    return Telecom_Ethernet.ether_connect_sts;
 }
 
 void set_ethernet_NWstatus(uint8_t sts)
 {
-    ether_network_sts = sts;
+    // ether_network_sts = sts;
+    Telecom_Ethernet.ether_network_sts = sts;
 }
 uint8_t get_ethernet_NWstatus(void)
 {
-    return ether_network_sts;
+    // return ether_network_sts;
+    return Telecom_Ethernet.ether_network_sts;
 }
 
 

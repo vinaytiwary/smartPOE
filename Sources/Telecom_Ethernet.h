@@ -105,6 +105,16 @@ typedef struct  {
     unsigned char elapsed;
 }ethernet_rx_buff_t;
 
+typedef struct
+{
+    ethernet_state_t ethernet_state;
+    ether_ws_cmd_t ether_ws_cmd;
+    ether_ping_cmd_t ether_ping_cmd;
+    ether_tcp_pckt_state_t ether_tcp_pckt_state;
+    bool ether_connect_sts;
+    bool ether_network_sts;
+}__attribute__((packed))Telecom_Ethernet_t;
+
 void vETHERNETSPIInit(void);
 
 void ethernet_handler(void);
