@@ -48,6 +48,9 @@ Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
 Sources/_common.obj: ../Sources/_debug.h
 Sources/_common.obj: ../Sources/_common.h
+Sources/_common.obj: ../Sources/UartCore.h
+Sources/_common.obj: ../Sources/HW_pins.h
+Sources/_common.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 
 ../Sources/_common.cpp:
 
@@ -144,4 +147,10 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 ../Sources/_debug.h:
 
 ../Sources/_common.h:
+
+../Sources/UartCore.h:
+
+../Sources/HW_pins.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 

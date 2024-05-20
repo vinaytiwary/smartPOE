@@ -36,6 +36,7 @@
 #include "PC_Cmds.h"
 #include "Web_Comm.h"
 #include "Telecom_Ethernet.h"
+#include "Telecom_server_query.h"
 #include "main.h"
 #include "_common.h"
 #include "_debug.h"
@@ -71,6 +72,8 @@ extern sys_config_t sys_config;
 
 ram_data_t ram_data;
 Alarms_t Alarms;
+
+extern uint32_t cnt_gps_1sec;
 
 extern sys_mode_t System_mode;
 
@@ -135,7 +138,7 @@ int main(void)
                 manage_gps_gprs();
 #else 
                 ethernet_handler();
-                gps_handler();
+                gps_handler();   //PP commented on 16-05-24 for WDISCONN testing
 #endif  //ETHERNET_EN
             }
 		}
@@ -143,7 +146,7 @@ int main(void)
 		if(scheduler.flg100ms == HIGH)
         {
             scheduler.flg100ms = LOW;
-            ToggleLEDs();
+            // ToggleLEDs();
             decodeMsgPC_Uart();
 		}
 
@@ -167,7 +170,26 @@ int main(void)
             if(++upload_time >= 30)
 			{
 				upload_time = 0;	
-				set_pending_request(1);
+                if(!get_pending_request() && getREQmode() == NOT_AVBL)
+                {
+                    set_pending_request(true);
+                    setServerReqType(NO_REQ);
+                    setClientMSGType(SCHEDULED_LOG);
+#ifdef DEBUG_SERVER_QUERY
+                    vUART_SendStr(DEBUG_UART_BASE, "\nS_logs");
+#endif  //DEBUG_SERVER_QUERY
+                }
+				else
+                {
+#ifdef DEBUG_SERVER_QUERY
+                    vUART_SendStr(DEBUG_UART_BASE, "\nREQ_p=");
+                    vUART_SendInt(DEBUG_UART_BASE, getServerReqType());
+                    vUART_SendChr(DEBUG_UART_BASE, ',');
+                    vUART_SendInt(DEBUG_UART_BASE, getClientMSGType());
+                    vUART_SendChr(DEBUG_UART_BASE, ',');
+                    vUART_SendInt(DEBUG_UART_BASE, getREQmode());
+#endif  //DEBUG_SERVER_QUERY
+                }
 			}
 		}
 
@@ -231,6 +253,13 @@ void update_ram_data(void)
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Charger_voltage);
 #endif
+
+#ifdef DEBUG_GET_LOC
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nGP1s:");
+    vUART_SendInt(DEBUG_UART_BASE, cnt_gps_1sec);
+#endif  //DEBUG_GET_LOC
+    
+    cnt_gps_1sec = 0;
 
 }
 
@@ -329,7 +358,8 @@ void write_defaults(uint32_t addr)
         {
             memset(&e2p_device_info, 0, sizeof(e2p_device_info_t));
             // memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
-            memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
+            // memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
+            memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
             e2p_write_device_cfg();
         }
         break;
@@ -397,7 +427,8 @@ void write_defaults(uint32_t addr)
 
             memset(&e2p_device_info, 0, sizeof(e2p_device_info_t));
             // memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
-            memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
+            // memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
+            memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
             e2p_write_device_cfg();
 /////////////////////////////////////////////////////////////////////FixLocation/////////////////////////////////////////////////////////////////////////////////
 

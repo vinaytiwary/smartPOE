@@ -22,6 +22,7 @@
 #include "E2P.h"
 #include "Display.h"
 #include "main.h"
+#include "Telecom_server_query.h"
 
 gprs_t gprs;
 
@@ -33,15 +34,16 @@ gprs_date_time_t gprs_date_time;
 
 extern e2p_device_info_t e2p_device_info;
 extern cloud_config_t cloud_config;
+extern e2p_router_config_t e2p_router_config;
 extern ram_data_t ram_data;
 extern Alarms_t Alarms;
 
-uint8_t dummy_json_string[390];
+extern uint8_t dummy_json_string[390];
 
-// uint8_t JSON_Tx_Buff[500];
-// uint8_t JSON_Rx_Buff[500];
-uint8_t JSON_Tx_Buff[513];
-uint8_t JSON_Rx_Buff[513];
+// // uint8_t JSON_Tx_Buff[500];
+// // uint8_t JSON_Rx_Buff[500];
+// extern uint8_t JSON_Tx_Buff[513];
+// extern uint8_t JSON_Rx_Buff[513];
 
 #ifndef ETHERNET_EN
 
@@ -49,7 +51,7 @@ void TCP_Handler(void)
 {
     char status = 0;
     static unsigned int timeout = 0;
-    static unsigned int TCP_indx = 0;
+    // static unsigned int TCP_indx = 0;
 
     switch(gprs.gprs_handler_state)
     {
@@ -281,14 +283,21 @@ void TCP_Handler(void)
 #endif
 
 #ifdef ENABLE_WDT_RESET
-                if(get_pending_request())
+//                 if(get_pending_request())
+//                 {
+//                     set_pending_request(false);
+// #ifdef DEBUG_SERVER_QUERY
+//                     UWriteString((char*)"\nRST4",DBG_UART);
+// #endif
+//                     reset_controller();
+//                 }
+                if(getServerReqType() == RESTART)
                 {
-                    set_pending_request(false);
-#ifdef DEBUG_WEBB_COMM
+#ifdef DEBUG_SERVER_QUERY
                     // UWriteString((char*)"\nRST4",DBG_UART);
                     vUART_SendStr(DEBUG_UART_BASE, "\nRST4");
 #endif
-                    reset_controller();
+                    // reset_controller();  //PP 15-05-24: Will implement this when WDT is implemented.
                 }
 #endif  //ENABLE_WDT_RESET
                 
@@ -299,14 +308,22 @@ void TCP_Handler(void)
             else if(status == WS_DISCON_FAIL)
             {
 #ifdef ENABLE_WDT_RESET
-                if(get_pending_request())
+//                 if(get_pending_request())
+//                 {
+//                     set_pending_request(false);
+// #ifdef DEBUG_SERVER_QUERY
+//                     UWriteString((char*)"\nRST5",DBG_UART);
+// #endif
+//                     reset_controller();
+//                 }
+
+                if(getServerReqType() == RESTART)
                 {
-                    set_pending_request(false);
-#ifdef DEBUG_WEBB_COMM
+#ifdef DEBUG_SERVER_QUERY
                     // UWriteString((char*)"\nRST5",DBG_UART);
                     vUART_SendStr(DEBUG_UART_BASE, "\nRST5");
 #endif
-                    reset_controller();
+                    // reset_controller();  //PP 15-05-24: Will implement this when WDT is implemented.
                 }
 #endif  //ENABLE_WDT_RESET
                 //LTEmodule.HandlerSts = GPRS_CONN_STS;
@@ -350,20 +367,23 @@ void TCP_Handler(void)
 
         case GPRS_PREPARE_LOGS:
         {
-            TCP_indx = prepare_JSON_pckt();
-            // TCP_indx = websocket_packet(dummy_json_string);
-            // setREQmode(AVBL);
-
+//             TCP_indx = prepare_JSON_pckt();
+//             // TCP_indx = websocket_packet(dummy_json_string);
+//             // setREQmode(AVBL);
+//
+// #ifdef DEBUG_TCP_HANDLER
+//             vUART_SendStr(UART_PC,"\nTCP_indx=");
+//             vUART_SendInt(UART_PC, TCP_indx);
+//             vUART_SendStr(UART_PC, "\nTCP_buff=");
+//             vUART_SendBytes(UART_PC, JSON_Tx_Buff, TCP_indx);
+// #endif
+            prepare_server_pkt();
+            // gprs_tx_buff.index = prepare_JSON_pckt();
 #ifdef DEBUG_TCP_HANDLER
-            // UWriteString((char*)"\nTCP_indx=", DBG_UART);
-            // UWriteInt(TCP_indx,DBG_UART);
-            // UWriteString((char*)"\nTCP_buff=", DBG_UART);
-            // UWriteBytes((unsigned char*)JSON_Tx_Buff,TCP_indx,DBG_UART);
-
             vUART_SendStr(UART_PC,"\nTCP_indx=");
-            vUART_SendInt(UART_PC, TCP_indx);
+            vUART_SendInt(UART_PC, gprs_tx_buff.index);
             vUART_SendStr(UART_PC, "\nTCP_buff=");
-            vUART_SendBytes(UART_PC, JSON_Tx_Buff, TCP_indx);
+            vUART_SendBytes(UART_PC, (const uint8_t*)gprs_tx_buff.buffer, gprs_tx_buff.index);
 #endif
             gprs.gprs_handler_state = GPRS_LOGS_UPLOAD;
         }
@@ -376,7 +396,8 @@ void TCP_Handler(void)
 #endif
             if(getREQmode() == AVBL)
             {
-                status = tcp_send((char *)JSON_Tx_Buff,TCP_indx);
+                // status = tcp_send((char *)JSON_Tx_Buff,TCP_indx);
+                status = tcp_send((char *)gprs_tx_buff.buffer,gprs_tx_buff.index);
 
                 if(status == TCP_SEND_PASS)         //pending
                 {
@@ -390,6 +411,16 @@ void TCP_Handler(void)
                     }
 
                     gprs.gprs_handler_state = GPRS_SESSION_IDLE;
+
+                    if(getServerReqType() == ODU_VOLTAGE_UPDATE)
+                    {
+                        setServerReqType(NO_REQ);
+                    }
+
+                    if(getClientMSGType() == RESPONSE_LOG)
+                    {
+                        setClientMSGType(SCHEDULED_LOG);
+                    }
 
                     //flushTxBuffer(LTE_UART);
                     //gprs_tx_buff.index = 0;
@@ -429,19 +460,45 @@ void TCP_Handler(void)
             //vUART_SendStr(UART_PC,"\ngetREQmode");
             //vUART_SendInt(UART_PC,getREQmode());
 #endif
-
             if(get_pending_request())
             {
-#ifdef DEBUG_GPRS_DATA_UPLOAD
-                vUART_SendStr(UART_PC,"\npr?:");
-                vUART_SendInt(UART_PC,get_pending_request());
+                switch(getServerReqType())
+                {
+                    case RESTART:
+                    {
+#ifdef DEBUG_SERVER_QUERY
+                        // UWriteString((char*)"\nRST3",DBG_UART);
+                        vUART_SendStr(DEBUG_UART_BASE, "\nRST3");
 #endif
-                // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // OCPP_Server_Query_Message();
-                // set_pending_request(0);
+                        set_pending_request(false);
+                        gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;                      
+                    }
+                    break;
 
-                TCP_indx = prepare_JSON_pckt();
-                set_pending_request(0);
+                    case ODU_VOLTAGE_UPDATE:
+                    {
+#ifdef DEBUG_SERVER_QUERY
+                        // UWriteString((char*)"\nOVC3",DBG_UART);
+                        vUART_SendStr(DEBUG_UART_BASE, "\nOVC3");
+#endif                 
+                        set_pending_request(false);
+                        // setClientMSGType(RESPONSE_LOG); // handled in HandleQueryStates() states now.
+                        gprs.gprs_handler_state = GPRS_PREPARE_LOGS;
+                    }
+                    break;
+
+                    case NO_REQ:
+                    default:
+                    {
+#ifdef DEBUG_SERVER_QUERY
+                        vUART_SendStr(DEBUG_UART_BASE, "\nLog");
+#endif                 
+                        set_pending_request(false);
+                        // setClientMSGType(RESPONSE_LOG); // handled in HandleQueryStates() states now.
+                        gprs.gprs_handler_state = GPRS_PREPARE_LOGS;
+                    }
+                    break;
+                }
             }
             else if(getREQmode() == AVBL)
             {
@@ -458,7 +515,7 @@ void TCP_Handler(void)
                 else
                 {
 #ifdef DEBUG_GPRS_DATA_UPLOAD
-                    vUART_SendStr(UART_PC,"\nNOT_AVBL");
+                    vUART_SendStr(UART_PC,"\nWNOT_AVBL");
 #endif
                     gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                 }
@@ -468,6 +525,45 @@ void TCP_Handler(void)
                 gprs_conn_retry_time = 0;
                 gprs.gprs_handler_state = GPRS_PING;
             }
+
+//             if(get_pending_request())
+//             {
+// #ifdef DEBUG_GPRS_DATA_UPLOAD
+//                 vUART_SendStr(UART_PC,"\npr?:");
+//                 vUART_SendInt(UART_PC,get_pending_request());
+// #endif
+//                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
+//                 // OCPP_Server_Query_Message();
+//                 // set_pending_request(0);
+//
+//                 TCP_indx = prepare_JSON_pckt();          
+//                 set_pending_request(0);
+//             }
+//             else if(getREQmode() == AVBL)
+//             {
+// #ifdef DEBUG_GPRS_DATA_UPLOAD
+//                 vUART_SendStr(UART_PC,"\nAVBL");
+// #endif
+//                 if (gprs.websocket_sts == TRUE)
+//                 {
+// #ifdef DEBUG_GPRS_DATA_UPLOAD
+//                     vUART_SendStr(UART_PC,"\nUPD_LOGS");
+// #endif
+//                     gprs.gprs_handler_state = GPRS_LOGS_UPLOAD;
+//                 }
+//                 else
+//                 {
+// #ifdef DEBUG_GPRS_DATA_UPLOAD
+//                     vUART_SendStr(UART_PC,"\nNOT_AVBL");
+// #endif
+//                     gprs.gprs_handler_state = GPRS_TCP_CONNECT;
+//                 }
+//             }
+//             else if(gprs_conn_retry_time++ > GPRS_CONN_RETRY_TIME)
+//             {
+//                 gprs_conn_retry_time = 0;
+//                 gprs.gprs_handler_state = GPRS_PING;
+//             }
         }
         break;
 
@@ -3680,159 +3776,6 @@ void generateMaskKey(uint8_t maskKey[4])
     }
 }
 
-unsigned int prepare_JSON_pckt(void)
-{
-    char earth_temp[7];
-    unsigned long epoch_time = 0;
-	memset(earth_temp, 0, sizeof(earth_temp));
-
-    unsigned int retVal = 0;
-
-    epoch_time = convertToEpochTime(&ram_data.ram_time);
-    // epoch_time = asUnixTime(ram_data.ram_time.year, ram_data.ram_time.month, ram_data.ram_time.date, ram_data.ram_time.hour, ram_data.ram_time.min, ram_data.ram_time.sec);
-
-    if(ram_data.ram_EXTI_cnt.earth_cnt)
-	{
-		memcpy(earth_temp, "true", strlen((const char*)"true"));
-	}
-	else
-	{
-		memcpy(earth_temp, "false", strlen((const char*)"false"));
-	}
-
-#ifdef DEBUG_JSON_PKT_PREP
-    vUART_SendStr(DEBUG_UART_BASE,"\nram_data:");
-    vUART_SendStr(DEBUG_UART_BASE,"\nrfc=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
-    vUART_SendStr(DEBUG_UART_BASE,"\tref=");
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)earth_temp);
-    vUART_SendStr(DEBUG_UART_BASE,"\nrACV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\nrRC=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tOC=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nRV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tOV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nChgV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Charger_voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\tBATTV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Battery_voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\net=");
-    vUART_SendInt(DEBUG_UART_BASE,epoch_time);
-    vUART_SendStr(DEBUG_UART_BASE,"\nrLa=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.Latitude);
-    vUART_SendStr(DEBUG_UART_BASE,"\trLo=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.Longitude);
-    vUART_SendStr(DEBUG_UART_BASE,"\nRS=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.supply_mode_R1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tOS=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.supply_mode_R2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nrA=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_alarms);
-#endif
-
-    memset(dummy_json_string, 0, sizeof(dummy_json_string));
-	my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
-			e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.DC_Voltage_router1/1000,ram_data.ram_ADC.DC_Voltage_router1%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.AC_Voltage/1000,ram_data.ram_ADC.AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms);
-
-#ifdef DEBUG_JSON_PKT_PREP
-    // UWriteString((char*)"\nPrep=",DBG_UART);
-    // UWriteBytes((unsigned char*)dummy_json_string, strlen((const char*)dummy_json_string),DBG_UART);
-
-    vUART_SendStr(DEBUG_UART_BASE, "\nPrep=");
-    vUART_SendBytes(DEBUG_UART_BASE, dummy_json_string, strlen((const char*)dummy_json_string));
-#endif
-
-    retVal = websocket_packet(dummy_json_string);
-    setREQmode(AVBL);
-
-    return retVal;
-}
-
-unsigned int websocket_packet(uint8_t *request)
-{
-	uint8_t opcode=0x01;
-    uint16_t Length;
-    uint8_t maskKey[4];
-    unsigned int i = 0, JSON_indx = 0;
-
-    memset(JSON_Tx_Buff, 0, sizeof(JSON_Tx_Buff));
-
-    maskKey[0] = 0x37;
-    maskKey[1] = 0xFA;
-    maskKey[2] = 0x21;
-    maskKey[3] = 0x3D;
-
-    Length = strlen((char *)request);
-    
-    JSON_Tx_Buff[0] = opcode|0x80;
-
-#ifdef DEBUG_WEB_PREP
-    // UWriteString((char*)"\nJSON_Tx_Buff[0]=", DBG_UART);
-    // UWriteData((JSON_Tx_Buff[0] & 0xFF), DBG_UART);
-#endif
-    
-    if(Length<126)
-    {
-        JSON_Tx_Buff[1] = Length|0x80;
-        JSON_indx += 2;
-#ifdef DEBUG_WEB_PREP
-        // UWriteString((char*)"\n1JSON_Tx_Buff[1]=", DBG_UART);
-        // UWriteData((JSON_Tx_Buff[1] & 0xFF), DBG_UART);
-#endif
-    }
-    else
-    {
-        JSON_Tx_Buff[1] = 0xFE;
-#ifdef DEBUG_WEB_PREP
-        // UWriteString((char*)"\n2JSON_Tx_Buff[1]=", DBG_UART);
-        // UWriteData((JSON_Tx_Buff[1] & 0xFF), DBG_UART);
-#endif
-        JSON_Tx_Buff[2] = ((Length >> 8) & 0xFF);
-#ifdef DEBUG_WEB_PREP
-        // UWriteString((char*)"\n2JSON_Tx_Buff[2]=", DBG_UART);
-        // UWriteData((JSON_Tx_Buff[2] & 0xFF), DBG_UART);
-#endif
-        JSON_Tx_Buff[3] = (Length & 0xFF);
-#ifdef DEBUG_WEB_PREP
-        // UWriteString((char*)"\n2JSON_Tx_Buff[3]=", DBG_UART);
-        // UWriteData((JSON_Tx_Buff[3] & 0xFF), DBG_UART);
-#endif
-        JSON_indx += 4;
-    }
-    
-    memcpy((void*)&JSON_Tx_Buff[JSON_indx],maskKey,sizeof(maskKey));
-    JSON_indx += sizeof(maskKey);
-
-#ifdef DEBUG_WEB_PREP
-    // // for(int k = 0; k < JSON_indx; k++)
-    // for(unsigned int k = 0; k < JSON_indx; k++)
-	// {
-    //     // UWriteString((char*)"\n2JSON_Tx_Buff[i]=", DBG_UART);
-    //     // UWriteData((JSON_Tx_Buff[k] & 0xFF), DBG_UART);
-	// 	// //printf("\n3JSON_Tx_Buff[%d] = %02X",k,(JSON_Tx_Buff[k] & 0xFF));
-	// }
-#endif
-    
-    for(i=0; i<Length;i++)
-    {
-        JSON_Tx_Buff[JSON_indx++] = request[i]^maskKey[i%4];
-#ifdef DEBUG_WEB_PREP
-        // UWriteString((char*)"\n\n4JSON_Tx_Buff[i]=", DBG_UART);
-        // UWriteData(',', DBG_UART);
-        // UWriteInt(JSON_indx, DBG_UART);
-        // UWriteData(',', DBG_UART);
-        // UWriteData((request[i]^maskKey[i%4]), DBG_UART);
-#endif        
-    }
-    
-    return JSON_indx;
-}
-
-
 int get_rx_data(char *copy_here)
 {
     int retval = 0;
@@ -3944,14 +3887,7 @@ char check_string_nobuf(const char *str)
 }
 
 // #ifndef ETHERNET_EN
-void setREQmode(gprs_status_t sts)
-{
-    gprs.send_request = sts;
-}
-gprs_status_t getREQmode(void)
-{
-    return gprs.send_request;
-}
+
 
 void set_upload_data(upload_data_t upload_data)
 {
@@ -3962,14 +3898,6 @@ upload_data_t get_upload_data(void)
     return gprs.upload_data;
 }
 
-void set_pending_request(uint8_t request)
-{
-    gprs.pending_request = request;
-}
-uint8_t get_pending_request(void)
-{
-    return gprs.pending_request;
-}
 void set_webconn_sts(uint8_t sts)
 {
     gprs.websocket_sts = sts;
@@ -3987,16 +3915,6 @@ void set_gprs_connct_sts(uint8_t sts)
 uint8_t get_gprs_connct_sts(void)
 {
     return gprs.connect_sts;
-}
-
-uint8_t get_pkt_recv(void)
-{
-    return gprs.pkt_recv;
-}
-
-void set_pkt_recv(uint8_t pktRecv)
-{
-    gprs.pkt_recv = pktRecv;
 }
 
 void setNWstatus(gprs_status_t sts)

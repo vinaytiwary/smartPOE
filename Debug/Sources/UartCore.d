@@ -41,6 +41,7 @@ Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
 Sources/UartCore.obj: ../Sources/gprs.h
 Sources/UartCore.obj: ../Sources/_common.h
 Sources/UartCore.obj: ../Sources/PC_Cmds.h
+Sources/UartCore.obj: ../Sources/Telecom_server_query.h
 
 ../Sources/UartCore.cpp:
 
@@ -123,4 +124,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 ../Sources/_common.h:
 
 ../Sources/PC_Cmds.h:
+
+../Sources/Telecom_server_query.h:
 

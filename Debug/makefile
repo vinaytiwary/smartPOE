@@ -21,6 +21,7 @@ ORDERED_OBJS += \
 "./Sources/SPI.obj" \
 "./Sources/SysTick_Timer.obj" \
 "./Sources/Telecom_Ethernet.obj" \
+"./Sources/Telecom_server_query.obj" \
 "./Sources/UartCore.obj" \
 "./Sources/Web_Comm.obj" \
 "./Sources/_common.obj" \
@@ -184,7 +185,7 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 Telecom_IoT_v2_00.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: Arm Linker'
-	"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --define=__TI_TIME_USES_64=1 --define=ccs="ccs" --define=PART_TM4C1233E6PZ -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Telecom_IoT_v2_00.map" --heap_size=0 --stack_size=2048 -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/lib" -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Telecom_IoT_v2_00_linkInfo.xml" --rom_model -o "Telecom_IoT_v2_00.out" $(ORDERED_OBJS)
+	"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O2 --define=__TI_TIME_USES_64=1 --define=ccs="ccs" --define=PART_TM4C1233E6PZ -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Telecom_IoT_v2_00.map" --heap_size=0 --stack_size=6144 -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/lib" -i"C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Telecom_IoT_v2_00_linkInfo.xml" --rom_model -o "Telecom_IoT_v2_00.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
@@ -198,10 +199,10 @@ Telecom_IoT_v2_00.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "tm4c1233e6pz_startup_ccs.obj" "Sources\ADC_Core.obj" "Sources\Clock.obj" "Sources\DS3231.obj" "Sources\Display.obj" "Sources\E2P.obj" "Sources\IO_cntrl.obj" "Sources\PC_Cmds.obj" "Sources\SPI.obj" "Sources\SysTick_Timer.obj" "Sources\Telecom_Ethernet.obj" "Sources\UartCore.obj" "Sources\Web_Comm.obj" "Sources\_common.obj" "Sources\delay.obj" "Sources\flashCore.obj" "Sources\flash_logger.obj" "Sources\gprs.obj" "Sources\gps.obj" "Sources\main.obj" "Sources\UIPEthernet\Dhcp.obj" "Sources\UIPEthernet\Dns.obj" "Sources\UIPEthernet\UIPClient.obj" "Sources\UIPEthernet\UIPEthernet.obj" "Sources\UIPEthernet\UIPServer.obj" "Sources\UIPEthernet\UIPUdp.obj" "Sources\UIPEthernet\mbed\IPAddress.obj" "Sources\UIPEthernet\mbed\Print.obj" "Sources\UIPEthernet\mbed\WString.obj" "Sources\UIPEthernet\mbed\dtostrf.obj" "Sources\UIPEthernet\mbed\itoa.obj" "Sources\UIPEthernet\mbed\millis.obj" "Sources\UIPEthernet\utility\Enc28J60Network.obj" "Sources\UIPEthernet\utility\mempool.obj" "Sources\UIPEthernet\utility\uip.obj" 
-	-$(RM) "Sources\UIPEthernet\utility\uip_arp.obj" 
+	-$(RM) "tm4c1233e6pz_startup_ccs.obj" "Sources\ADC_Core.obj" "Sources\Clock.obj" "Sources\DS3231.obj" "Sources\Display.obj" "Sources\E2P.obj" "Sources\IO_cntrl.obj" "Sources\PC_Cmds.obj" "Sources\SPI.obj" "Sources\SysTick_Timer.obj" "Sources\Telecom_Ethernet.obj" "Sources\Telecom_server_query.obj" "Sources\UartCore.obj" "Sources\Web_Comm.obj" "Sources\_common.obj" "Sources\delay.obj" "Sources\flashCore.obj" "Sources\flash_logger.obj" "Sources\gprs.obj" "Sources\gps.obj" "Sources\main.obj" "Sources\UIPEthernet\Dhcp.obj" "Sources\UIPEthernet\Dns.obj" "Sources\UIPEthernet\UIPClient.obj" "Sources\UIPEthernet\UIPEthernet.obj" "Sources\UIPEthernet\UIPServer.obj" "Sources\UIPEthernet\UIPUdp.obj" "Sources\UIPEthernet\mbed\IPAddress.obj" "Sources\UIPEthernet\mbed\Print.obj" "Sources\UIPEthernet\mbed\WString.obj" "Sources\UIPEthernet\mbed\dtostrf.obj" "Sources\UIPEthernet\mbed\itoa.obj" "Sources\UIPEthernet\mbed\millis.obj" "Sources\UIPEthernet\utility\Enc28J60Network.obj" "Sources\UIPEthernet\utility\mempool.obj" 
+	-$(RM) "Sources\UIPEthernet\utility\uip.obj" "Sources\UIPEthernet\utility\uip_arp.obj" 
 	-$(RM) "tm4c1233e6pz_startup_ccs.d" "Sources\UIPEthernet\mbed\dtostrf.d" "Sources\UIPEthernet\mbed\itoa.d" "Sources\UIPEthernet\utility\uip.d" "Sources\UIPEthernet\utility\uip_arp.d" 
-	-$(RM) "Sources\ADC_Core.d" "Sources\Clock.d" "Sources\DS3231.d" "Sources\Display.d" "Sources\E2P.d" "Sources\IO_cntrl.d" "Sources\PC_Cmds.d" "Sources\SPI.d" "Sources\SysTick_Timer.d" "Sources\Telecom_Ethernet.d" "Sources\UartCore.d" "Sources\Web_Comm.d" "Sources\_common.d" "Sources\delay.d" "Sources\flashCore.d" "Sources\flash_logger.d" "Sources\gprs.d" "Sources\gps.d" "Sources\main.d" "Sources\UIPEthernet\Dhcp.d" "Sources\UIPEthernet\Dns.d" "Sources\UIPEthernet\UIPClient.d" "Sources\UIPEthernet\UIPEthernet.d" "Sources\UIPEthernet\UIPServer.d" "Sources\UIPEthernet\UIPUdp.d" "Sources\UIPEthernet\mbed\IPAddress.d" "Sources\UIPEthernet\mbed\Print.d" "Sources\UIPEthernet\mbed\WString.d" "Sources\UIPEthernet\mbed\millis.d" "Sources\UIPEthernet\utility\Enc28J60Network.d" "Sources\UIPEthernet\utility\mempool.d" 
+	-$(RM) "Sources\ADC_Core.d" "Sources\Clock.d" "Sources\DS3231.d" "Sources\Display.d" "Sources\E2P.d" "Sources\IO_cntrl.d" "Sources\PC_Cmds.d" "Sources\SPI.d" "Sources\SysTick_Timer.d" "Sources\Telecom_Ethernet.d" "Sources\Telecom_server_query.d" "Sources\UartCore.d" "Sources\Web_Comm.d" "Sources\_common.d" "Sources\delay.d" "Sources\flashCore.d" "Sources\flash_logger.d" "Sources\gprs.d" "Sources\gps.d" "Sources\main.d" "Sources\UIPEthernet\Dhcp.d" "Sources\UIPEthernet\Dns.d" "Sources\UIPEthernet\UIPClient.d" "Sources\UIPEthernet\UIPEthernet.d" "Sources\UIPEthernet\UIPServer.d" "Sources\UIPEthernet\UIPUdp.d" "Sources\UIPEthernet\mbed\IPAddress.d" "Sources\UIPEthernet\mbed\Print.d" "Sources\UIPEthernet\mbed\WString.d" "Sources\UIPEthernet\mbed\millis.d" "Sources\UIPEthernet\utility\Enc28J60Network.d" "Sources\UIPEthernet\utility\mempool.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

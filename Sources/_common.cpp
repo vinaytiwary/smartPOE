@@ -16,6 +16,7 @@
 #include "gprs.h"
 #include "_debug.h"
 #include "_common.h"
+#include "UartCore.h"
 
 char getChecksum(unsigned char* buff, char len)
 {
@@ -244,3 +245,4 @@ char *my_strstr(const char *haystack, const char *needle, int haystack_len)
     }
     return (NULL);
 }
+

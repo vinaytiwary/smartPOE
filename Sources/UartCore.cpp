@@ -29,6 +29,7 @@
 #include "gprs.h"
 #include "_common.h"
 #include "PC_Cmds.h"
+#include "Telecom_server_query.h"
 
 Rx_Buff_t pc_uart_rx, display_uart_rx;
 Tx_Buff_t pc_uart_tx;//, display_uart_tx;
@@ -787,7 +788,14 @@ void vUART_CheckFrameTimeout(int uart_no)
                     //memset(gprs_resp_rx_buff,0,sizeof(gprs_rx_data_buff_t));
                     //memcpy(&gprs_resp_rx_buff,&gprs_rx_buff,sizeof(gprs_rx_data_buff_t));
                     // PP commented on 27-04-24: EVSE relevant function:
+#ifndef ETHERNET_EN
                     // GPRS_Server_Request();
+                    bool gotReq = server_query();
+                    if(gotReq)
+                    {
+                        HandleQueryStates();
+                    }
+#endif  // ETHERNET_EN
                 }
             }
             else if((gprs_rx_buff.index > 0) && (gprs_rx_buff.locked != LOCKED))
@@ -807,7 +815,14 @@ void vUART_CheckFrameTimeout(int uart_no)
                 //memcpy(&gprs_resp_rx_buff,&gprs_rx_buff,sizeof(gprs_rx_data_buff_t));
 
                 // PP commented on 27-04-24: EVSE relevant function:
+#ifndef ETHERNET_EN
                 //  GPRS_Server_Request();
+                bool gotReq = server_query();
+                if(gotReq)
+                {
+                    HandleQueryStates();
+                }
+#endif  // ETHERNET_EN
             }
         }
     }

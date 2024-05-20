@@ -58,6 +58,7 @@ Sources/main.obj: ../Sources/PC_Cmds.h
 Sources/main.obj: ../Sources/Web_Comm.h
 Sources/main.obj: ../Sources/_common.h
 Sources/main.obj: ../Sources/Telecom_Ethernet.h
+Sources/main.obj: ../Sources/Telecom_server_query.h
 Sources/main.obj: ../Sources/main.h
 Sources/main.obj: ../Sources/_debug.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h
@@ -213,6 +214,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 ../Sources/_common.h:
 
 ../Sources/Telecom_Ethernet.h:
+
+../Sources/Telecom_server_query.h:
 
 ../Sources/main.h:
 

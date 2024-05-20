@@ -140,6 +140,7 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr100ms = 0;
         scheduler.flg100ms = HIGH;
+        ToggleLEDs();
     }
 
     if(scheduler.u16Cntr600ms >= 600U)

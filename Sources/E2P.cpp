@@ -625,9 +625,12 @@ bool cloud_config_data(void)
         i++;
     }
 
-#ifdef DEBUG_CLOUD_CFG_DECODE
-    UWriteString((char*)"\nip=",DBG_UART);
-    UWriteString((char*)cloud_config.ip_addr,DBG_UART);
+// #ifdef DEBUG_CLOUD_CFG_DECODE
+#ifdef DEBUG_SERVER_QUERY
+    // UWriteString((char*)"\nip=",DBG_UART);
+    // UWriteString((char*)cloud_config.ip_addr,DBG_UART);
+    vUART_SendStr(UART_PC, "\nip=");
+    vUART_SendStr(UART_PC, cloud_config.ip_addr);
 #endif
 
     i++;
@@ -647,9 +650,13 @@ bool cloud_config_data(void)
     }
 
     cloud_config.port_num = atoi((const char *)temp_buff);
-#ifdef DEBUG_CLOUD_CFG_DECODE
-    UWriteString((char*)"\npn=",DBG_UART);
-    UWriteInt(cloud_config.port_num,DBG_UART);
+
+// #ifdef DEBUG_CLOUD_CFG_DECODE
+#ifdef DEBUG_SERVER_QUERY
+    // UWriteString((char*)"\npn=",DBG_UART);
+    // UWriteInt(cloud_config.port_num,DBG_UART);
+    vUART_SendStr(UART_PC, "\npn=");
+    vUART_SendInt(UART_PC, cloud_config.port_num);
 #endif
 
     memset(temp_buff,0,sizeof(temp_buff));
@@ -676,9 +683,12 @@ bool cloud_config_data(void)
 
     memcpy(&cloud_config.path[strlen((const char*)cloud_config.path)], e2p_device_info.device_id, strlen((const char*)e2p_device_info.device_id));
 
-#ifdef DEBUG_CLOUD_CFG_DECODE
-    UWriteString((char*)"\npa=",DBG_UART);
-    UWriteString((char*)cloud_config.path,DBG_UART);
+// #ifdef DEBUG_CLOUD_CFG_DECODE
+#ifdef DEBUG_SERVER_QUERY
+    // UWriteString((char*)"\npa=",DBG_UART);
+    // UWriteString((char*)cloud_config.path,DBG_UART);
+    vUART_SendStr(UART_PC, "\npa=");
+    vUART_SendStr(UART_PC, cloud_config.path);
 #endif
 
     return true;

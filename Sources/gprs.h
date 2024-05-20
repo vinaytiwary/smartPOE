@@ -322,7 +322,7 @@ typedef struct
     //char imei[IMEI_LEN];
     //unsigned char gprs_config_sts;
     //gprs_status_t server_status;
-    gprs_status_t send_request;
+
     gprs_handler_state_t gprs_handler_state;
     gprs_connect_t gprs_connect;
     gprs_connect_state_t gprs_connect_state;
@@ -342,9 +342,6 @@ typedef struct
     unsigned int gprs_rx_buff_len;
     //unsigned int data_length;
 //    unsigned char data_mode;
-    uint8_t pending_request;
-    uint8_t pkt_recv;
-
 
 } gprs_t;
 
@@ -372,16 +369,16 @@ char check_string(const char *str, char *copy_here, int* numbytes);
 char check_string_nobuf(const char *str);
 //char getGPRSConfigErrSts(void);
 //void setGPRSConfigErrSts(char sts);
-void setREQmode(gprs_status_t sts);
+
 char pong_received(char *tmpstr);
-gprs_status_t getREQmode(void);
+
 ping_status_t ping_send(void);
 bool read_ip_port(char *tmpstr);
 char match_cpsi_data(char *tmpstr);
 char valid_code(char *tmpstr);
-unsigned int websocket_packet(uint8_t *request);
+
 void generateMaskKey(uint8_t maskKey[4]);
-unsigned int prepare_JSON_pckt(void);
+
 char respos_recvd(char *tmpstr);
 void set_webconn_sts(uint8_t sts);
 uint8_t get_webconn_sts(void);
@@ -390,12 +387,10 @@ void GPRS_Server_Request(void);
 void GPRS_OCPP_CMS_DATA_Filter(void);
 upload_data_t get_upload_data(void);
 void set_upload_data(upload_data_t);
-void set_pending_request(uint8_t);
-uint8_t get_pending_request(void);
+
 void set_gprs_connct_sts(uint8_t sts);
 uint8_t get_gprs_connct_sts(void);
-uint8_t get_pkt_recv(void);
-void set_pkt_recv(uint8_t pktRecv);
+
 void setNWstatus(gprs_status_t sts);
 gprs_status_t getNW_status(void);
 void setServerStatus(gprs_status_t sts);

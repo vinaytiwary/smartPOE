@@ -16,11 +16,11 @@
 // #define ETHER_RX_BUFFER_MAX  (128)
 // // #define ETHER_RX_BUFFER_MAX  (500)
 
-#define ETHER_TX_BUFFER_MAX  (513)
-#define ETHER_RX_BUFFER_MAX  (513)
+// #define ETHER_TX_BUFFER_MAX  (513)
+// #define ETHER_RX_BUFFER_MAX  (513)
 
-// #define ETHER_TX_BUFFER_MAX  (2600)
-// #define ETHER_RX_BUFFER_MAX  (2600)
+#define ETHER_TX_BUFFER_MAX  (2600)
+#define ETHER_RX_BUFFER_MAX  (2600)
 
 #define ETHER_CONN_RETRY_TIME    (10000/GPRS_STATE_MC_TIME)
 
@@ -30,6 +30,7 @@ typedef enum
     ETHER_DHCP_CONN,
     ETHER_TCP_CONN,
     ETHER_WS_CONN,
+    ETHER_WS_DISCONN,
     ETHER_PING,
     ETHER_PREPARE_LOGS,
     ETHER_LOG_UPLOAD,
@@ -73,10 +74,25 @@ typedef enum
 
 typedef enum
 {
+    ETHER_WS_DISCON_FAIL,
+    ETHER_WS_DISCON_PASS,
+    ETHER_WS_DISCON_PRG,
+}ether_wsdisconn_sts_t;
+
+typedef enum
+{
+    ETHER_WSDIS_CMD,
+    ETHER_WSDIS_RSP,
+}ether_wsdis_cmd_t;
+
+typedef enum
+{
     ETHER_PING_CMD,
     ETHER_PING_RSP,
+#if 0
     ETHER_HRT_CMD,
     ETHER_HRT_RSP,
+#endif  //if 0
 }ether_ping_cmd_t;
 
 typedef enum
@@ -113,6 +129,8 @@ typedef struct
     ether_tcp_pckt_state_t ether_tcp_pckt_state;
     bool ether_connect_sts;
     bool ether_network_sts;
+    bool pkt_recv;
+    unsigned int ether_rx_buff_len;
 }__attribute__((packed))Telecom_Ethernet_t;
 
 void vETHERNETSPIInit(void);
@@ -124,6 +142,8 @@ ether_tcp_sts_t ether_tcp_connect(void);
 ether_ws_sts_t ws_connect(void);
 
 ether_ping_status_t ether_ping_send(void);
+
+ether_wsdisconn_sts_t ws_disconn(void);
 
 char ethernet_pong_received(uint8_t *tmpstr);
 
@@ -151,7 +171,13 @@ void check_ethernet_message(void);
 
 char HTTP_valid_code(char *tmpstr);
 
+void resetEther_SubHandlers(void);
+
 void ethernet_init(void);
+
+bool get_pkt_recv(void);
+
+void set_pkt_recv(bool pktRecv);
 
 #endif  //ETHERNET_EN
 #endif /* SOURCES_TELECOM_ETHERNET_H_ */

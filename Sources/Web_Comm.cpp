@@ -17,6 +17,7 @@
 #include "_debug.h"
 #include "SysTick_Timer.h"
 #include "main.h"
+#include "Telecom_server_query.h"
 
 extern gprs_t gprs;
 extern gps_t gps;
@@ -178,13 +179,17 @@ void manage_gps_gprs(void)
 #ifdef ENABLE_WDT_RESET
             if(get_pending_request())
             {
-#ifdef DEBUG_WEBB_COMM
-                UWriteString((char*)"\nRST2",DBG_UART);
-                vUART_SendStr(DEBUG_UART_BASE, "\nRST2");
+                if(getServerReqType() == RESTART)
+                {
+#ifdef DEBUG_SERVER_QUERY
+                    // UWriteString((char*)"\nRST2",DBG_UART);
+                    vUART_SendStr(DEBUG_UART_BASE, "\nRST2");
 #endif
-                // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT; 
-                LTEmodule.HandlerSts = GPRS_WEBSOCKET_DISCONNECT; 
-                conn_state = CONNECT_DATA_UPLOAD; 
+                    // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT; 
+                    gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
+                    conn_state = CONNECT_DATA_UPLOAD; 
+                    set_pending_request(false); //PP added on 15-05-24: This was not being rest although it will restart the MCU before that.
+                }
             }
 #endif //ENABLE_WDT_RESET               
 
@@ -279,11 +284,17 @@ void manage_gps_gprs(void)
 #ifdef ENABLE_WDT_RESET
             else if(get_pending_request())
             {
-#ifdef DEBUG_WEBB_COMM
-                UWriteString((char*)"\nRST1",DBG_UART);
+                if(getServerReqType() == RESTART)
+                {
+#ifdef DEBUG_SERVER_QUERY
+                    // UWriteString((char*)"\nRST1",DBG_UART);
+                    vUART_SendStr(DEBUG_UART_BASE, "\nRST1");
 #endif
-                // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT;
-                LTEmodule.HandlerSts = GPRS_WEBSOCKET_DISCONNECT;
+                    // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT;
+                    gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
+                    conn_state = CONNECT_DATA_UPLOAD; 
+                    set_pending_request(false); //PP added on 15-05-24: This was not being rest although it will restart the MCU before that.
+                }
             }
 #endif  //ENABLE_WDT_RESET
         }

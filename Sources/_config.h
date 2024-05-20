@@ -57,5 +57,7 @@
 
 #define ETHERNET_EN
 
+#define ENABLE_WDT_RESET
+
 
 #endif /* SOURCES__CONFIG_H_ */

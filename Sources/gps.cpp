@@ -35,6 +35,9 @@ gps_data_t gps_data;
 
 gps_handler_state_t gps_handler_state;
 
+uint32_t gps_interval_start = 0;
+uint32_t cnt_gps_1sec = 0;
+
 bool get_location(void)
 {
 	int i = 0;
@@ -141,7 +144,7 @@ bool get_location(void)
         // UWriteInt(temp_value,DBG_UART);
         // UWriteData(',',DBG_UART);
         // UWriteInt(value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\temp_long=");
+        vUART_SendStr(DEBUG_UART_BASE, "\ntemp_long=");
         vUART_SendInt(DEBUG_UART_BASE, temp_value);
         vUART_SendChr(DEBUG_UART_BASE, ',');
         vUART_SendInt(DEBUG_UART_BASE, value);
@@ -161,7 +164,8 @@ bool get_location(void)
         // UWriteInt(temp_value,DBG_UART);
         // UWriteData(',',DBG_UART);
         // UWriteInt(value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+        // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+        vUART_SendStr(DEBUG_UART_BASE, "\n2temp_long=");
         vUART_SendInt(DEBUG_UART_BASE, temp_value);
         vUART_SendChr(DEBUG_UART_BASE, ',');
         vUART_SendInt(DEBUG_UART_BASE, value);
@@ -179,7 +183,8 @@ bool get_location(void)
 #ifdef DEBUG_GET_LOC
         // UWriteString((char *)"temp_lat:",DBG_UART);
         // UWriteInt(temp_value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+        // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+        vUART_SendStr(DEBUG_UART_BASE, "\n3temp_lat=");
         vUART_SendInt(DEBUG_UART_BASE, temp_value);
 #endif
 	//	if (gps.gps_info.longitude[0] == '-')
@@ -241,7 +246,7 @@ gps_status_t gps_handler(void)
     {
         case GPS_CONNCT_RESET:
         {
-            // if (gps_wait_timeout++ > LTE_WARMUP_TIME)
+            if (gps_wait_timeout++ > LTE_WARMUP_TIME)
             {
                 gps_wait_timeout = 0;
                 gps_retry_cnt = 0;
@@ -287,10 +292,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_MATCH_OK:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\ngEOK",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\ngEOK");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\ngEOK",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\ngEOK");
+// #endif
                     gps_retry_cnt = 0;
                     gps_wait_timeout = 0;
                     
@@ -300,10 +305,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_NO_NEW_MSG:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\ngEOW",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nEOW");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\ngEOW",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nEOW");
+// #endif
                     if(gps_wait_timeout++ >= ATE0_TIMEOUT)
                     {
                         gps_wait_timeout = 0;
@@ -364,10 +369,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_MATCH_OK:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\n1PWK",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\n1PWK");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\n1PWK",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\n1PWK");
+// #endif
                     gps_retry_cnt = 0;
                     gps_wait_timeout = 0;
 
@@ -377,10 +382,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_NO_NEW_MSG:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\n1PWW",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\n1PWW");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\n1PWW",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\n1PWW");
+// #endif
                     if(gps_wait_timeout++ >= GPS_TIMEOUT)
                     {
                         gps_wait_timeout = 0;
@@ -422,10 +427,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_MATCH_OK:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\n2PWK",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\n2PWK");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\n2PWK",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\n2PWK");
+// #endif
                     gps_retry_cnt = 0;
                     gps_wait_timeout = 0;
                     gps_handler_state = GPS_CMD_LOCATION;
@@ -434,10 +439,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_NO_NEW_MSG:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\n2PWW",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\n2PWW");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\n2PWW",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\n2PWW");
+// #endif
                     if(gps_wait_timeout++ >= GPS_RDY_RSP_TIMEOUT)
                     {
 #ifdef GPS_DEBUG_SHOW_FAILS
@@ -541,34 +546,48 @@ gps_status_t gps_handler(void)
 
                 case GPRS_MATCH_OK:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\nLOCK",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nLOCK");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\nLOCK",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nLOCK");
+// #endif
                     gps_wait_timeout = 0;
                     gps_retry_cnt = 0;
 
                     if(count_comma(tmpstr, 68) == MIN_COMMAS)
                     {
-#ifdef DEBUG_GPS_HANDLER
-                        // UWriteString((char*)"\nLOCK2",DBG_UART);
-                        vUART_SendStr(DEBUG_UART_BASE, "\nLOCK2");
-#endif                        
+// #ifdef DEBUG_GPS_HANDLER
+//                         // UWriteString((char*)"\nLOCK2",DBG_UART);
+//                         vUART_SendStr(DEBUG_UART_BASE, "\nLOCK2");
+// #endif                        
                         decode_result = gps_pkt_parsing(&temp_gps, tmpstr);
-#ifdef DEBUG_GPS_HANDLER
-                        // UWriteString((char*)"\nres=",DBG_UART);
-                        // UWriteInt(decode_result,DBG_UART);
-                        vUART_SendStr(DEBUG_UART_BASE, "\nres=");
-                        vUART_SendInt(DEBUG_UART_BASE, decode_result);
-#endif
+
                         if(decode_result >= GOT_LATLONG)
                         {
                             get_location();
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
+#ifdef DEBUG_GPS_HANDLER
+                            vUART_SendStr(DEBUG_UART_BASE, "\ngotGPS:");
+                            vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
+                            vUART_SendChr(DEBUG_UART_BASE, ',');
+                            // vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
+                            vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gps_interval_start));
+#endif
+                            gps_interval_start = my_millis();
+                            cnt_gps_1sec++;
                         }
                         else
                         {
+#ifdef DEBUG_GPS_HANDLER
+                            // UWriteString((char*)"\nres=",DBG_UART);
+                            // UWriteInt(decode_result,DBG_UART);
+                            vUART_SendStr(DEBUG_UART_BASE, "\nGPS=?");
+                            vUART_SendInt(DEBUG_UART_BASE, decode_result);
+                            vUART_SendChr(DEBUG_UART_BASE, ',');
+                            vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
+                            vUART_SendChr(DEBUG_UART_BASE, ',');
+                            vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
+#endif
                             sts = GPS_WAIT;
                         }
                     }
@@ -587,10 +606,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_NO_NEW_MSG:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\nLOCW",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nLOCKW");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\nLOCW",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nLOCKW");
+// #endif
                     if(gps_wait_timeout++ >= GPS_TIMEOUT)
                     {
                         gps_wait_timeout = 0;
@@ -670,10 +689,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_NO_NEW_MSG:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\nPDW",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nPDW");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\nPDW",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nPDW");
+// #endif
                     if(gps_wait_timeout++ >= GPS_TIMEOUT)
                     {
                         gps_wait_timeout = 0;
@@ -711,7 +730,7 @@ gps_status_t gps_handler(void)
 
 gps_decode_result_t gps_pkt_parsing(gps_info_t *temp_gps, char *tmpstr)
 {
-	unsigned int i = 0, j = 0, k = 0, cnt = 0;
+	unsigned int i = 0, cnt = 0; // j = 0, k = 0;
 	gps_decode_result_t retVal = PARSE_FAIL;
 	
 #ifdef DEBUG_GPS_DECODE

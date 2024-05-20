@@ -14,6 +14,8 @@
 
 #include "gprs.h"
 
+#define LTE_WARMUP_TIME (10000/GPRS_STATE_MC_TIME)
+
 // #define GNS_PKT_EN	//PP(14-02-2023): this is declared here now.
 
 #define LAT_LEN						(11)			// No NULL always use memcpy

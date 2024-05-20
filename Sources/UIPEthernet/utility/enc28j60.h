@@ -257,5 +257,22 @@
 #define        MAX_FRAMELEN        1500        // (note: maximum ethernet frame length would be 1518)
 //#define MAX_FRAMELEN     600
 
+// // The RXSTART_INIT should be zero. See Rev. B4 Silicon Errata
+// // buffer boundaries applied to internal 8K ram
+// // the entire available packet buffer space is allocated
+// //
+// // start with recbuf at 0/
+// #define RXSTART_INIT     0x0
+// // receive buffer end. make sure this is an odd value ( See Rev. B1,B4,B5,B7 Silicon Errata 'Memory (Ethernet Buffer)')
+// #define RXSTOP_INIT      (0x3FF-0x200)
+// // start TX buffer RXSTOP_INIT+1
+// #define TXSTART_INIT     (RXSTOP_INIT+1)
+// // stp TX buffer at end of mem
+// #define TXSTOP_INIT      (0x3FF)
+// //
+// // max frame length which the conroller will accept:
+// #define        MAX_FRAMELEN        512        // (note: maximum ethernet frame length would be 1518)
+// //#define MAX_FRAMELEN     600
+
 #endif
 #endif

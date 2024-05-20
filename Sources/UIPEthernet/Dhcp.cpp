@@ -41,13 +41,13 @@ int DhcpClass::beginWithDHCP(uint8_t *mac)
 
     // zero out _dhcpMacAddr
     memset(_dhcpMacAddr, 0, 6); 
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendChr(UART_PC,'2');
-// #endif
+//#endif
     reset_DHCP_lease();
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendChr(UART_PC,'3');
-// #endif
+//#endif
     memcpy((void*)_dhcpMacAddr, (void*)mac, 6);
     if(set_first_state)
     {
@@ -58,10 +58,10 @@ int DhcpClass::beginWithDHCP(uint8_t *mac)
     }
     else if(_dhcp_state == STATE_DHCP_LEASED)
     {
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendStr(UART_PC,"\nset_state:");
 //  vUART_SendStr(UART_PC,"STATE_DHCP_LEASED");
-// #endif
+//#endif
         //startTime = 0;
         _dhcp_state = STATE_DHCP_START;
         startTime = millis();
@@ -100,18 +100,18 @@ int DhcpClass::request_DHCP_lease(void){
        _dhcpTransactionId = (rand() % 2000UL) + 1;
     #endif
     _dhcpInitialTransactionId = _dhcpTransactionId;
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendChr(UART_PC,'4');
-// #endif
+//#endif
 //    _dhcpUdpSocket.stop();
     if (_dhcpUdpSocket.begin(DHCP_CLIENT_PORT) == 0)
     {
       // Couldn't get a socket
       return 0;
     }
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendChr(UART_PC,'5');
-// #endif
+//#endif
     presend_DHCP();
     
     int result = 0;
@@ -142,13 +142,13 @@ int DhcpClass::request_DHCP_lease(void){
             
             send_DHCP_MESSAGE(DHCP_DISCOVER, ((millis() - startTime) / 1000));
             _dhcp_state = STATE_DHCP_DISCOVER;
-// #ifdef DEBUG_ETHERNET
-// //  vUART_SendChr(UART_PC,'6');
+//#ifdef DEBUG_ETHERNET
+//  vUART_SendChr(UART_PC,'6');
 //  vUART_SendStr(UART_PC,"\nDHCP_STARTtime:");
 //  vUART_SendInt(UART_PC,(millis() - startTime));
 //  vUART_SendChr(UART_PC,',');
 //  vUART_SendInt(UART_PC,_dhcp_state);
-// #endif
+//#endif
         }
         else if(_dhcp_state == STATE_DHCP_REREQUEST)
         {
@@ -159,24 +159,24 @@ int DhcpClass::request_DHCP_lease(void){
             _dhcpTransactionId++;
             send_DHCP_MESSAGE(DHCP_REQUEST, ((millis() - startTime)/1000));
             _dhcp_state = STATE_DHCP_REQUEST;
-// #ifdef DEBUG_ETHERNET
-// //  vUART_SendChr(UART_PC,'7');
+//#ifdef DEBUG_ETHERNET
+//  //vUART_SendChr(UART_PC,'7');
 //  vUART_SendStr(UART_PC,"\nDHCP_REREQUESTtime:");
 //  vUART_SendInt(UART_PC,(millis() - startTime));
-// #endif
+//#endif
         }
         else if(_dhcp_state == STATE_DHCP_DISCOVER)
         {
             uint32_t respId;
             //startTime = millis();
             messageType = parseDHCPResponse(respId);
-// #ifdef DEBUG_ETHERNET
+//#ifdef DEBUG_ETHERNET
 //  vUART_SendStr(UART_PC,"\nDHCP_DISCOVERtime:");
 //  vUART_SendInt(UART_PC,(millis() - startTime));
 //  vUART_SendChr(UART_PC,',');
 //  vUART_SendStr(UART_PC,"messageType:");
 //  vUART_SendInt(UART_PC,messageType);
-// #endif
+//#endif
             if(messageType == DHCP_OFFER)
             {
                 //startTime = millis();

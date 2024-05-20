@@ -33,11 +33,17 @@
 #define DEBUG_EPOCHTIME
 
 #define DEBUG_GPS_HANDLER
-#define DEBUG_GPS_DECODE
+// #define DEBUG_GPS_DECODE
 #define DEBUG_GET_LOC
 
 #define DEBUG_WEBB_COMM
 
 #define DEBUG_ETHERNET
+
+#define DEBUG_SERVER_QUERY
+
+// #define DEBUG_WEB_PREP
+
+#define DEBUG_QUERY_STATES
 
 #endif /* SOURCES__DEBUG_H_ */

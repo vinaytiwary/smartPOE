@@ -271,9 +271,9 @@ void Enc28J60Network::init(uint8_t* macaddr)
   // RX end
   writeRegPair(ERXNDL, RXSTOP_INIT);
   // TX start
-  //writeRegPair(ETXSTL, TXSTART_INIT);
+  // writeRegPair(ETXSTL, TXSTART_INIT);
   // TX end
-  //writeRegPair(ETXNDL, TXSTOP_INIT);
+  // writeRegPair(ETXNDL, TXSTOP_INIT);
   // do bank 1 stuff, packet filter:
   // For broadcast packets we allow only ARP packtets
   // All other packets should be unicast only for our mac (MAADR)
