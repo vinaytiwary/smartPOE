@@ -160,7 +160,7 @@ void manage_gps_gprs(void)
     {
         case CONNECT_BEGIN:
         {
-#ifdef DEBUG_TCP_HANDLER
+#ifdef DEBUG_WEBB_COMM
             // UWriteString((char*)"\nCB:", DBG_UART);
             // UWriteInt(LTE_bootUp_timeout, DBG_UART);
             vUART_SendStr(DEBUG_UART_BASE, "\nCB:");
@@ -176,7 +176,7 @@ void manage_gps_gprs(void)
 
         case CONNECT_LOCATION:
         {
-#ifdef ENABLE_WDT_RESET
+// #ifdef ENABLE_WDT_RESET  //commenting this as this request will be handled via sysCtlReset() incase of WDT disable
             if(get_pending_request())
             {
                 if(getServerReqType() == RESTART)
@@ -191,7 +191,7 @@ void manage_gps_gprs(void)
                     set_pending_request(false); //PP added on 15-05-24: This was not being rest although it will restart the MCU before that.
                 }
             }
-#endif //ENABLE_WDT_RESET               
+// #endif //ENABLE_WDT_RESET               
 
             gps_sts = gps_handler();
             if ((gps_sts == GPS_WAIT) || (gps_sts == GPS_PASS))
@@ -209,12 +209,12 @@ void manage_gps_gprs(void)
             }
             else
             {
-#ifdef DEBUG_WEBB_COMM
-                // UWriteString((char *)"\ndiff:", DBG_UART);
-                // UWriteInt((millis() - gprs_read_timeout),DBG_UART);
-                vUART_SendStr(DEBUG_UART_BASE, "\ndiff:");
-                vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gprs_read_timeout));
-#endif                
+// #ifdef DEBUG_WEBB_COMM
+//                 // UWriteString((char *)"\ndiff:", DBG_UART);
+//                 // UWriteInt((millis() - gprs_read_timeout),DBG_UART);
+//                 vUART_SendStr(DEBUG_UART_BASE, "\ndiff:");
+//                 vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gprs_read_timeout));
+// #endif                
                 // gprs_read_timeout += 50;
                 // if (gprs_read_timeout++ >= GPS_FAIL_TIMEOUT)
                 gps_diff = my_millis() - gprs_read_timeout;
@@ -259,8 +259,8 @@ void manage_gps_gprs(void)
 
                     vUART_SendStr(DEBUG_UART_BASE, "\nGPS_T:");
                     vUART_SendInt(DEBUG_UART_BASE, gps_handler_state);      
-                    vUART_SendChr(DEBUG_UART_BASE, ',');
-                    vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gprs_read_timeout));
+                    // vUART_SendChr(DEBUG_UART_BASE, ',');
+                    // vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gprs_read_timeout));
 #endif
                     // if((gps_handler_state == GPS_RSP_CMD_ENABLE) || (gps_handler_state == GPS_CMD_LOC))
                     // {
@@ -271,17 +271,17 @@ void manage_gps_gprs(void)
                     //     gps_handler_state = GPS_ENABLE;
                     // }
                     gprs_read_timeout = my_millis();
-#ifdef DEBUG_WEBB_COMM
-                    // UWriteString((char *)"\nstrt:", DBG_UART);
-                    // UWriteInt(gprs_read_timeout,DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nstrt:");
-                    vUART_SendInt(DEBUG_UART_BASE, gprs_read_timeout);
-#endif
+// #ifdef DEBUG_WEBB_COMM
+//                     // UWriteString((char *)"\nstrt:", DBG_UART);
+//                     // UWriteInt(gprs_read_timeout,DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nstrt:");
+//                     vUART_SendInt(DEBUG_UART_BASE, gprs_read_timeout);
+// #endif
                     conn_state = CONNECT_LOCATION;
                     gps_read_timeout = 0;                    
                 }
             }
-#ifdef ENABLE_WDT_RESET
+// #ifdef ENABLE_WDT_RESET  //commenting this as this request will be handled via sysCtlReset() incase of WDT disable
             else if(get_pending_request())
             {
                 if(getServerReqType() == RESTART)
@@ -296,7 +296,7 @@ void manage_gps_gprs(void)
                     set_pending_request(false); //PP added on 15-05-24: This was not being rest although it will restart the MCU before that.
                 }
             }
-#endif  //ENABLE_WDT_RESET
+// #endif  //ENABLE_WDT_RESET
         }
         break;
 

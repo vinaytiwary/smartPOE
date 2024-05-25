@@ -547,7 +547,12 @@ bool server_query(void)
             vUART_SendStr(DEBUG_UART_BASE, "\n3Q=");
             vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)decoded_query);
 #endif
-            flush_ether_rx_buff();
+
+#ifndef ETHERNET_EN
+                flushRxBuffer(LTE_UART);
+#else
+                flush_ether_rx_buff();
+#endif  //ETHERNET_EN
             // // for(int i = 0; decoded_query[i] != '"'; i++)
             // // for(; decoded_query[i] != '"';)
             // for(; decoded_query[i] != '\0';)
@@ -584,9 +589,17 @@ bool server_query(void)
         else if(ret_addr == NULL)
         {
 #ifdef DEBUG_SERVER_QUERY
-            vUART_SendStr(DEBUG_UART_BASE,"\nnotODUcmd");
+            // vUART_SendStr(DEBUG_UART_BASE,"\nnotODUcmd");
+            vUART_SendStr(DEBUG_UART_BASE,"\nnotSUPcmd");
 #endif           
-            setServerReqType(NO_REQ);        
+            // commenting resetting to NO_REQ here coz it should be resetted when the request's sesponse is successfully sent. 
+            // We check for REQType in successfull tcp_send() so that if it's server url update request, we can reconnect to that 
+            // instead of going to SESSION_IDLE. But when we get "{ "response": "accepted" } by TELECOM444" server echo for 
+            // accepting the server url update request, this condition "notSUPcmd" executed causing setServerReqType(NO_REQ) 
+            // and that causes us to never reconnect to the new server for a while. For the rest of the requests it'd be fine 
+            // but as a standard we should only reset it in tcp_send() successfull or 30s periodically.
+
+            // setServerReqType(NO_REQ);        
         }
     }
     else
@@ -754,6 +767,7 @@ unsigned int websocket_packet(uint8_t *request)
 }
 #endif  //if 0
 
+#if 1
 #ifndef ETHERNET_EN
 unsigned int websocket_packet(uint8_t *request)
 {
@@ -962,7 +976,9 @@ unsigned int websocket_packet(uint8_t *request)
     // return gprs_tx_buff.index;
     return ethernet_tx_buff.index;
 }
-#endif
+#endif  //ETHERNET_EN
+
+#endif  //if 0
 
 
 void HandleQueryStates(void)    //Call to this should be only made once, not periodically otherwise it will keep changing states even when we are in the middle of processing a query.
@@ -1062,7 +1078,7 @@ void prepare_server_pkt(void)
         default:
         case SCHEDULED_LOG:
         {
-#ifdef DEBUG_TCP_HANDLER
+#ifdef DEBUG_SERVER_QUERY
             // UWriteString((char*)"\nREQ=2", DBG_UART);
             vUART_SendStr(DEBUG_UART_BASE, "\nREQ=2");
 #endif

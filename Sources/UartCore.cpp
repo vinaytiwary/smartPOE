@@ -30,6 +30,7 @@
 #include "_common.h"
 #include "PC_Cmds.h"
 #include "Telecom_server_query.h"
+#include "_debug.h"
 
 Rx_Buff_t pc_uart_rx, display_uart_rx;
 Tx_Buff_t pc_uart_tx;//, display_uart_tx;
@@ -781,8 +782,8 @@ void vUART_CheckFrameTimeout(int uart_no)
 
                     gprs_rx_isr_handler.state = GPRS_RX_IDLE;
 #ifdef DEBUG_GPRS_RX
-                    vUART_SendStr(UART_PC,"\ngprs_rx_buf:");
-                    vUART_SendStr(UART_PC,(const uint8_t *)gprs_rx_buff.buffer);
+                    // vUART_SendStr(UART_PC,"\ngprs_rx_buf:");
+                    // vUART_SendStr(UART_PC,(const uint8_t *)gprs_rx_buff.buffer);
 #endif
                     gprs.gprs_rx_buff_len = gprs_rx_buff.index;
                     //memset(gprs_resp_rx_buff,0,sizeof(gprs_rx_data_buff_t));
@@ -807,8 +808,8 @@ void vUART_CheckFrameTimeout(int uart_no)
 
                 gprs_rx_isr_handler.state = GPRS_RX_IDLE;
 #ifdef DEBUG_GPRS_RX
-                    vUART_SendStr(UART_PC,"\ngprs_rx_buf:");
-                    vUART_SendStr(UART_PC,(const uint8_t *)gprs_rx_buff.buffer);
+                    // vUART_SendStr(UART_PC,"\ngprs_rx_buf:");
+                    // vUART_SendStr(UART_PC,(const uint8_t *)gprs_rx_buff.buffer);
 #endif
                 gprs.gprs_rx_buff_len = gprs_rx_buff.index;
                 //memset(gprs_resp_rx_buff,0,sizeof(gprs_rx_data_buff_t));
@@ -824,6 +825,12 @@ void vUART_CheckFrameTimeout(int uart_no)
                 }
 #endif  // ETHERNET_EN
             }
+// #ifdef DEBUG_GPRS_RX
+//             vUART_SendStr(UART_PC,"\ngrb:");
+//             vUART_SendInt(UART_PC, gprs_rx_buff.index);
+//             vUART_SendChr(UART_PC, ',');
+//             vUART_SendBytes(UART_PC, (const uint8_t*)gprs_rx_buff.buffer, gprs_rx_buff.index);
+// #endif
         }
     }
 }

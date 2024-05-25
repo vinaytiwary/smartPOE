@@ -52,12 +52,17 @@
 #define EARTH_DETECT_EN
 #define OFFLINE_MODE_EN
 // #define UART_TX_IRQ_EN
-#define USE_NETCLOSE
+
+// #define USE_NETCLOSE //To use or to not use???
+
 // #define CHECKSTR_EXP
 
 #define ETHERNET_EN
 
 #define ENABLE_WDT_RESET
 
+#ifdef ENABLE_WDT_RESET
+//#define WDT_IRQ_MODE
+#endif  //ENABLE_WDT_RESET
 
 #endif /* SOURCES__CONFIG_H_ */

@@ -127,7 +127,7 @@ void SysTickIntHandler(void)
         scheduler.flg20ms = HIGH;
 
         // calculate_AC_ADC();
-        vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(24-04-24) for testing
+        //vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(24-04-24) for testing
     }
 
     if(scheduler.u16Cntr50ms >= 50U)

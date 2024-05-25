@@ -26,6 +26,7 @@
 #include "main.h"
 #include "SysTick_Timer.h"
 #include "_debug.h"
+#include "Telecom_server_query.h"
 
 extern ram_data_t ram_data;
 gps_info_t gps_info;
@@ -61,16 +62,16 @@ bool get_location(void)
 		value = (temp_value*10) / 60;
 		// printf("\ntemp value:%d,\n value:%d",temp_value,value);
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"temp_lat:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        // UWriteData(',',DBG_UART);
-        // UWriteInt(value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-        vUART_SendChr(DEBUG_UART_BASE, ',');
-        vUART_SendInt(DEBUG_UART_BASE, value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"temp_lat:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         // UWriteData(',',DBG_UART);
+//         // UWriteInt(value,DBG_UART);
+//         vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+//         vUART_SendChr(DEBUG_UART_BASE, ',');
+//         vUART_SendInt(DEBUG_UART_BASE, value);
+// #endif
 		temp_value = 0;
 		for (i = 3-1; (i < 5-1); i++)
 		{
@@ -81,16 +82,16 @@ bool get_location(void)
 		value = (value + ((temp_value * 1000000) / 60));
 		// printf("\ntemp value:%d,\n value:%d",temp_value,value);
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"2_temp_lat:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        // UWriteData(',',DBG_UART);
-        // UWriteInt(value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\n2_temp_lat=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-        vUART_SendChr(DEBUG_UART_BASE, ',');
-        vUART_SendInt(DEBUG_UART_BASE, value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"2_temp_lat:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         // UWriteData(',',DBG_UART);
+//         // UWriteInt(value,DBG_UART);
+//         vUART_SendStr(DEBUG_UART_BASE, "\n2_temp_lat=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+//         vUART_SendChr(DEBUG_UART_BASE, ',');
+//         vUART_SendInt(DEBUG_UART_BASE, value);
+// #endif
 		temp_value = 0;
 		for (i = 1-1; (i < 3-1); i++)
 		{
@@ -100,15 +101,15 @@ bool get_location(void)
 		}
 		
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"3_temp_lat:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\n3_temp_lat=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"3_temp_lat:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         vUART_SendStr(DEBUG_UART_BASE, "\n3_temp_lat=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+// #endif
 		gps_data.Latitude = (value + (temp_value * 1000000));
 		// printf("\ntemp value:%d,\n lat:%d",temp_value,gps_data.Latitude);
-	//	if (gps.gps_info.latitude[0] == '-')
+		// if (gps.gps_info.latitude[0] == '-')
 		if(gps.gps_info.N_S == 'S')
 		{
 			// gps_data.Latitude |= (1UL << 28);
@@ -139,16 +140,16 @@ bool get_location(void)
 		value = (temp_value * 10) / 60;
 		// printf("\ntemp value:%d,\n value:%d",temp_value,value);
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"temp_long:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        // UWriteData(',',DBG_UART);
-        // UWriteInt(value,DBG_UART);
-        vUART_SendStr(DEBUG_UART_BASE, "\ntemp_long=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-        vUART_SendChr(DEBUG_UART_BASE, ',');
-        vUART_SendInt(DEBUG_UART_BASE, value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"temp_long:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         // UWriteData(',',DBG_UART);
+//         // UWriteInt(value,DBG_UART);
+//         vUART_SendStr(DEBUG_UART_BASE, "\ntemp_long=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+//         vUART_SendChr(DEBUG_UART_BASE, ',');
+//         vUART_SendInt(DEBUG_UART_BASE, value);
+// #endif
 		temp_value = 0;
 		for (i = 4-1; (i < 6-1); i++)
 		{
@@ -159,17 +160,17 @@ bool get_location(void)
 		value = (value + ((temp_value * 1000000) / 60));
 		// printf("\ntemp value:%d,\n value:%d",temp_value,value);
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"temp_lat:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        // UWriteData(',',DBG_UART);
-        // UWriteInt(value,DBG_UART);
-        // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
-        vUART_SendStr(DEBUG_UART_BASE, "\n2temp_long=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-        vUART_SendChr(DEBUG_UART_BASE, ',');
-        vUART_SendInt(DEBUG_UART_BASE, value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"temp_lat:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         // UWriteData(',',DBG_UART);
+//         // UWriteInt(value,DBG_UART);
+//         // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+//         vUART_SendStr(DEBUG_UART_BASE, "\n2temp_long=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+//         vUART_SendChr(DEBUG_UART_BASE, ',');
+//         vUART_SendInt(DEBUG_UART_BASE, value);
+// #endif
 		temp_value = 0;
 		for (i = 1-1; (i < 4-1); i++)
 		{
@@ -180,13 +181,13 @@ bool get_location(void)
 		gps_data.Longitude = (value + (temp_value * 1000000));
 		// printf("\ntemp value:%d,\n longitude:%d",temp_value,gps_data.Longitude);
 
-#ifdef DEBUG_GET_LOC
-        // UWriteString((char *)"temp_lat:",DBG_UART);
-        // UWriteInt(temp_value,DBG_UART);
-        // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
-        vUART_SendStr(DEBUG_UART_BASE, "\n3temp_lat=");
-        vUART_SendInt(DEBUG_UART_BASE, temp_value);
-#endif
+// #ifdef DEBUG_GET_LOC
+//         // UWriteString((char *)"temp_lat:",DBG_UART);
+//         // UWriteInt(temp_value,DBG_UART);
+//         // vUART_SendStr(DEBUG_UART_BASE, "\ntemp_lat=");
+//         vUART_SendStr(DEBUG_UART_BASE, "\n3temp_lat=");
+//         vUART_SendInt(DEBUG_UART_BASE, temp_value);
+// #endif
 	//	if (gps.gps_info.longitude[0] == '-')
 		if(gps.gps_info.E_W == 'W')
 		{
@@ -215,11 +216,11 @@ bool get_location(void)
     vUART_SendStr(DEBUG_UART_BASE, "\nLO:");
     vUART_SendInt(DEBUG_UART_BASE, gps_data.Longitude);
 
-//	printf("\nLA=%+03ld.%06lu", gps_data.latitude/1000000L,abs(gps_data.latitude%1000000L));
-//	printf("\nLO=%+04ld.%06lu", gps_data.longitude/1000000L,abs(gps_data.longitude%1000000L));
+	// printf("\nLA=%+03ld.%06lu", gps_data.latitude/1000000L,abs(gps_data.latitude%1000000L));
+	// printf("\nLO=%+04ld.%06lu", gps_data.longitude/1000000L,abs(gps_data.longitude%1000000L));
 
-//	printf("\nLA=%d", gps_data.latitude);
-//	printf("\nLO=%d", gps_data.longitude);
+	// printf("\nLA=%d", gps_data.latitude);
+	// printf("\nLO=%d", gps_data.longitude);
 	// printf("\nLA=%d.%06lu", gps_data.latitude/1000000L,abs(gps_data.latitude%1000000L));
 	// printf("\nLO=%d.%06lu", gps_data.longitude/1000000L,abs(gps_data.longitude%1000000L));
 #endif
@@ -246,7 +247,7 @@ gps_status_t gps_handler(void)
     {
         case GPS_CONNCT_RESET:
         {
-            if (gps_wait_timeout++ > LTE_WARMUP_TIME)
+            // if (gps_wait_timeout++ > LTE_WARMUP_TIME)
             {
                 gps_wait_timeout = 0;
                 gps_retry_cnt = 0;
@@ -258,18 +259,65 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_ECHO_OFF:
         {
-            flushTxBuffer(LTE_UART);
+            // flushTxBuffer(LTE_UART);
+#ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
+#else
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_ge", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_ge");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_ECHO_OFF;
+                sts = GPS_FAIL;
+                HandleQueryStates();
 
-            // UWriteString((char*)"ATE0\r\n",LTE_UART);
-            vUART_SendStr(LTE_UART_BASE, "ATE0\r");
+                break;
+            }
+            else
+#endif  //ETHERNET_EN
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_ge", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_ge");
+#endif
+                flushRxBuffer(LTE_UART);
+                // UWriteString((char*)"ATE0\r\n",LTE_UART);
+                vUART_SendStr(LTE_UART_BASE, "ATE0\r");
 
-            gps_handler_state = GPS_RSP_ECHO_OFF;
+                gps_handler_state = GPS_RSP_ECHO_OFF;
+            }
         }
         break;
 
         case GPS_RSP_ECHO_OFF:
         {
+#ifndef ETHERNET_EN
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_ger", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_ger");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_ECHO_OFF;
+                sts = GPS_FAIL;
+                HandleQueryStates();
+
+                break;
+            }
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_ger", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_ger");
+#endif
+#endif  //ETHERNET_EN
+
             switch(check_string_nobuf("OK"))
             {
                 case GPRS_MATCH_FAIL:
@@ -336,17 +384,63 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_POWER:
         {
-            flushTxBuffer(LTE_UART);
+            // flushTxBuffer(LTE_UART);
+#ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
+#else
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_gp", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_gp");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_POWER;
+                sts = GPS_FAIL;
+                HandleQueryStates();
 
-            // UWriteString((char*)"AT+CGNSSPWR=1\r\n", LTE_UART);
-            vUART_SendStr(LTE_UART_BASE, "AT+CGNSSPWR=1\r\n");
-            gps_handler_state = GPS_RSP_POWER;
+                break;
+            }
+            else
+#endif  //ETHERNET_EN
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_gp", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_gp");
+#endif
+                flushRxBuffer(LTE_UART);
+                // UWriteString((char*)"AT+CGNSSPWR=1\r\n", LTE_UART);
+                vUART_SendStr(LTE_UART_BASE, "AT+CGNSSPWR=1\r\n");
+                gps_handler_state = GPS_RSP_POWER;
+            }
         }
         break;
 
         case GPS_RSP_POWER:
         {
+#ifndef ETHERNET_EN
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\n1GR_gpr", DBG_UART);
+                vUART_SendStr(UART_PC, "\n1GR_gpr");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_POWER;
+                sts = GPS_FAIL;
+                HandleQueryStates();
+
+                break;
+            }
+#ifdef DEBUG_QUERY_STATES
+            // UWriteString((char*)"\n1NR_gpr", DBG_UART);
+            vUART_SendStr(UART_PC, "\n1NR_gpr");
+#endif
+#endif  //ETHERNET_EN
             switch(check_string_nobuf("OK"))
             {
                 case GPRS_MATCH_FAIL:
@@ -413,6 +507,27 @@ gps_status_t gps_handler(void)
 
         case GPS_RSP_1_POWER:
         {
+#ifndef ETHERNET_EN
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\n2GR_gpr", DBG_UART);
+                vUART_SendStr(UART_PC, "\n2GR_gpr");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_POWER;
+                sts = GPS_FAIL;
+                HandleQueryStates();
+
+                break;
+            }
+#ifdef DEBUG_QUERY_STATES
+            // UWriteString((char*)"\n2NR_gpr", DBG_UART);
+            vUART_SendStr(UART_PC, "\n2NR_gpr");
+#endif
+#endif  //ETHERNET_EN
             switch(check_string_nobuf("+CGNSSPWR: READY"))
             {
                 case GPRS_MATCH_FAIL:
@@ -490,9 +605,33 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_LOCATION:
         {
-            flushTxBuffer(LTE_UART);
+            // flushTxBuffer(LTE_UART);
+#ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
+#else
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_gl", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_gl");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_LOCATION;
+                sts = GPS_FAIL;
+                HandleQueryStates();
 
+                break;
+            }
+            else
+#endif  //ETHERNET_EN
+            {
+#ifdef DEBUG_QUERY_STATES
+            // UWriteString((char*)"\nNR_gl", DBG_UART);
+            vUART_SendStr(UART_PC, "\nNR_gl");
+#endif
+            flushRxBuffer(LTE_UART);
 #ifdef GNS_PKT_EN
 			// UWriteString((char *)"AT+CGNSSINFO\r", LTE_UART);
             vUART_SendStr(LTE_UART_BASE, "AT+CGNSSINFO\r");
@@ -502,11 +641,34 @@ gps_status_t gps_handler(void)
 #endif	//GNS_PKT_EN
 
             gps_handler_state = GPS_RSP_LOCATION;
+            }
         }
         break;
 
         case GPS_RSP_LOCATION:
         {
+#ifndef ETHERNET_EN
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_glr", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_glr");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_LOCATION;
+                sts = GPS_FAIL;
+                HandleQueryStates();
+
+                break;
+            }
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_gl", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_gl");
+#endif
+#endif  //ETHERNET_EN
+
             char tmpstr[GPRS_RX_BUFFER_MAX];
             memset(tmpstr, 0, sizeof(tmpstr));
 
@@ -566,28 +728,28 @@ gps_status_t gps_handler(void)
                             get_location();
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
-#ifdef DEBUG_GPS_HANDLER
-                            vUART_SendStr(DEBUG_UART_BASE, "\ngotGPS:");
-                            vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
-                            vUART_SendChr(DEBUG_UART_BASE, ',');
-                            // vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
-                            vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gps_interval_start));
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                             vUART_SendStr(DEBUG_UART_BASE, "\ngotGPS:");
+//                             vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
+//                             vUART_SendChr(DEBUG_UART_BASE, ',');
+//                             // vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
+//                             vUART_SendInt(DEBUG_UART_BASE, (my_millis() - gps_interval_start));
+// #endif
                             gps_interval_start = my_millis();
                             cnt_gps_1sec++;
                         }
                         else
                         {
-#ifdef DEBUG_GPS_HANDLER
-                            // UWriteString((char*)"\nres=",DBG_UART);
-                            // UWriteInt(decode_result,DBG_UART);
-                            vUART_SendStr(DEBUG_UART_BASE, "\nGPS=?");
-                            vUART_SendInt(DEBUG_UART_BASE, decode_result);
-                            vUART_SendChr(DEBUG_UART_BASE, ',');
-                            vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
-                            vUART_SendChr(DEBUG_UART_BASE, ',');
-                            vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                             // UWriteString((char*)"\nres=",DBG_UART);
+//                             // UWriteInt(decode_result,DBG_UART);
+//                             vUART_SendStr(DEBUG_UART_BASE, "\nGPS=?");
+//                             vUART_SendInt(DEBUG_UART_BASE, decode_result);
+//                             vUART_SendChr(DEBUG_UART_BASE, ',');
+//                             vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
+//                             vUART_SendChr(DEBUG_UART_BASE, ',');
+//                             vUART_SendInt(DEBUG_UART_BASE, ((my_millis() - gps_interval_start)/1000));
+// #endif
                             sts = GPS_WAIT;
                         }
                     }
@@ -643,17 +805,63 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_POWER_OFF:
         {
-            flushTxBuffer(LTE_UART);
+            // flushTxBuffer(LTE_UART);
+#ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
+#else
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_gpo", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_gpo");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_POWER_OFF;
+                sts = GPS_FAIL;
+                HandleQueryStates();
 
-            // UWriteString((char*)"AT+CGNSSPWR=0\r\n",LTE_UART);
-            vUART_SendStr(LTE_UART_BASE, "AT+CGNSSPWR=0\r\n");
-            gps_handler_state = GPS_RSP_POWER_OFF;
+                break;
+            }
+            else
+#endif  //ETHERNET_EN
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_gpo", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_gpo");
+#endif
+                flushRxBuffer(LTE_UART);
+                // UWriteString((char*)"AT+CGNSSPWR=0\r\n",LTE_UART);
+                vUART_SendStr(LTE_UART_BASE, "AT+CGNSSPWR=0\r\n");
+                gps_handler_state = GPS_RSP_POWER_OFF;
+            }
         }
         break;
 
         case GPS_RSP_POWER_OFF:
         {
+#ifndef ETHERNET_EN
+            bool gotReq = server_query();
+            if(gotReq)
+            {
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nGR_rgpo", DBG_UART);
+                vUART_SendStr(UART_PC, "\nGR_rgpo");
+#endif
+                gps_retry_cnt = 0;
+                gps_wait_timeout = 0;
+                gps_handler_state = GPS_CMD_POWER_OFF;
+                sts = GPS_FAIL;
+                HandleQueryStates();
+
+                break;
+            }
+#ifdef DEBUG_QUERY_STATES
+                // UWriteString((char*)"\nNR_rgpo", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_rgpo");
+#endif
+#endif  //ETHERNET_EN
             switch(check_string_nobuf("OK"))
             {
                 case GPRS_MATCH_FAIL:
@@ -676,10 +884,10 @@ gps_status_t gps_handler(void)
 
                 case GPRS_MATCH_OK:
                 {
-#ifdef DEBUG_GPS_HANDLER
-                    // UWriteString((char*)"\nPDK",DBG_UART);
-                    vUART_SendStr(DEBUG_UART_BASE, "\nPDK");
-#endif
+// #ifdef DEBUG_GPS_HANDLER
+//                     // UWriteString((char*)"\nPDK",DBG_UART);
+//                     vUART_SendStr(DEBUG_UART_BASE, "\nPDK");
+// #endif
                     gps_retry_cnt = 0;
                     gps_wait_timeout = 0;
 

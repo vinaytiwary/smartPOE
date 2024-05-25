@@ -9,7 +9,6 @@ Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_ti_config.h
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/linkage.h
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h
-Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdio.h
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdio.h
 Sources/gprs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdarg.h
@@ -54,6 +53,9 @@ Sources/gprs.obj: ../Sources/ADC_Core.h
 Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
 Sources/gprs.obj: ../Sources/Telecom_server_query.h
+Sources/gprs.obj: ../Sources/WDT.h
+Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_watchdog.h
+Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/watchdog.h
 
 ../Sources/gprs.cpp:
 
@@ -72,8 +74,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_ti_config.h:
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/linkage.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h:
-
-C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdio.h:
 
@@ -162,4 +162,10 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
 ../Sources/Telecom_server_query.h:
+
+../Sources/WDT.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_watchdog.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/watchdog.h:
 

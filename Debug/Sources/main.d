@@ -61,6 +61,7 @@ Sources/main.obj: ../Sources/Telecom_Ethernet.h
 Sources/main.obj: ../Sources/Telecom_server_query.h
 Sources/main.obj: ../Sources/main.h
 Sources/main.obj: ../Sources/_debug.h
+Sources/main.obj: ../Sources/WDT.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/ethernet_comp.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/utility/Enc28J60Network.h
@@ -82,7 +83,6 @@ Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include
 Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h
 Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h
 Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h
-Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h
 Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Udp.h
@@ -221,6 +221,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 
 ../Sources/_debug.h:
 
+../Sources/WDT.h:
+
 D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h:
 
 D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/ethernet_comp.h:
@@ -262,8 +264,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h:
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h:
-
-C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h:
 
 D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/mbed/Printable.h:
 

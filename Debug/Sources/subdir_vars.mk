@@ -18,6 +18,7 @@ CPP_SRCS += \
 ../Sources/Telecom_Ethernet.cpp \
 ../Sources/Telecom_server_query.cpp \
 ../Sources/UartCore.cpp \
+../Sources/WDT.cpp \
 ../Sources/Web_Comm.cpp \
 ../Sources/_common.cpp \
 ../Sources/delay.cpp \
@@ -40,6 +41,7 @@ OBJS += \
 ./Sources/Telecom_Ethernet.obj \
 ./Sources/Telecom_server_query.obj \
 ./Sources/UartCore.obj \
+./Sources/WDT.obj \
 ./Sources/Web_Comm.obj \
 ./Sources/_common.obj \
 ./Sources/delay.obj \
@@ -62,6 +64,7 @@ CPP_DEPS += \
 ./Sources/Telecom_Ethernet.d \
 ./Sources/Telecom_server_query.d \
 ./Sources/UartCore.d \
+./Sources/WDT.d \
 ./Sources/Web_Comm.d \
 ./Sources/_common.d \
 ./Sources/delay.d \
@@ -84,6 +87,7 @@ OBJS__QUOTED += \
 "Sources\Telecom_Ethernet.obj" \
 "Sources\Telecom_server_query.obj" \
 "Sources\UartCore.obj" \
+"Sources\WDT.obj" \
 "Sources\Web_Comm.obj" \
 "Sources\_common.obj" \
 "Sources\delay.obj" \
@@ -106,6 +110,7 @@ CPP_DEPS__QUOTED += \
 "Sources\Telecom_Ethernet.d" \
 "Sources\Telecom_server_query.d" \
 "Sources\UartCore.d" \
+"Sources\WDT.d" \
 "Sources\Web_Comm.d" \
 "Sources\_common.d" \
 "Sources\delay.d" \
@@ -128,6 +133,7 @@ CPP_SRCS__QUOTED += \
 "../Sources/Telecom_Ethernet.cpp" \
 "../Sources/Telecom_server_query.cpp" \
 "../Sources/UartCore.cpp" \
+"../Sources/WDT.cpp" \
 "../Sources/Web_Comm.cpp" \
 "../Sources/_common.cpp" \
 "../Sources/delay.cpp" \

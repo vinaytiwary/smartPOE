@@ -23,6 +23,7 @@ tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 tm4c1233e6pz_startup_ccs.obj: ../Sources/_config.h
+tm4c1233e6pz_startup_ccs.obj: ../Sources/WDT.h
 
 ../tm4c1233e6pz_startup_ccs.c:
 
@@ -69,4 +70,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 
 ../Sources/_config.h:
+
+../Sources/WDT.h:
 

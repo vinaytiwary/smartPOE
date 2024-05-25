@@ -16,8 +16,10 @@
 #define GPRS_STATE_MC_TIME      (50)
 #define TCP_STATE_MC_TIME       (50)
 
+// #define GPRS_TX_BUFFER_MAX      (500)
+// #define GPRS_RX_BUFFER_MAX      (128)
 #define GPRS_TX_BUFFER_MAX      (500)
-#define GPRS_RX_BUFFER_MAX      (128)
+#define GPRS_RX_BUFFER_MAX      (500)
 
 #define TEMP_BUFF_LEN           (300)
 
@@ -328,6 +330,7 @@ typedef struct
     gprs_connect_state_t gprs_connect_state;
     gprs_tcp_state_t gprs_tcp_state;
     gprs_websocket_connect_t gprs_websocket_connect;
+    ping_state_t tcp_ping_states;
     tcp_packet_state_t tcp_packet_state;
     tcp_webskt_disconnect_states_t tcp_webskt_disconnect_states;
     tcp_disconnct_states_t tcp_disconnct_states;
@@ -355,6 +358,7 @@ typedef struct
 //}gprs_config_t;                         //24
 
 void TCP_Handler(void);
+void resetTCP_SubHandlers(void);
 con_status_t gprs_connect(void);
 con_status_t gprs_connect_status(void);
 tcp_status_t tcp_connect(void);

@@ -31,6 +31,10 @@
 #include "main.h"
 #include "Telecom_server_query.h"
 
+#include "WDT.h"
+#include "inc/hw_watchdog.h"
+#include "driverlib/watchdog.h"
+
 
 Telecom_Ethernet_t Telecom_Ethernet;
 UIPClient client,Eclient;
@@ -80,7 +84,7 @@ void ethernet_init(void)
     Ethernet.begin(mac); //Configure IP address via DHCP
     //Serial.print(F("localIP: "));
 #ifdef DEBUG_ETHERNET
-    vUART_SendStr(UART_PC, "localIP: ");
+    vUART_SendStr(UART_PC, "\nlocalIP: ");
     IPAddress localIP = Ethernet.localIP();
     vUART_SendInt(UART_PC, localIP[0]);
     vUART_SendInt(UART_PC, localIP[1]);
@@ -181,7 +185,7 @@ void ethernet_handler(void)
             if(sts == ETHER_TCP_ALREADY_CONN)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_tcp_conn:ak");
+                vUART_SendStr(UART_PC,"\neTC:ak");
                 vUART_SendStr(UART_PC, "\nWS_sts=");
                 vUART_SendInt(UART_PC, ether_ws_sts);
 #endif
@@ -201,7 +205,7 @@ void ethernet_handler(void)
             else if(sts == ETHER_TCP_CON_PASS)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_tcp_conn:k");
+                vUART_SendStr(UART_PC,"\neTC:k");
 #endif
                 // ethernet_state = ETHER_WS_CONN;
                 Telecom_Ethernet.ethernet_state = ETHER_WS_CONN;
@@ -211,7 +215,7 @@ void ethernet_handler(void)
             else if(sts == ETHER_TCP_CON_FAIL)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_tcp_conn:f");
+                vUART_SendStr(UART_PC,"\neTC:f");
 #endif
                 set_ethernet_NWstatus(FALSE);
                 set_ethernet_connct_sts(FALSE);
@@ -230,7 +234,7 @@ void ethernet_handler(void)
             if(sts == ETHER_WS_CON_PASS)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_ws_conn:k");
+                vUART_SendStr(UART_PC,"\neWC:k");
 #endif
                 set_ethernet_NWstatus(TRUE);
                 set_ethernet_connct_sts(TRUE);
@@ -244,7 +248,7 @@ void ethernet_handler(void)
             else if(sts == ETHER_WS_CON_FAIL)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_ws_conn:f");
+                vUART_SendStr(UART_PC,"\neWC:f");
 #endif
                 set_ethernet_NWstatus(FALSE);
 
@@ -264,8 +268,28 @@ void ethernet_handler(void)
             if(sts == ETHER_WS_DISCON_PASS)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_wsdis_conn:k");
+                vUART_SendStr(UART_PC,"\neWDC:k");
 #endif
+
+                if(getServerReqType() == RESTART)
+                {
+#ifdef DEBUG_SERVER_QUERY
+                    // UWriteString((char*)"\neRST4",DBG_UART);
+                    vUART_SendStr(DEBUG_UART_BASE, "\neRST4");
+#endif
+#ifdef ENABLE_WDT_RESET
+#ifdef WDT_IRQ_MODE
+
+                    reset_controller();  //PP 15-05-24: Will implement this when WDT is implemented.
+#else
+                    WatchdogUnlock(WATCHDOG0_BASE);
+                    WatchdogReloadSet(WATCHDOG0_BASE, 0);
+#endif  //WDT_IRQ_MODE
+#else
+                    SysCtlReset();
+#endif  //ENABLE_WDT_RESET
+                }
+
                 set_ethernet_NWstatus(FALSE);
                 set_ethernet_connct_sts(FALSE);
 
@@ -278,8 +302,28 @@ void ethernet_handler(void)
             else if(sts == ETHER_WS_CON_FAIL)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_wsdis_conn:f");
+                vUART_SendStr(UART_PC,"\neWDC:f");
 #endif
+
+                if(getServerReqType() == RESTART)
+                {
+#ifdef DEBUG_SERVER_QUERY
+                    // UWriteString((char*)"\neRST5",DBG_UART);
+                    vUART_SendStr(DEBUG_UART_BASE, "\neRST5");
+#endif
+#ifdef ENABLE_WDT_RESET
+#ifdef WDT_IRQ_MODE
+
+                    reset_controller();  //PP 15-05-24: Will implement this when WDT is implemented.
+#else
+                    WatchdogUnlock(WATCHDOG0_BASE);
+                    WatchdogReloadSet(WATCHDOG0_BASE, 0);
+#endif  //WDT_IRQ_MODE
+#else
+                    SysCtlReset();
+#endif  //ENABLE_WDT_RESET
+                }
+
                 set_ethernet_NWstatus(FALSE);
 
                 ether_ws_sts = FALSE;
@@ -298,7 +342,7 @@ void ethernet_handler(void)
             if(sts == ETHER_PING_PASS)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_ping_send:k");
+                vUART_SendStr(UART_PC,"\nePS:k");
 #endif
                 ether_ws_sts = TRUE;
                 set_ethernet_NWstatus(TRUE);
@@ -311,7 +355,7 @@ void ethernet_handler(void)
             else if(sts == ETHER_PING_FAIL)
             {
 #ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nether_ping_send:f");
+                vUART_SendStr(UART_PC,"\nePS:f");
 #endif
                 ether_ws_sts = FALSE;
                 set_ethernet_NWstatus(FALSE);
@@ -331,7 +375,7 @@ void ethernet_handler(void)
 //             // TCP_indx = websocket_packet(dummy_json_string);
 //             // setREQmode(AVBL);
 //
-// #ifdef DEBUG_TCP_HANDLER
+// #ifdef DEBUG_ETHERNET
 //             vUART_SendStr(UART_PC,"\nTCP_indx=");
 //             vUART_SendInt(UART_PC, TCP_indx);
 //             vUART_SendStr(UART_PC, "\nTCP_buff=");
@@ -339,7 +383,7 @@ void ethernet_handler(void)
 // #endif
             prepare_server_pkt();
             // ethernet_tx_buff.index = prepare_JSON_pckt();
-#ifdef DEBUG_TCP_HANDLER
+#ifdef DEBUG_ETHERNET
             vUART_SendStr(UART_PC,"\nTCP_indx=");
             vUART_SendInt(UART_PC, ethernet_tx_buff.index);
             vUART_SendStr(UART_PC, "\nTCP_buff=");
@@ -369,10 +413,27 @@ void ethernet_handler(void)
                         setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
                     }
 
-                    // ethernet_state = ETHER_SESSION_IDLE;
-                    Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
+                    if(getServerReqType() == SERVER_URL_UPDATE)
+                    {
+#ifdef DEBUG_GPRS_DATA_UPLOAD
+                        vUART_SendStr(UART_PC,"\nEservicedSUP:");
+                        vUART_SendInt(UART_PC, getServerReqType());
+#endif
+                        Telecom_Ethernet.ethernet_state = ETHER_WS_DISCONN;    //so that it disconnects and then connects again with the new server ipaddr & portnum.
+                    }
+                    else
+                    {
+#ifdef DEBUG_GPRS_DATA_UPLOAD
+                        vUART_SendStr(UART_PC,"\nEservicedQ:");
+                        vUART_SendInt(UART_PC, getServerReqType());
+#endif
+                        // ethernet_state = ETHER_SESSION_IDLE;
+                        Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
+                    }
 
-                    if(getServerReqType() == ODU_VOLTAGE_UPDATE)
+                    
+
+                    if((getServerReqType() == ODU_VOLTAGE_UPDATE)||(getServerReqType() == SERVER_URL_UPDATE))
                     {
                         setServerReqType(NO_REQ);
                     }
@@ -429,8 +490,8 @@ void ethernet_handler(void)
 #endif
                         set_pending_request(false);
                         // gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;     //PP 15-05-24: make a similar command for ETHERNET later
-                        Telecom_Ethernet.ethernet_state = ETHER_WS_DISCONN;
                         resetEther_SubHandlers();
+                        Telecom_Ethernet.ethernet_state = ETHER_WS_DISCONN;
                     }
                     break;
 
@@ -442,8 +503,8 @@ void ethernet_handler(void)
 #endif                 
                         set_pending_request(false);
                         // setClientMSGType(RESPONSE_LOG); // handled in HandleQueryStates() states now.
-                        Telecom_Ethernet.ethernet_state = ETHER_PREPARE_LOGS;
                         resetEther_SubHandlers();
+                        Telecom_Ethernet.ethernet_state = ETHER_PREPARE_LOGS;
                     }
                     break;
 
@@ -455,8 +516,8 @@ void ethernet_handler(void)
 #endif 
                         set_pending_request(false);
                         // setClientMSGType(RESPONSE_LOG); // handled in HandleQueryStates() states now.
-                        Telecom_Ethernet.ethernet_state = ETHER_PREPARE_LOGS;
                         resetEther_SubHandlers();
+                        Telecom_Ethernet.ethernet_state = ETHER_PREPARE_LOGS;
                     }
                     break;
 
@@ -594,7 +655,7 @@ ether_tcp_sts_t ether_tcp_connect(void)
     // const char ip[20] = ""
     if (client.connected())
     {
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_CONN
         vUART_SendStr(UART_PC, "\ntcp_conn");
 #endif
 
@@ -605,22 +666,22 @@ ether_tcp_sts_t ether_tcp_connect(void)
         // uint8_t conn_sts = client.connect((const char *)cloud_config.ip_addr, cloud_config.port_num);
         // uint8_t conn_sts = client.connect(IPAddress(192, 168, 1, 101), 5000);
         uint8_t conn_sts = client.connect(IPAddress(192, 168, 1, 101), 10001);
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_CONN
         vUART_SendStr(UART_PC, "\nconn_sts:");
         vUART_SendInt(UART_PC, conn_sts);
 #endif
         if (conn_sts == 1)
         {
-#ifdef DEBUG_ETHERNET
-            vUART_SendStr(UART_PC, "\ntcp_con:k");
-#endif
+// #ifdef DEBUG_ETHER_TCP_CONN
+//             vUART_SendStr(UART_PC, "\ntcp_con:k");
+// #endif
             sts = ETHER_TCP_CON_PASS;
         }
         else if (conn_sts == 0)
         {
-#ifdef DEBUG_ETHERNET
-            vUART_SendStr(UART_PC, "\ntcp_con:f");
-#endif
+// #ifdef DEBUG_ETHER_TCP_CONN
+//             vUART_SendStr(UART_PC, "\ntcp_con:f");
+// #endif
             sts = ETHER_TCP_CON_FAIL;
         }
     }
@@ -656,7 +717,10 @@ ether_ws_sts_t ws_connect(void)
             //my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Protocol: ocpp1.6\r\n\r\n","/RB/WS/ECMS/E4E003","122.160.48.7",8060,randomKey);
             // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Protocol: ocpp1.6\r\n\r\n",cloud_config.path,cloud_config.ip_addr,cloud_config.port_num,randomKey);
             // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Protocol: ocpp1.6\r\n\r\n",cloud_config.path,"192.168.1.101",cloud_config.port_num,randomKey);
+            
             my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,"192.168.1.101",cloud_config.port_num,randomKey);
+
+            // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,cloud_config.ip_addr,cloud_config.port_num,randomKey);
 
             int final_index = strlen(temp_buff);
 
@@ -665,7 +729,7 @@ ether_ws_sts_t ws_connect(void)
 
             //send ws command
             //client.write(ws_req);
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WS
             vUART_SendStr(UART_PC,"\nws_conn:cmd");
             vUART_SendBytes(UART_PC,(const uint8_t *)temp_buff,final_index);
 #endif
@@ -686,7 +750,7 @@ ether_ws_sts_t ws_connect(void)
                 //uint8_t size = client.available();
                 //uint8_t msg[size];
                 //client.read((uint8_t *)&rx_buff, size);
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WS
                 vUART_SendStr(UART_PC,"\nws_conn:rsp:");
                 vUART_SendBytes(UART_PC,(const uint8_t *)/*rx_buff*/ethernet_rx_buff.buffer,ethernet_rx_buff.index);
 #endif
@@ -695,9 +759,9 @@ ether_ws_sts_t ws_connect(void)
                 {
                     if(ether_valid_code((char *)&resp[strlen("HTTP/1.1 ")]))
                     {
-#ifdef DEBUG_ETHERNET
-                        vUART_SendStr(UART_PC,"\nws_conn:rsp:k");
-#endif
+// #ifdef DEBUG_ETHER_WS
+//                         vUART_SendStr(UART_PC,"\nws_conn:rsp:k");
+// #endif
                         timeout = 0;
                         retry_cnt = 0;
                         sts = ETHER_WS_CON_PASS;
@@ -706,9 +770,9 @@ ether_ws_sts_t ws_connect(void)
                     }
                     else
                     {
-#ifdef DEBUG_ETHERNET
-                        vUART_SendStr(UART_PC,"\nws_conn:rsp:f");
-#endif
+// #ifdef DEBUG_ETHER_WS
+//                         vUART_SendStr(UART_PC,"\nws_conn:rsp:f");
+// #endif
                         timeout = 0;
                         retry_cnt = 0;
                         sts = ETHER_WS_CON_FAIL;
@@ -719,7 +783,7 @@ ether_ws_sts_t ws_connect(void)
                 }
                 else
                 {
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WS
                     vUART_SendStr(UART_PC,"\nnoHTTP");
 #endif
                     timeout = 0;
@@ -731,7 +795,7 @@ ether_ws_sts_t ws_connect(void)
             }
             else
             {
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WS
                 vUART_SendStr(UART_PC,"\nwsw:");
                 vUART_SendInt(UART_PC, timeout);
                 vUART_SendChr(UART_PC, ',');
@@ -746,7 +810,7 @@ ether_ws_sts_t ws_connect(void)
                     {
                         retry_cnt = 0;
                         sts = ETHER_WS_CON_FAIL;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WS
                         vUART_SendStr(UART_PC,"\nws_conn:rsp:f");
 #endif
                     }
@@ -779,7 +843,7 @@ ether_ping_status_t ether_ping_send(void )
             flush_ether_rx_buff();
             // ether_ping_cmd = ETHER_PING_RSP;
             Telecom_Ethernet.ether_ping_cmd = ETHER_PING_RSP;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
             vUART_SendStr(UART_PC,"\nping_snd:cmd:");
             vUART_SendStr(UART_PC, (uint8_t*)buff);
 #endif
@@ -795,7 +859,7 @@ ether_ping_status_t ether_ping_send(void )
             {
                 ethernet_rx_buff.locked = UNLOCKED;
                 //uint8_t size = client.available();
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
                 vUART_SendStr(UART_PC,"\nPSR:");
                 vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
                 vUART_SendChr(UART_PC, ',');
@@ -805,18 +869,18 @@ ether_ping_status_t ether_ping_send(void )
                 //ethernet_rx_buff.index += size;
                 if(ethernet_pong_received((uint8_t *)ethernet_rx_buff.buffer))
                 {
-#ifdef DEBUG_ETHERNET
-                    vUART_SendStr(UART_PC,"\npong_recv");
-#endif
+// #ifdef DEBUG_ETHER_PS
+//                     vUART_SendStr(UART_PC,"\npong_recv");
+// #endif
                     sts = ETHER_PING_PASS;
                     //ether_ping_cmd = ETHER_HRT_CMD;
                     flush_ether_rx_buff();  //PP added on 15-05-24: as this was not being cleared till the next cmd and since it contains 0x8A, 0x00. 0x00 reamaining in the buffer caused parsing issues when we recieved a server_request() after this.
                 }
                 else
                 {
-#ifdef DEBUG_ETHERNET
-                    vUART_SendStr(UART_PC,"\npong_not_recv");
-#endif
+// #ifdef DEBUG_ETHER_PS
+//                     vUART_SendStr(UART_PC,"\npong_not_recv");
+// #endif
                     //sts = ETHER_PING_PASS;
                     sts = ETHER_PING_FAIL;
                     // ether_ping_cmd = ETHER_PING_CMD;
@@ -827,23 +891,24 @@ ether_ping_status_t ether_ping_send(void )
                 Telecom_Ethernet.ether_ping_cmd = ETHER_PING_CMD;
                 timeout = 0;
                 retry_cnt = 0;
-#ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nping_snd:rsp:");
-                vUART_SendBytes(UART_PC,(const uint8_t *)&ethernet_rx_buff.buffer, ethernet_rx_buff.index);
-#endif
+// #ifdef DEBUG_ETHER_PS
+//                 vUART_SendStr(UART_PC,"\nping_snd:rsp:");
+//                 vUART_SendBytes(UART_PC,(const uint8_t *)&ethernet_rx_buff.buffer, ethernet_rx_buff.index);
+// #endif
             }
             else
             {
-#ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\nPSW:");
-                vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
-                vUART_SendChr(UART_PC, ',');
-                vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+#ifdef DEBUG_ETHER_PS
+                vUART_SendStr(UART_PC,"\nPSW");
+                // vUART_SendStr(UART_PC,"\nPSW:");
+                // vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+                // vUART_SendChr(UART_PC, ',');
+                // vUART_SendInt(UART_PC, ethernet_rx_buff.index);
 #endif
                 if(++timeout >= ((10*1000)/50))
                 {
                     timeout = 0;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
                     vUART_SendStr(UART_PC,"\nping:rsp:to");
 #endif
                     // ether_ping_cmd = ETHER_PING_CMD;
@@ -852,7 +917,7 @@ ether_ping_status_t ether_ping_send(void )
                     {
                         retry_cnt = 0;
                         sts = ETHER_PING_FAIL;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
                         vUART_SendStr(UART_PC,"\nping:rsp:rf");
 #endif
                     }
@@ -868,7 +933,7 @@ ether_ping_status_t ether_ping_send(void )
             //char buff[] = {0x89,0x80,0x37,0xFA,0x21,0x3D};
             client.write(buff,sizeof(buff));
             ether_ping_cmd = ETHER_HRT_RSP;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
             vUART_SendStr(UART_PC,"\nhrt:cmd");
 #endif
         }
@@ -892,7 +957,7 @@ ether_ping_status_t ether_ping_send(void )
                 free(rx_buff);
                 sts = ETHER_PING_PASS;
                 ether_ping_cmd = ETHER_PING_CMD;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
                 vUART_SendStr(UART_PC,"\nhrt:rsp:");
                 vUART_SendBytes(UART_PC,(const uint8_t *)rx_buff, size);
 #endif
@@ -908,7 +973,7 @@ ether_ping_status_t ether_ping_send(void )
                         retry_cnt = 0;
                         ether_ping_cmd = ETHER_PING_CMD;
                         sts = ETHER_PING_FAIL;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_PS
                         vUART_SendStr(UART_PC,"\nhrt:rsp:rf");
 #endif
                     }
@@ -926,7 +991,7 @@ ether_wsdisconn_sts_t ws_disconn(void )
     ether_wsdisconn_sts_t sts = ETHER_WS_DISCON_PRG;
     static ether_wsdis_cmd_t ether_wsdis_cmd = ETHER_WSDIS_CMD;
 #ifdef DEBUG_ETHERNET
-    vUART_SendStr(UART_PC,"\neWDIS:");
+    vUART_SendStr(UART_PC,"\neWSDIS:");
     vUART_SendInt(UART_PC, ether_wsdis_cmd);
 #endif
     switch(ether_wsdis_cmd)
@@ -941,7 +1006,7 @@ ether_wsdisconn_sts_t ws_disconn(void )
             client.write(buff,sizeof(buff));
             flush_ether_rx_buff();
             ether_wsdis_cmd = ETHER_WSDIS_RSP;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_WSD
             vUART_SendStr(UART_PC,"\nwdis:cmd:");
             vUART_SendStr(UART_PC, (uint8_t*)buff);
 #endif
@@ -957,8 +1022,8 @@ ether_wsdisconn_sts_t ws_disconn(void )
             {
                 ethernet_rx_buff.locked = UNLOCKED;
                 //uint8_t size = client.available();
-#ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\neWDR:");
+#ifdef DEBUG_ETHER_WSD
+                vUART_SendStr(UART_PC,"\neWSDR:");
                 vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
                 vUART_SendChr(UART_PC, ',');
                 vUART_SendInt(UART_PC, ethernet_rx_buff.index);
@@ -993,12 +1058,12 @@ ether_wsdisconn_sts_t ws_disconn(void )
                 if(((ethernet_rx_buff.buffer[0] & 0xFF) == 0x88) && ((ethernet_rx_buff.buffer[1] & 0xFF) == 0x02) 
                 && ((ethernet_rx_buff.buffer[2] & 0xFF) == 0x03) && ((ethernet_rx_buff.buffer[3]) & 0xFF) == 0xE8)
                 {
-#ifdef DEBUG_ETHERNET
-                    vUART_SendStr(UART_PC, "\neWDk:");
-                    vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
-                    vUART_SendChr(UART_PC, ',');
-                    vUART_SendInt(UART_PC, ethernet_rx_buff.index);
-#endif
+// #ifdef DEBUG_ETHER_WSD
+//                     vUART_SendStr(UART_PC, "\neWSDk:");
+//                     vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+//                     vUART_SendChr(UART_PC, ',');
+//                     vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+// #endif
                     timeout = 0;
                     retry_cnt = 0;
                     sts = ETHER_WS_DISCON_PASS;
@@ -1007,12 +1072,12 @@ ether_wsdisconn_sts_t ws_disconn(void )
                 }
                 else
                 {
-#ifdef DEBUG_ETHERNET
-                    vUART_SendStr(UART_PC, "\neWDf:");
-                    vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
-                    vUART_SendChr(UART_PC, ',');
-                    vUART_SendInt(UART_PC, ethernet_rx_buff.index);
-#endif
+// #ifdef DEBUG_ETHER_WSD
+//                     vUART_SendStr(UART_PC, "\neWSDf:");
+//                     vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+//                     vUART_SendChr(UART_PC, ',');
+//                     vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+// #endif
                     timeout = 0;
                     retry_cnt = 0;
                     sts = ETHER_WS_DISCON_FAIL;
@@ -1022,25 +1087,26 @@ ether_wsdisconn_sts_t ws_disconn(void )
             }
             else
             {
-#ifdef DEBUG_ETHERNET
-                vUART_SendStr(UART_PC,"\neWDW:");
-                vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
-                vUART_SendChr(UART_PC, ',');
-                vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+#ifdef DEBUG_ETHER_WSD
+                vUART_SendStr(UART_PC,"\neWSDW");
+                // vUART_SendStr(UART_PC,"\neWSDW:");
+                // vUART_SendStr(UART_PC, (uint8_t*)ethernet_rx_buff.buffer);
+                // vUART_SendChr(UART_PC, ',');
+                // vUART_SendInt(UART_PC, ethernet_rx_buff.index);
 #endif
                 if(++timeout >= ((10*1000)/50))
                 {
                     timeout = 0;
-#ifdef DEBUG_ETHERNET
-                    vUART_SendStr(UART_PC,"\nWD:rsp:to");
+#ifdef DEBUG_ETHER_WSD
+                    vUART_SendStr(UART_PC,"\nWSD:rsp:to");
 #endif
                     ether_wsdis_cmd = ETHER_WSDIS_CMD;
                     if(++retry_cnt >= 3)
                     {
                         retry_cnt = 0;
                         sts = ETHER_WS_DISCON_FAIL;
-#ifdef DEBUG_ETHERNET
-                        vUART_SendStr(UART_PC,"\nWD:rsp:rf");
+#ifdef DEBUG_ETHER_WSD
+                        vUART_SendStr(UART_PC,"\nWSD:rsp:rf");
 #endif
                     }
                 }
@@ -1074,22 +1140,22 @@ char ether_valid_code(char *tmpstr)
     {
         return FALSE;
     }
-#ifdef DEBUG_ETHERNET
-    vUART_SendStr(UART_PC,"\ntmpstr:");
-    // vUART_SendStr(UART_PC,(const uint8_t *)tmpstr);
-    vUART_SendBytes(UART_PC, (uint8_t*)tmpstr, strlen((const char*)tmpstr));
-#endif
+// #ifdef DEBUG_ETHER_WS
+//     vUART_SendStr(UART_PC,"\ntmpstr:");
+//     // vUART_SendStr(UART_PC,(const uint8_t *)tmpstr);
+//     vUART_SendBytes(UART_PC, (uint8_t*)tmpstr, strlen((const char*)tmpstr));
+// #endif
     char temp_buff[5];
     int i=0;
     memset(temp_buff,0,sizeof(temp_buff));
     while(tmpstr[i] != 0x20)
     {
-#ifdef DEBUG_ETHERNET
-    vUART_SendChr(UART_PC,'\n');
-    vUART_SendChr(UART_PC, tmpstr[i]);
-    vUART_SendChr(UART_PC, ',');
-    vUART_SendInt(UART_PC, i);
-#endif
+// #ifdef DEBUG_ETHER_WS
+//     vUART_SendChr(UART_PC,'\n');
+//     vUART_SendChr(UART_PC, tmpstr[i]);
+//     vUART_SendChr(UART_PC, ',');
+//     vUART_SendInt(UART_PC, i);
+// #endif
         temp_buff[i] = tmpstr[i];
         i++;
     }
@@ -1122,13 +1188,19 @@ ether_tcp_packet_status_t ether_tcp_send(char *data_str, int len)
     ether_tcp_packet_status_t ether_tcp_packet_status = ETHER_TCP_SEND_IN_PRG;
     static char retry_cnt = 0;
     static unsigned int timeout = 0;
+
+#ifdef DEBUG_ETHERNET
+    vUART_SendStr(UART_PC,"\neTST:");
+    vUART_SendInt(UART_PC, Telecom_Ethernet.ether_tcp_pckt_state);
+#endif
+
     // switch(ether_tcp_pckt_state)
     switch(Telecom_Ethernet.ether_tcp_pckt_state)
     {
         case ETHER_TCP_SEND_CMD:
         {
             client.write(data_str,len);
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_SEND
             vUART_SendStr(UART_PC,"\ntcp_cmd:");
             vUART_SendBytes(UART_PC,(const uint8_t *)data_str, len);
 #endif
@@ -1163,14 +1235,14 @@ ether_tcp_packet_status_t ether_tcp_send(char *data_str, int len)
                 // size = client.available();
                 // size = client.read((uint8_t *)&ethernet_rx_buff.buffer,size);
                 // ethernet_rx_buff.index += size;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_SEND
                 vUART_SendStr(UART_PC,"\ntcp:rsp:");
                 vUART_SendBytes(UART_PC,(const uint8_t *)ethernet_rx_buff.buffer, ethernet_rx_buff.index);
 #endif
 
-#ifdef DEBUG_GPRS_DATA_UPLOAD
-                vUART_SendStr(UART_PC,"TCP_SEND:k2");
-#endif
+// #ifdef DEBUG_ETHER_TCP_SEND
+//                 vUART_SendStr(UART_PC,"TCP_SEND:k2");
+// #endif
                 flush_ether_rx_buff();  //PP added on 15-05-24: as this was not being cleared till 30secs and server_query() called in check_ethernet_msg() was parsing it again as it found a brace every time.
                 ether_tcp_packet_status = ETHER_TCP_SEND_PASS;
                 // ether_tcp_pckt_state = ETHER_TCP_SEND_CMD;
@@ -1223,7 +1295,7 @@ ether_tcp_packet_status_t ether_tcp_send(char *data_str, int len)
                 if(++timeout >= ((10*1000)/50))
                 {
                     timeout = 0;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_SEND
                     vUART_SendStr(UART_PC,"\ntcp:rsp:to");
 #endif
                     // ether_tcp_pckt_state = ETHER_TCP_SEND_CMD;
@@ -1232,7 +1304,7 @@ ether_tcp_packet_status_t ether_tcp_send(char *data_str, int len)
                     {
                         retry_cnt = 0;
                         ether_tcp_packet_status = ETHER_TCP_SEND_FAIL;
-#ifdef DEBUG_ETHERNET
+#ifdef DEBUG_ETHER_TCP_SEND
                         vUART_SendStr(UART_PC,"\ntcp:rsp:rf");
 #endif
                     }
@@ -1465,11 +1537,12 @@ void check_ethernet_message(void)
             {
 #ifdef DEBUG_ETHERNET
                 // vUART_SendStr(UART_PC, "\nnot_found_avbl_size:");
-                vUART_SendStr(UART_PC, "\nno_avbl_size:");
-                vUART_SendStr(UART_PC, "\neri:");
-                vUART_SendInt(UART_PC, ethernet_rx_buff.index);
-                vUART_SendStr(UART_PC, "\nerb:");
-                vUART_SendBytes(UART_PC,(const uint8_t *) ethernet_rx_buff.buffer,ethernet_rx_buff.index);
+                vUART_SendStr(UART_PC, "\nno_avbl_size");
+                // vUART_SendStr(UART_PC, "\nno_avbl_size:");
+                // vUART_SendStr(UART_PC, "\neri:");
+                // vUART_SendInt(UART_PC, ethernet_rx_buff.index);
+                // vUART_SendStr(UART_PC, "\nerb:");
+                // vUART_SendBytes(UART_PC,(const uint8_t *) ethernet_rx_buff.buffer,ethernet_rx_buff.index);
 #endif
                 retry_coun = 0;
                 break;
@@ -1492,11 +1565,12 @@ void check_ethernet_message(void)
 
             memcpy((void *)&ethernet_rx_buff.buffer,(void *)&ethernet_rx_buff.buffer[shift_bytes],ethernet_rx_buff.index);
 #ifdef DEBUG_ETHERNET
-            vUART_SendStr(UART_PC, "\nether_1_rx_buff:");
-            vUART_SendBytes(UART_PC, (const uint8_t*) ethernet_rx_buff.buffer,ethernet_rx_buff.index);
-            vUART_SendChr(UART_PC, ',');
-            vUART_SendInt(UART_PC, Telecom_Ethernet.ether_rx_buff_len);
-            vUART_SendStr(DEBUG_UART_BASE, "\nTCP_SEND:k1");
+            vUART_SendStr(UART_PC, "\ne1rb");
+            // vUART_SendStr(UART_PC, "\nether_1_rx_buff:");
+            // vUART_SendBytes(UART_PC, (const uint8_t*) ethernet_rx_buff.buffer,ethernet_rx_buff.index);
+            // vUART_SendChr(UART_PC, ',');
+            // vUART_SendInt(UART_PC, Telecom_Ethernet.ether_rx_buff_len);
+            // vUART_SendStr(DEBUG_UART_BASE, "\nTCP_SEND:k1");
 #endif
             ethernet_rx_buff.index -= shift_bytes;
             set_pkt_recv(TRUE);
@@ -1505,7 +1579,8 @@ void check_ethernet_message(void)
         else
         {
 #ifdef DEBUG_ETHERNET
-           vUART_SendStr(UART_PC, "\nin_else");
+        //    vUART_SendStr(UART_PC, "\nin_else");
+        vUART_SendStr(UART_PC, "\nC");
 #endif
             set_pkt_recv(FALSE);
         }

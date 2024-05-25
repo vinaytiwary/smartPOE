@@ -26,6 +26,8 @@
 #include "Sources/SysTick_Timer.h"
 #include "Sources/IO_cntrl.h"
 #include "Sources/UartCore.h"
+#include "Sources/WDT.h"
+#include "Sources/_config.h"
 
 //*****************************************************************************
 //
@@ -51,6 +53,9 @@ extern void DEBUGUARTIntHandler(void);
 extern void LTEUARTIntHandler(void);    //PP on 20-04-24: how did this ISR work without externing this here? realized that i didn't do it while i was externing DISPLAYUARTIntHandler(). Although I did add it to the vector table.
 extern void DISPLAYUARTIntHandler(void);
 
+#ifdef WDT_IRQ_MODE
+extern void WatchdogIntHandler(void);
+#endif  //WDT_IRQ_MODE  
 //*****************************************************************************
 //
 // Linker variable that marks the top of the stack.
@@ -113,7 +118,12 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // ADC Sequence 1
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
+    // IntDefaultHandler,                      // Watchdog timer
+#ifdef WDT_IRQ_MODE
+    WatchdogIntHandler,                      // Watchdog timer
+#else
     IntDefaultHandler,                      // Watchdog timer
+#endif  //WDT_IRQ_MODE  
     IntDefaultHandler,                      // Timer 0 subtimer A
     IntDefaultHandler,                      // Timer 0 subtimer B
     IntDefaultHandler,                      // Timer 1 subtimer A
@@ -292,6 +302,7 @@ FaultISR(void)
     //
     while(1)
     {
+        GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
     }
 }
 

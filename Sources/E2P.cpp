@@ -171,7 +171,7 @@ void e2p_write_device_cfg()
 #ifdef DEBUG_E2P
     // UWriteString((char*)"\nWDID:",DBG_UART);
     // UWriteBytes((unsigned char*)&e2p_device_info,sizeof(e2p_device_info_t),DBG_UART);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nWDID:");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nwDID:");
     vUART_SendBytes(DEBUG_UART_BASE, (const uint8_t*)&e2p_device_info,sizeof(e2p_device_info_t));
 #endif
     // __enable_irq();

@@ -26,7 +26,6 @@ Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h
-Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/math.h
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/math.h
 Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_defs.h
@@ -67,6 +66,7 @@ Sources/gps.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
 Sources/gps.obj: ../Sources/main.h
 Sources/gps.obj: ../Sources/SysTick_Timer.h
 Sources/gps.obj: ../Sources/_debug.h
+Sources/gps.obj: ../Sources/Telecom_server_query.h
 
 ../Sources/gps.cpp:
 
@@ -119,8 +119,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/ctype.h:
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/ctype.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdcl.h:
-
-C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/_isfuncdef.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/math.h:
 
@@ -201,4 +199,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 ../Sources/SysTick_Timer.h:
 
 ../Sources/_debug.h:
+
+../Sources/Telecom_server_query.h:
 

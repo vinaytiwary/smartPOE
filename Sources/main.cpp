@@ -40,6 +40,7 @@
 #include "main.h"
 #include "_common.h"
 #include "_debug.h"
+#include "WDT.h"
 
 #ifdef ETHERNET_EN
 #include "Sources/UIPEthernet/UIPEthernet.h"
@@ -89,6 +90,17 @@ int main(void)
     vMAIN_InitClockPeripherals();
 	init_config();
 
+#if RTC_SIMULATOR
+		//update_date_time();
+#elif defined(RTC_ENABLE)
+		get_present_time(&ram_data.ram_time);
+		// update_rtc(&dummyDateBuff[0], 0);
+#endif
+    
+#ifdef  ENABLE_WDT_RESET
+    initWDT();
+#endif  //ENABLE_WDT_RESET
+
 #ifdef ETHERNET_EN
     ethernet_init();
 #endif  // ETHERNET_EN
@@ -110,6 +122,9 @@ int main(void)
 #if 1
 	while(1)
 	{
+#ifdef ENABLE_WDT_RESET
+        feedWDT();
+#endif  //ENABLE_WDT_RESET
         vUART_CheckFrameTimeout(LTE_UART);
 		if(scheduler.flg10ms == HIGH)
         {
@@ -254,10 +269,10 @@ void update_ram_data(void)
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Charger_voltage);
 #endif
 
-#ifdef DEBUG_GET_LOC
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nGP1s:");
-    vUART_SendInt(DEBUG_UART_BASE, cnt_gps_1sec);
-#endif  //DEBUG_GET_LOC
+// #ifdef DEBUG_GET_LOC
+//     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nGP1s:");
+//     vUART_SendInt(DEBUG_UART_BASE, cnt_gps_1sec);
+// #endif  //DEBUG_GET_LOC
     
     cnt_gps_1sec = 0;
 
@@ -528,7 +543,17 @@ void init_config(void)
         write_defaults(E2P_CONFIG_TIME_ADDR);     
     }
 
-    memset(&ram_data, 0, sizeof(ram_data_t));
+    // memset(&ram_data, 0, sizeof(ram_data_t));
+
+	// // PP commented on 25-04-24: will do this later:
+    // memset(&Alarms, 0, sizeof(Alarms_t));
+
+    // Alarms.Power_ON = true;
+    // setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
+
+#endif  //NEW_BOARD
+
+    memset(&ram_data, 0, sizeof(ram_data_t));   //PP 22-05-24: shifted this down to make this independent of NEW_BOARD condition.
 
 	// PP commented on 25-04-24: will do this later:
     memset(&Alarms, 0, sizeof(Alarms_t));
@@ -536,6 +561,5 @@ void init_config(void)
     Alarms.Power_ON = true;
     setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
 
-#endif  //NEW_BOARD
 }
 
