@@ -302,7 +302,7 @@ FaultISR(void)
     //
     while(1)
     {
-        GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
+        // GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
     }
 }
 

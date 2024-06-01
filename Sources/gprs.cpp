@@ -1795,7 +1795,7 @@ websckt_sts_t websckt_connect(void)
 
 #ifdef DEBUG_TCP_HANDLER
     vUART_SendStr(DEBUG_UART_BASE, "\nWCT:");
-    vUART_SendInt(DEBUG_UART_BASE, gprs.tcp_ping_states);
+    vUART_SendInt(DEBUG_UART_BASE, gprs.gprs_websocket_connect);
 #endif
 
     switch(gprs.gprs_websocket_connect)
