@@ -26,21 +26,6 @@
 // extern FL_char_data_t FL_char_data;  //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
 // extern totalizer_t totalizer;        //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
 
-#if 0
-void CS_Low(void)
-{
-    GPIOPinWrite(FLASH_PORT_BASE, FLASH_CS_PIN, 0);
-    //_delay_ms(1);                     /* clear CE low */
-    //_delay_us(1);         // HJ 13-08-2016
-}
-void CS_High(void)
-{
-    GPIOPinWrite(FLASH_PORT_BASE, FLASH_CS_PIN, FLASH_CS_PIN);
-    //FLASH_CNTRL_PORT|=(1<<CE1);
-    //LATF = LATF | (0x04);                 /* set CE high */
-    //_delay_us(1);         // HJ 13-08-2016
-}
-#endif
 void Reset_Hold_Low(void)
 {
     GPIOPinWrite(FLASH_PORT_BASE, FLASH_RST_PIN, 0);
@@ -72,8 +57,11 @@ void WP_High(void)
 
 void flash_port_assign(void)
 {
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\nFL3");
+#endif
 #ifndef HARD_FLASH_SPI
-    SSIDisable(FLASH_SPI_BASE);
+    // SSIDisable(FLASH_SPI_BASE);
     GPIOPinTypeGPIOOutput(FLASH_SPI_PORT_BASE,FLASH_MOSI_PIN);
     GPIOPinTypeGPIOOutput(FLASH_SPI_PORT_BASE,FLASH_CLK_PIN);
     GPIOPinTypeGPIOInput(FLASH_SPI_PORT_BASE,FLASH_MISO_PIN);
@@ -86,11 +74,14 @@ void flash_port_assign(void)
     //GPIOPinWrite(FLASH_SPI_PORT_BASE, FLASH_CLK_PIN | FLASH_MOSI_PIN, 0);
     GPIOPinWrite(FLASH_PORT_BASE, FLASH_CS_PIN | FLASH_WP_PIN, 0);
     GPIOPinWrite(FLASH_PORT_BASE,FLASH_RST_PIN,FLASH_RST_PIN);
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\nFL4");
+#endif
 }
 
 void init_flash_pins(void)
 {
-    SSIDisable(FLASH_SPI_BASE);
+    // SSIDisable(FLASH_SPI_BASE);
     GPIOPinTypeGPIOOutput(FLASH_SPI_PORT_BASE,FLASH_MOSI_PIN);
     GPIOPinTypeGPIOOutput(FLASH_SPI_PORT_BASE,FLASH_CLK_PIN);
     GPIOPinTypeGPIOInput(FLASH_SPI_PORT_BASE,FLASH_MISO_PIN);
@@ -98,12 +89,14 @@ void init_flash_pins(void)
 
 int flashInit(void)
 {
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\nFL2");
+#endif
     //Portassign();        //ADD BY ROHIT
     flash_port_assign();
 
-
 #ifdef DEBUG_FLASH_INIT
-    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\n portassi");
+    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\nFLinit");
 #endif
 #if 1
     CE_High();           //ADD BY ROHIT
@@ -134,29 +127,30 @@ int flashInit(void)
 #endif
 #endif  //#if 0
     return updateFlashCurrAddr();
-    //return 1;
+    // return 1;
 }
 
-// void addDummyChargingLogs(unsigned int no_of_logs)   //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
-// {
-//     unsigned int i=0;
-//     uint8_t dummy_id[7] = {0x9A, 0x0B, 0x54, 0x1C, 0x00, 0x00, 0x00};
-//     FL_char_data.reservation_id=2;
-//     FL_char_data.EVT_type=CHARGING_START;
-//     FL_char_data.Reason=REA_DUMMY;
-//     FL_char_data.connector_id='1';
-//     memcpy(&FL_char_data.Id_tag,dummy_id,sizeof(FL_char_data.Id_tag));
-//     vMAIN_DelayMS(1000);
+#if 0   //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
+void addDummyChargingLogs(unsigned int no_of_logs)   
+{
+    unsigned int i=0;
+    uint8_t dummy_id[7] = {0x9A, 0x0B, 0x54, 0x1C, 0x00, 0x00, 0x00};
+    FL_char_data.reservation_id=2;
+    FL_char_data.EVT_type=CHARGING_START;
+    FL_char_data.Reason=REA_DUMMY;
+    FL_char_data.connector_id='1';
+    memcpy(&FL_char_data.Id_tag,dummy_id,sizeof(FL_char_data.Id_tag));
+    vMAIN_DelayMS(1000);
 
-//     for(i=0;i<no_of_logs;i++)
-//     {
-//         FL_char_data.meter_value=rand()%(1000)+(totalizer.system_totalizer*1000+totalizer.system_totalizer_dp);
-//         // get_present_time(&FL_char_data.time_stamp);  //PP (24-04-24) commenting this till I have'nt implemented RTC
-//         FlashWriteChargeEvents();
-//         vMAIN_DelayMS(1);
+    for(i=0;i<no_of_logs;i++)
+    {
+        FL_char_data.meter_value=rand()%(1000)+(totalizer.system_totalizer*1000+totalizer.system_totalizer_dp);
+        // get_present_time(&FL_char_data.time_stamp);  //PP (24-04-24) commenting this till I have'nt implemented RTC
+        FlashWriteChargeEvents();
+        vMAIN_DelayMS(1);
 
-//     }
-// }
+    }
+}
 
 #ifdef OFFLINE_MODE_EN
 void flashClrFreqUpdLogs(void)
@@ -221,6 +215,87 @@ void flashClrChargingLogs(void)
         WBPR(0);
 #endif
         addr += SECTOR_SIZE;
+    }
+}
+#endif  // if 0
+
+void flashClrTR_Logs(void)
+{
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(UART_PC, "CTR");
+#endif  //DEBUG_FLASH_INIT
+
+    unsigned int sectors_to_erase = ((FL_MAX_TLOG_ADDR - FL_TLOG_LEN) / SECTOR_SIZE) + 1;
+    unsigned long addr = FL_MAX_TLOG_ADDR;
+
+    while(sectors_to_erase--)
+    {
+#ifdef FLASH_WP_ENABLE
+        remove_block_protection();
+#endif
+        WREN();
+        Sector_Erase(addr);
+        Wait_Busy();
+        WRDI();             // HJ 29-12-2015    // Write Disable
+#ifdef FLASH_WP_ENABLE
+        WBPR(0);
+#endif
+        addr += SECTOR_SIZE;
+    }
+}
+
+void flashClrFreqUpdLogs(void)
+{
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(UART_PC, "CFU");
+#endif  //DEBUG_FLASH_INIT
+
+    unsigned int sectors_to_erase = ((FL_FREQ_UPD_DATA_MAX_ADDR - FL_FREQ_UPD_DATA_START_ADDR) / SECTOR_SIZE) + 1;
+    unsigned long addr = FL_FREQ_UPD_DATA_START_ADDR;
+
+    while(sectors_to_erase--)
+    {
+#ifdef FLASH_WP_ENABLE
+        remove_block_protection();
+#endif
+        WREN();
+        Sector_Erase(addr);
+        Wait_Busy();
+        WRDI();             // HJ 29-12-2015    // Write Disable
+#ifdef FLASH_WP_ENABLE
+        WBPR(0);
+#endif
+        addr += SECTOR_SIZE;
+    }
+}
+
+void addDummyFL_TelecomLogs(unsigned int no_of_logs)
+{
+    unsigned int i = 0;
+    FL_log_data_t dummy_FL_Log;
+    memset(&dummy_FL_Log, 0, sizeof(FL_log_data_t));
+
+    dummy_FL_Log.ram_data.ram_ADC.AC_Voltage = 260000;
+    dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage = 12000;
+    dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = 12000;
+    dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = 500;
+    dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = 500;
+    dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+    dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = 30000;
+    dummy_FL_Log.ram_data.ram_alarms = 0;
+    dummy_FL_Log.ram_data.Status = 0;
+    dummy_FL_Log.ram_data.Latitude = 26263863;
+    dummy_FL_Log.ram_data.Longitude = 73008957;
+    dummy_FL_Log.ram_data.supply_mode_R1 = 24;
+    dummy_FL_Log.ram_data.supply_mode_R2 = 30;
+
+    vMAIN_DelayMS(1000);    //disable WDT while testing this
+
+    for(i=0;i<no_of_logs;i++)
+    {
+        get_present_time(&dummy_FL_Log.ram_data.ram_time);
+        flashWriteTR();
+        vMAIN_DelayMS(1);
     }
 }
 
@@ -302,7 +377,7 @@ void CE_High()
 void CE_Low()
 {
     //flash_port_assign();    //
-    init_flash_pins();
+    // init_flash_pins();
     GPIOPinWrite(FLASH_PORT_BASE,FLASH_CS_PIN,0);
     //FLASH_PORT_BASE&=~(1<<FLASH_CS_PIN);
     //_delay_ms(1);                     /* clear CE low */
@@ -359,8 +434,9 @@ void readContToBuff(unsigned long Dst, unsigned int no_bytes, char* buff)
 
 void flashEraseMaster(void)
 {
-#ifdef DEBUG_CODE_HANG
-    UWriteString((char*)"FEM:",UART_PC);
+#ifdef DEBUG_PASS
+    // UWriteString((char*)"FEM:",UART_PC);
+    vUART_SendStr(UART_PC, "\nFEM");
 #endif
     unsigned long addr;
     for(addr = FL_MR_START_ADDR ; addr < FL_MR_MAX_ADDR ; addr+=SECTOR_SIZE)
@@ -434,8 +510,9 @@ void flashEraseSector(unsigned long addr, unsigned long max_addr)
 
 void flashEraseBackup(void)     //Anand
 {
-#ifdef DEBUG_CODE_HANG
-UWriteString((char*)"FEB:",UART_PC);
+#ifdef DEBUG_PASS
+    // UWriteString((char*)"FEB:",UART_PC);
+    vUART_SendStr(UART_PC, "\nFEB");
 #endif
 unsigned long addr;
     for(addr = FL_MR_BKP_ADDR ; addr < FL_MR_BKP_MAX_ADDR ; addr+=SECTOR_SIZE)
@@ -578,7 +655,8 @@ void Wait_Busy()
           flashSwReset();
 #endif
 #ifdef DEBUG_SPCL_FLASH
-          UWriteString((char *)"\nSPI TIMEOUT", UART_PC);
+        //   UWriteString((char *)"\nSPI TIMEOUT", UART_PC);
+        vUART_SendStr(UART_PC, "\nSPItout");
 #endif
           break;
       }
@@ -867,5 +945,5 @@ void Chip_Erase()
     CE_High();              /* disable device */
 }
 
-#endif
+#endif  //FLASH_EN
 

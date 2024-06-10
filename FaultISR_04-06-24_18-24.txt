@@ -1,0 +1,218 @@
+Core Registers		Core Registers	
+	PC	0x00010330	Program Counter [Core]	
+	SP	0x20002920	General Purpose Register 13 - Stack Pointer [Core]	
+	LR	0xFFFFFFF9	General Purpose Register 14 - Link Register [Core]	
+	xPSR	0x01000003	Stores the status of interrupt enables and critical processor status signals [Core]	
+		N	0	Stores bit 31 of the result of the instruction. In other words stores the sign of the number	
+		Z	0	Is set to 1 if the result of the operation is zero else stays 0	
+		C	0	Stores the value of the carry bit if it occurred in an addition or the borrow bit in a subtraction. In a shift stores the last bit shifted out.	
+		V	0	Set to 1 if an overflow occurred	
+		Q	0	Indicates whether an overflow/saturation occurred in the enhanced DSP instructions	
+		ICI_IT_2	00	ICI/IT - bit26-bit25	
+		T	1	Thumb State	
+		RESV	00000000	Reserved	
+		ICI_IT_1	000000	ICI/IT - bit15-bit10	
+		RESV2	0	Reserved	
+		EXCEPTION	000000011	Exception Number	
+	R0	0x00000000	General Purpose Register 0 [Core]	
+	R1	0x00000000	General Purpose Register 1 [Core]	
+	R2	0x00000000	General Purpose Register 2 [Core]	
+	R3	0x00000000	General Purpose Register 3 [Core]	
+	R4	0x00000000	General Purpose Register 4 [Core]	
+	R5	0x00000000	General Purpose Register 5 [Core]	
+	R6	0x00000000	General Purpose Register 6 [Core]	
+	R7	0x00000000	General Purpose Register 7 [Core]	
+	R8	0x00000000	General Purpose Register 8 [Core]	
+	R9	0x00000000	General Purpose Register 9 [Core]	
+	R10	0x00000000	General Purpose Register 10 [Core]	
+	R11	0x00000000	General Purpose Register 11 [Core]	
+	R12	0x00000000	General Purpose Register 12 [Core]	
+	R13	0x20002920	General Purpose Register 13 [Core]	
+	R14	0xFFFFFFF9	General Purpose Register 14 [Core]	
+	MSP	0x20002920	MSP Register [Core]	
+	PSP	0x00000000	PSP Register [Core]	
+	DSP	0x00000000	DSP Register [Core]	
+	CTRL_FAULT_BASE_PRI	0x00000000	CM4 Special Registers [Core]	
+WATCHDOG0		Watchdog Timer register offsets	
+WATCHDOG1		Watchdog Timer register offsets	
+GPIO_PORTA		GPIO register offsets	
+GPIO_PORTB		GPIO register offsets	
+GPIO_PORTC		GPIO register offsets	
+GPIO_PORTD		GPIO register offsets	
+SSI0		SSI register offsets	
+SSI1		SSI register offsets	
+SSI2		SSI register offsets	
+SSI3		SSI register offsets	
+UART0		UART register offsets	
+UART1		UART register offsets	
+UART2		UART register offsets	
+UART3		UART register offsets	
+UART4		UART register offsets	
+UART5		UART register offsets	
+UART6		UART register offsets	
+UART7		UART register offsets	
+I2C0		I2C register offsets	
+I2C1		I2C register offsets	
+I2C2		I2C register offsets	
+I2C3		I2C register offsets	
+GPIO_PORTE		GPIO register offsets	
+GPIO_PORTF		GPIO register offsets	
+GPIO_PORTG		GPIO register offsets	
+GPIO_PORTH		GPIO register offsets	
+TIMER0		Timer register offsets	
+TIMER1		Timer register offsets	
+TIMER2		Timer register offsets	
+TIMER3		Timer register offsets	
+TIMER4		Timer register offsets	
+TIMER5		Timer register offsets	
+WTIMER0		Timer register offsets	
+WTIMER1		Timer register offsets	
+ADC0		ADC register offsets	
+ADC1		ADC register offsets	
+COMP		Comparator register offsets	
+GPIO_PORTJ		GPIO register offsets	
+CAN0		CAN register offsets	
+WTIMER2		Timer register offsets	
+WTIMER3		Timer register offsets	
+WTIMER4		Timer register offsets	
+WTIMER5		Timer register offsets	
+USB0		Univeral Serial Bus register offsets	
+GPIO_PORTA_AHB		GPIO register offsets	
+GPIO_PORTB_AHB		GPIO register offsets	
+GPIO_PORTC_AHB		GPIO register offsets	
+GPIO_PORTD_AHB		GPIO register offsets	
+GPIO_PORTE_AHB		GPIO register offsets	
+GPIO_PORTF_AHB		GPIO register offsets	
+GPIO_PORTG_AHB		GPIO register offsets	
+GPIO_PORTH_AHB		GPIO register offsets	
+GPIO_PORTJ_AHB		GPIO register offsets	
+GPIO_PORTK		GPIO register offsets	
+EEPROM		EEPROM register offsets	
+I2C4		I2C register offsets	
+I2C5		I2C register offsets	
+SYSEXC		System Exception Module register addresses	
+HIB		Hibernation module register addresses	
+FLASH_CTRL		FLASH register offsets	
+SYSCTL		System Control register addresses	
+UDMA		Micro Direct Memory Access register addresses	
+NVIC		NVIC register addresses	
+	NVIC_ACTLR	0x00000000	Auxiliary Control [Memory Mapped]	
+	NVIC_ST_CTRL	0x00000000	SysTick Control and Status Register [Memory Mapped]	
+	NVIC_ST_RELOAD	0x00000000	SysTick Reload Value Register [Memory Mapped]	
+	NVIC_ST_CURRENT	0x00000000	SysTick Current Value Register [Memory Mapped]	
+	NVIC_EN0	0x00000000	Interrupt 0-31 Set Enable [Memory Mapped]	
+	NVIC_EN1	0x00000000	Interrupt 32-63 Set Enable [Memory Mapped]	
+	NVIC_EN2	0x00000000	Interrupt 64-95 Set Enable [Memory Mapped]	
+	NVIC_EN3	0x00000000	Interrupt 96-127 Set Enable [Memory Mapped]	
+	NVIC_EN4	0x00000000	Interrupt 128-159 Set Enable [Memory Mapped]	
+	NVIC_DIS0	0x00000000	Interrupt 0-31 Clear Enable [Memory Mapped]	
+	NVIC_DIS1	0x00000000	Interrupt 32-63 Clear Enable [Memory Mapped]	
+	NVIC_DIS2	0x00000000	Interrupt 64-95 Clear Enable [Memory Mapped]	
+	NVIC_DIS3	0x00000000	Interrupt 96-127 Clear Enable [Memory Mapped]	
+	NVIC_DIS4	0x00000000	Interrupt 128-159 Clear Enable [Memory Mapped]	
+	NVIC_PEND0	0x00000000	Interrupt 0-31 Set Pending [Memory Mapped]	
+	NVIC_PEND1	0x00000000	Interrupt 32-63 Set Pending [Memory Mapped]	
+	NVIC_PEND2	0x00000000	Interrupt 64-95 Set Pending [Memory Mapped]	
+	NVIC_PEND3	0x00000000	Interrupt 96-127 Set Pending [Memory Mapped]	
+	NVIC_PEND4	0x00000000	Interrupt 128-159 Set Pending [Memory Mapped]	
+	NVIC_UNPEND0	0x00000000	Interrupt 0-31 Clear Pending [Memory Mapped]	
+	NVIC_UNPEND1	0x00000000	Interrupt 32-63 Clear Pending [Memory Mapped]	
+	NVIC_UNPEND2	0x00000000	Interrupt 64-95 Clear Pending [Memory Mapped]	
+	NVIC_UNPEND3	0x00000000	Interrupt 96-127 Clear Pending [Memory Mapped]	
+	NVIC_UNPEND4	0x00000000	Interrupt 128-159 Clear Pending [Memory Mapped]	
+	NVIC_ACTIVE0	0x00000000	Interrupt 0-31 Active Bit [Memory Mapped]	
+	NVIC_ACTIVE1	0x00000000	Interrupt 32-63 Active Bit [Memory Mapped]	
+	NVIC_ACTIVE2	0x00000000	Interrupt 64-95 Active Bit [Memory Mapped]	
+	NVIC_ACTIVE3	0x00000000	Interrupt 96-127 Active Bit [Memory Mapped]	
+	NVIC_ACTIVE4	0x00000000	Interrupt 128-159 Active Bit [Memory Mapped]	
+	NVIC_PRI0	0x00000000	Interrupt 0-3 Priority [Memory Mapped]	
+	NVIC_PRI1	0x00000000	Interrupt 4-7 Priority [Memory Mapped]	
+	NVIC_PRI2	0x00000000	Interrupt 8-11 Priority [Memory Mapped]	
+	NVIC_PRI3	0x00000000	Interrupt 12-15 Priority [Memory Mapped]	
+	NVIC_PRI4	0x00000000	Interrupt 16-19 Priority [Memory Mapped]	
+	NVIC_PRI5	0x00000000	Interrupt 20-23 Priority [Memory Mapped]	
+	NVIC_PRI6	0x00000000	Interrupt 24-27 Priority [Memory Mapped]	
+	NVIC_PRI7	0x00000000	Interrupt 28-31 Priority [Memory Mapped]	
+	NVIC_PRI8	0x00000000	Interrupt 32-35 Priority [Memory Mapped]	
+	NVIC_PRI9	0x00000000	Interrupt 36-39 Priority [Memory Mapped]	
+	NVIC_PRI10	0x00000000	Interrupt 40-43 Priority [Memory Mapped]	
+	NVIC_PRI11	0x00000000	Interrupt 44-47 Priority [Memory Mapped]	
+	NVIC_PRI12	0x00000000	Interrupt 48-51 Priority [Memory Mapped]	
+	NVIC_PRI13	0x00000000	Interrupt 52-55 Priority [Memory Mapped]	
+	NVIC_PRI14	0x00000000	Interrupt 56-59 Priority [Memory Mapped]	
+	NVIC_PRI15	0x00000000	Interrupt 60-63 Priority [Memory Mapped]	
+	NVIC_PRI16	0x00000000	Interrupt 64-67 Priority [Memory Mapped]	
+	NVIC_PRI17	0x00000000	Interrupt 68-71 Priority [Memory Mapped]	
+	NVIC_PRI18	0x00000000	Interrupt 72-75 Priority [Memory Mapped]	
+	NVIC_PRI19	0x00000000	Interrupt 76-79 Priority [Memory Mapped]	
+	NVIC_PRI20	0x00000000	Interrupt 80-83 Priority [Memory Mapped]	
+	NVIC_PRI21	0x00000000	Interrupt 84-87 Priority [Memory Mapped]	
+	NVIC_PRI22	0x00000000	Interrupt 88-91 Priority [Memory Mapped]	
+	NVIC_PRI23	0x00000000	Interrupt 92-95 Priority [Memory Mapped]	
+	NVIC_PRI24	0x00000000	Interrupt 96-99 Priority [Memory Mapped]	
+	NVIC_PRI25	0x00000000	Interrupt 100-103 Priority [Memory Mapped]	
+	NVIC_PRI26	0x00000000	Interrupt 104-107 Priority [Memory Mapped]	
+	NVIC_PRI27	0x00000000	Interrupt 108-111 Priority [Memory Mapped]	
+	NVIC_PRI28	0x00000000	Interrupt 112-115 Priority [Memory Mapped]	
+	NVIC_PRI29	0x00000000	Interrupt 116-119 Priority [Memory Mapped]	
+	NVIC_PRI30	0x00000000	Interrupt 120-123 Priority [Memory Mapped]	
+	NVIC_PRI31	0x00000000	Interrupt 124-127 Priority [Memory Mapped]	
+	NVIC_PRI32	0x00000000	Interrupt 128-131 Priority [Memory Mapped]	
+	NVIC_PRI33	0x00000000	Interrupt 132-135 Priority [Memory Mapped]	
+	NVIC_PRI34	0x00000000	Interrupt 136-139 Priority [Memory Mapped]	
+	NVIC_CPUID	0x410FC241	CPU ID Base [Memory Mapped]	
+	NVIC_INT_CTRL	0x00000803	Interrupt Control and State [Memory Mapped]	
+	NVIC_VTABLE	0x00000000	Vector Table Offset [Memory Mapped]	
+	NVIC_APINT	0xFA050000	Application Interrupt and Reset Control [Memory Mapped]	
+	NVIC_SYS_CTRL	0x00000000	System Control [Memory Mapped]	
+	NVIC_CFG_CTRL	0x00000200	Configuration and Control [Memory Mapped]	
+	NVIC_SYS_PRI1	0x00000000	System Handler Priority 1 [Memory Mapped]	
+	NVIC_SYS_PRI2	0x00000000	System Handler Priority 2 [Memory Mapped]	
+	NVIC_SYS_PRI3	0x00000000	System Handler Priority 3 [Memory Mapped]	
+	NVIC_SYS_HND_CTRL	0x00000000	System Handler Control and State [Memory Mapped]	
+	NVIC_FAULT_STAT	0x00080000	Configurable Fault Status [Memory Mapped]	
+		NVIC_FAULT_STAT_DIV0	0	Divide-by-Zero Usage Fault	
+		NVIC_FAULT_STAT_UNALIGN	0	Unaligned Access Usage Fault	
+		NVIC_FAULT_STAT_NOCP	1	No Coprocessor Usage Fault	
+		NVIC_FAULT_STAT_INVPC	0	Invalid PC Load Usage Fault	
+		NVIC_FAULT_STAT_INVSTAT	0	Invalid State Usage Fault	
+		NVIC_FAULT_STAT_UNDEF	0	Undefined Instruction Usage Fault	
+		NVIC_FAULT_STAT_BFARV	0	Bus Fault Address Register Valid	
+		NVIC_FAULT_STAT_BLSPERR	0	Bus Fault on Floating-Point Lazy State Preservation	
+		NVIC_FAULT_STAT_BSTKE	0	Stack Bus Fault	
+		NVIC_FAULT_STAT_BUSTKE	0	Unstack Bus Fault	
+		NVIC_FAULT_STAT_IMPRE	0	Imprecise Data Bus Error	
+		NVIC_FAULT_STAT_PRECISE	0	Precise Data Bus Error	
+		NVIC_FAULT_STAT_IBUS	0	Instruction Bus Error	
+		NVIC_FAULT_STAT_MMARV	0	Memory Management Fault Address Register Valid	
+		NVIC_FAULT_STAT_MLSPERR	0	Memory Management Fault on Floating-Point Lazy State Preservation	
+		NVIC_FAULT_STAT_MSTKE	0	Stack Access Violation	
+		NVIC_FAULT_STAT_MUSTKE	0	Unstack Access Violation	
+		NVIC_FAULT_STAT_DERR	0	Data Access Violation	
+		NVIC_FAULT_STAT_IERR	0	Instruction Access Violation	
+	NVIC_HFAULT_STAT	0x40000000	Hard Fault Status [Memory Mapped]	
+	NVIC_DEBUG_STAT	0x00000009	Debug Status Register [Memory Mapped]	
+	NVIC_MM_ADDR	0xE000EDF8	Memory Management Fault Address [Memory Mapped]	
+	NVIC_FAULT_ADDR	0xE000EDF8	Bus Fault Address [Memory Mapped]	
+	NVIC_CPAC	0x00000000	Coprocessor Access Control [Memory Mapped]	
+	NVIC_MPU_TYPE	0x00000800	MPU Type [Memory Mapped]	
+	NVIC_MPU_CTRL	0x00000000	MPU Control [Memory Mapped]	
+	NVIC_MPU_NUMBER	0x00000000	MPU Region Number [Memory Mapped]	
+	NVIC_MPU_BASE	0x00000000	MPU Region Base Address [Memory Mapped]	
+	NVIC_MPU_ATTR	0x00000000	MPU Region Attribute and Size [Memory Mapped]	
+	NVIC_MPU_BASE1	0x00000000	MPU Region Base Address Alias 1 [Memory Mapped]	
+	NVIC_MPU_ATTR1	0x00000000	MPU Region Attribute and Size Alias 1 [Memory Mapped]	
+	NVIC_MPU_BASE2	0x00000000	MPU Region Base Address Alias 2 [Memory Mapped]	
+	NVIC_MPU_ATTR2	0x00000000	MPU Region Attribute and Size Alias 2 [Memory Mapped]	
+	NVIC_MPU_BASE3	0x00000000	MPU Region Base Address Alias 3 [Memory Mapped]	
+	NVIC_MPU_ATTR3	0x00000000	MPU Region Attribute and Size Alias 3 [Memory Mapped]	
+	NVIC_DBG_CTRL	0x00030003	Debug Control and Status Reg [Memory Mapped]	
+	NVIC_DBG_CTRL	0x00030003	Debug Control and Status Reg [Memory Mapped]	
+	NVIC_DBG_XFER	0x00000000	Debug Core Reg. Transfer Select [Memory Mapped]	
+	NVIC_DBG_DATA	0x00000000	Debug Core Register Data [Memory Mapped]	
+	NVIC_DBG_INT	0x01000001	Debug Reset Interrupt Control [Memory Mapped]	
+	NVIC_SW_TRIG	0x00000000	Software Trigger Interrupt [Memory Mapped]	
+	NVIC_FPCC	0xC0000000	Floating-Point Context Control [Memory Mapped]	
+	NVIC_FPCA	0x00000000	Floating-Point Context Address [Memory Mapped]	
+	NVIC_FPDSC	0x00000000	Floating-Point Default Status Control [Memory Mapped]	
+FPU		Cortex M4 FPU Registers	

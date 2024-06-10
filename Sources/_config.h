@@ -57,12 +57,14 @@
 
 // #define CHECKSTR_EXP
 
-// #define ETHERNET_EN
+#define ETHERNET_EN
 
-#define ENABLE_WDT_RESET
+// #define ENABLE_WDT_RESET
 
 #ifdef ENABLE_WDT_RESET
 //#define WDT_IRQ_MODE
 #endif  //ENABLE_WDT_RESET
+
+#define USE_FLASH_FOR_FREQ_UPD_DATA //Move frequently updated data from eeprom to flash
 
 #endif /* SOURCES__CONFIG_H_ */

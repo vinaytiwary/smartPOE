@@ -33,6 +33,15 @@ Sources/flashCore.obj: ../Sources/flashCore.h
 Sources/flashCore.obj: ../Sources/HW_pins.h
 Sources/flashCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/flashCore.obj: ../Sources/flash_logger.h
+Sources/flashCore.obj: ../Sources/main.h
+Sources/flashCore.obj: ../Sources/IO_cntrl.h
+Sources/flashCore.obj: ../Sources/ADC_Core.h
+Sources/flashCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
+Sources/flashCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/flashCore.obj: ../Sources/Clock.h
+Sources/flashCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h
+Sources/flashCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h
+Sources/flashCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h
 Sources/flashCore.obj: ../Sources/SPI.h
 Sources/flashCore.obj: ../Sources/_debug.h
 Sources/flashCore.obj: ../Sources/UartCore.h
@@ -103,6 +112,24 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/ssi.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 
 ../Sources/flash_logger.h:
+
+../Sources/main.h:
+
+../Sources/IO_cntrl.h:
+
+../Sources/ADC_Core.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
+
+../Sources/Clock.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 
 ../Sources/SPI.h:
 

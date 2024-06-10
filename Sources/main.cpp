@@ -41,6 +41,8 @@
 #include "_common.h"
 #include "_debug.h"
 #include "WDT.h"
+#include "flashCore.h"
+#include "flash_logger.h"
 
 #ifdef ETHERNET_EN
 #include "Sources/UIPEthernet/UIPEthernet.h"
@@ -81,6 +83,7 @@ extern sys_mode_t System_mode;
 char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 
 unsigned int upload_time = 0;
+unsigned int save_offline_time = 0;
 
 int main(void)
 {
@@ -90,11 +93,13 @@ int main(void)
     vMAIN_InitClockPeripherals();
 	init_config();
 
+    // flashInit();
+
 #if RTC_SIMULATOR
-		//update_date_time();
+    //update_date_time();
 #elif defined(RTC_ENABLE)
-		get_present_time(&ram_data.ram_time);
-		// update_rtc(&dummyDateBuff[0], 0);
+    get_present_time(&ram_data.ram_time);
+    // update_rtc(&dummyDateBuff[0], 0);
 #endif
     
 #ifdef  ENABLE_WDT_RESET
@@ -146,6 +151,7 @@ int main(void)
 
 			//vInput_PollingRead();
             // if(!System_mode)
+            if(get_system_state() != CONFIG_MODE)
             {
 #ifndef ETHERNET_EN
                 // TCP_Handler();
@@ -182,30 +188,42 @@ int main(void)
 			update_ram_data();
 			Data_Screen_lcd();
 
-            if(++upload_time >= 30)
-			{
-				upload_time = 0;	
-                if(!get_pending_request() && getREQmode() == NOT_AVBL)
+            if(get_system_state() != CONFIG_MODE)
+            {
+                if(++upload_time >= 30)
                 {
-                    set_pending_request(true);
-                    setServerReqType(NO_REQ);
-                    setClientMSGType(SCHEDULED_LOG);
+                    upload_time = 0;	
+                    if(!get_pending_request() && getREQmode() == NOT_AVBL)
+                    {
+                        set_pending_request(true);
+                        setServerReqType(NO_REQ);
+                        setClientMSGType(SCHEDULED_LOG);
 #ifdef DEBUG_SERVER_QUERY
-                    vUART_SendStr(DEBUG_UART_BASE, "\nS_logs");
+                        vUART_SendStr(DEBUG_UART_BASE, "\nS_logs");
 #endif  //DEBUG_SERVER_QUERY
+                    }
+                    else
+                    {
+#ifdef DEBUG_SERVER_QUERY
+                        vUART_SendStr(DEBUG_UART_BASE, "\nREQ_p=");
+                        vUART_SendInt(DEBUG_UART_BASE, getServerReqType());
+                        vUART_SendChr(DEBUG_UART_BASE, ',');
+                        vUART_SendInt(DEBUG_UART_BASE, getClientMSGType());
+                        vUART_SendChr(DEBUG_UART_BASE, ',');
+                        vUART_SendInt(DEBUG_UART_BASE, getREQmode());
+#endif  //DEBUG_SERVER_QUERY
+                    }
                 }
-				else
+
+                if(++save_offline_time >= SAVE_OFFLINE_TIME)
                 {
-#ifdef DEBUG_SERVER_QUERY
-                    vUART_SendStr(DEBUG_UART_BASE, "\nREQ_p=");
-                    vUART_SendInt(DEBUG_UART_BASE, getServerReqType());
-                    vUART_SendChr(DEBUG_UART_BASE, ',');
-                    vUART_SendInt(DEBUG_UART_BASE, getClientMSGType());
-                    vUART_SendChr(DEBUG_UART_BASE, ',');
-                    vUART_SendInt(DEBUG_UART_BASE, getREQmode());
-#endif  //DEBUG_SERVER_QUERY
+                    save_offline_time = 0;
+                    if(!System_mode)
+                    {
+                        save_OfflineTelecomData();
+                    }
                 }
-			}
+            } 
 		}
 
         tx_pending_dataPC();
@@ -328,16 +346,24 @@ void vMAIN_InitClockPeripherals(void)
 	vPERIPH_SystickInit();
 	vPERIPH_UARTInit();
 	vADC0Init();
-#if defined(FLASH_EN)
-	//PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
-	//PP (24-04-24) The flash test project is on hold. It will be resumed after a few more functionalities have been have been tested: LCD, RTC, E2P etc
-	// flashInit();
-#endif
+// #if defined(FLASH_EN)
+// 	//PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
+// 	//PP (24-04-24) The flash test project is on hold. It will be resumed after a few more functionalities have been have been tested: LCD, RTC, E2P etc
+// 	flashInit();
+// #endif  //FLASH_EN
 	vRTCI2CInit(); 
 	vPERIPH_E2PInit();
 #ifdef ETHERNET_EN
     vETHERNETSPIInit();
 #endif  //ETHERNET_EN
+#ifdef DEBUG_FLASH_INIT
+    vUART_SendStr(DEBUG_UART_BASE, (uint8_t *)"\nFL1");
+#endif
+#if defined(FLASH_EN)
+	//PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
+	//PP (24-04-24) The flash test project is on hold. It will be resumed after a few more functionalities have been have been tested: LCD, RTC, E2P etc
+	flashInit();
+#endif  //FLASH_EN
 
 	memset(&ram_data, 0, sizeof(ram_data_t));
 
@@ -443,7 +469,8 @@ void write_defaults(uint32_t addr)
             memset(&e2p_device_info, 0, sizeof(e2p_device_info_t));
             // memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
             // memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
-            memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
+            // memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
+            memcpy(e2p_device_info.device_id, "TELECOM333", strlen((const char*)"TELECOM333"));
             e2p_write_device_cfg();
 /////////////////////////////////////////////////////////////////////FixLocation/////////////////////////////////////////////////////////////////////////////////
 
@@ -470,6 +497,11 @@ void init_config(void)
     // DFMC_EraseChipTest(0);
     write_defaults(0xFF);
     cloud_config_data();
+
+    clear_logs();
+#ifdef FLASH_EN
+    clear_flash();
+#endif
 #else
     if(e2p_read_voltage_config()) //PP 09-02-24 commented for testing on BOARD A which has no relay ckt correction atm //PP 07-02-24: commented for testing  //PP commented on 03-02-24 for relay testing tempporarily
     {

@@ -15,6 +15,11 @@
 #include "ADC_Core.h"
 #include "Clock.h"
 
+#define MINUTE		          (60)
+
+// #define SAVE_OFFLINE_TIME		(30 * MINUTE)
+#define SAVE_OFFLINE_TIME		(1 * MINUTE)
+
 typedef enum
 {
   EARTH_FAULT,

@@ -22,81 +22,51 @@
 
 #define FLASH_READ_TIMEOUT      (100)
 #define SECTOR_SIZE       ((unsigned long)0x1000)
+
+#define MAX_NUM_OF_TELECOM_LOGS	(0x2D77)	//(11640-1) = 11639 or 0x2D77.
+
+// #ifdef OFFLINE_MODE_EN
+// #define MR_BR_UNUSED_LEN (54)
+// // #define MR_BR_UNUSED_LEN (38)
+// #else
+// #define MR_BR_UNUSED_LEN (54)
+// // #define MR_BR_UNUSED_LEN (50)
+// #endif
+
 #ifdef OFFLINE_MODE_EN
-#define MR_BR_UNUSED_LEN (38)
+#define MR_BR_UNUSED_LEN (22)
+// #define MR_BR_UNUSED_LEN (38)
 #else
-#define MR_BR_UNUSED_LEN (50)
+#define MR_BR_UNUSED_LEN (22)
+// #define MR_BR_UNUSED_LEN (50)
 #endif
 
-#define TOTALIZER_SIZE          (8)
-#define TOTALIZER_MAX_ENTRIES   (100)
-#define TOTALIZER_START_ADDR    ((unsigned long)0x0)
-#define TOTALIZER_MAX_ADDR      ((unsigned long)(TOTALIZER_START_ADDR + (TOTALIZER_SIZE * TOTALIZER_MAX_ENTRIES)))  //0x320
+#define FL_MR_BR_LEN		(32)								/* Master/Backup Packet Length */
 
-#define CHG_PROFILE_SIZE         (0x40)
-#define CHG_PROFILE_MAX_ENTRIES   (0x7F)
-#define CHG_PROFILE_START_ADDR    ((unsigned long)0x1000)
-#define CHG_PROFILE_MAX_ADDR      ((unsigned long)(CHG_PROFILE_START_ADDR + (CHG_PROFILE_SIZE * CHG_PROFILE_MAX_ENTRIES)))    //2FC0
+#define FL_MAX_MR_ENTRIES	(200)
+#define FL_MR_START_ADDR	((unsigned long)0x00)
+#define FL_MR_MAX_ADDR		(FL_MR_START_ADDR + (FL_MAX_MR_ENTRIES * FL_MR_BR_LEN))							//0x1900
 
-#define CHG_SCH_PERIOD_SIZE         (0x10)
-#define CHG_SCH_PERIOD_MAX_ENTRIES   (0x1FF)
-#define CHG_SCH_PERIOD_START_ADDR    ((unsigned long)0x3000)
-#define CHG_SCH_PERIOD_MAX_ADDR      ((unsigned long)(CHG_SCH_PERIOD_START_ADDR + (CHG_SCH_PERIOD_SIZE * CHG_SCH_PERIOD_MAX_ENTRIES)))    //4FF0
-#define FL_MR_BR_LEN        (64)                                /* Master/Backup Packet Length */
-#define FL_MAX_MR_ENTRIES   (100)
-#define FL_MR_START_ADDR    ((unsigned long)0x6000)
-#define FL_MR_MAX_ADDR      (FL_MR_START_ADDR + (FL_MAX_MR_ENTRIES * FL_MR_BR_LEN))//7900
+#define FL_MR_BKP_ADDR		((unsigned long)0x2000)
+#define FL_MR_BKP_MAX_ADDR	(FL_MR_BKP_ADDR + (FL_MAX_MR_ENTRIES * FL_MR_BR_LEN))							//0x3900
 
-#define FL_MR_BKP_ADDR      ((unsigned long)0x8000)
-#define FL_MR_BKP_MAX_ADDR  (FL_MR_BKP_ADDR + (FL_MAX_MR_ENTRIES * FL_MR_BR_LEN)) //9900
+#define FL_TLOG_LEN			(64)					//change from 32 to 64		//HJ 11-07-2017
+#define FL_TLOG_START_ADDR	((unsigned long)0x4000)
+#define FL_MAX_TLOG_ADDR	(((unsigned long)MAX_NUM_OF_TELECOM_LOGS * FL_TLOG_LEN) + FL_TLOG_START_ADDR)	//0xB9DC0
 
-#define FL_FREQ_UPD_DATA_SIZE           (16)
-#define FL_FREQ_UPD_DATA_MAX_ENTRIES    (100)
-#define FL_FREQ_UPD_DATA_START_ADDR     ((unsigned long)0xA000)       //Reserve one sector fto store circular buffer for frequently updated data
-#define FL_FREQ_UPD_DATA_MAX_ADDR       ((unsigned long)(FL_FREQ_UPD_DATA_START_ADDR + (FL_FREQ_UPD_DATA_SIZE * FL_FREQ_UPD_DATA_MAX_ENTRIES))) //A640
+//Frequently updated data moved from eeprom to flash // KP 20-4-2018
+#define FL_FREQ_UPD_DATA_SIZE			(16)
+#define FL_FREQ_UPD_DATA_MAX_ENTRIES	(100)
+#define FL_FREQ_UPD_DATA_START_ADDR		((unsigned long)0xBA000)		//Reserve one sector fto store circular buffer for frequently updated data
+#define FL_FREQ_UPD_DATA_MAX_ADDR		((unsigned long)(FL_FREQ_UPD_DATA_START_ADDR + (FL_FREQ_UPD_DATA_SIZE * FL_FREQ_UPD_DATA_MAX_ENTRIES)))		//0xBA640
 
-#define FL_CMD_LEN           (64)       //KOMAL
-#define MAX_NUM_OF_CMD_LOGS    (0x1388)//5000
-#define FL_CMD_START_ADDR    ((unsigned long)0xB000)
-#define FL_MAX_CMD_ADDR      (((unsigned long)MAX_NUM_OF_CMD_LOGS * FL_CMD_LEN) + FL_CMD_START_ADDR)//0x59200
-
-
-#define FL_CR_LEN           (64) //change from 32 to 64
-#define MAX_NUM_OF_CHAR_LOGS    (0x5DC)//(0x7FFF)
-#define FL_CR_START_ADDR    ((unsigned long)0x5A000)
-#define FL_MAX_CR_ADDR      (((unsigned long)MAX_NUM_OF_CHAR_LOGS * FL_CR_LEN) + FL_CR_START_ADDR)//0x71700
-
-#ifdef OFFLINE_MODE_EN
-
-#define FL_LOCAL_LIST_LEN          (32)
-#define FL_NUM_OF_LOCAL_LIST        (0xFF)
-
-#define FL_LOCAL_LIST_START_ADDR   ((unsigned long)0x72000)
-#define FL_LOCAL_LIST_MAX_ADDR     (((unsigned long)FL_NUM_OF_LOCAL_LIST * FL_LOCAL_LIST_LEN) + FL_LOCAL_LIST_START_ADDR)//0x73FE0(if FL_NUM_OF_LOCAL_LIST=24)
-
-#define FL_LOCAL_LIST_BKP_START_ADDR   ((unsigned long)0x74000)
-#define FL_LOCAL_LIST_BKP_MAX_ADDR     (((unsigned long)FL_NUM_OF_LOCAL_LIST * FL_LOCAL_LIST_LEN) + FL_LOCAL_LIST_BKP_START_ADDR)
-//75FE0(if FL_NUM_OF_LOCAL_LIST=24)
-#endif
-
-#define FL_HEX_PKT_LEN                  (0x40)
-#define FL_HEX_PKT_MAX_NUM              (unsigned long)(0x2000)
-#define FL_HEX_FILE_START_ADDR          ((unsigned long)0x300000)
-#define FL_MAX_HEX_FILE_ADDR            ((unsigned long)(FL_HEX_FILE_START_ADDR + (FL_HEX_PKT_LEN * FL_HEX_PKT_MAX_NUM)))//0x380000
-
-typedef struct                                                                                  //komal
+typedef struct
 {
-    unsigned char pkt_ser;                                                       //1
-    unsigned long curr_data_write_addr_charging_log;                             //4
-    unsigned long curr_upload_addr_charging_log;                                 //4
-    unsigned long transaction_id_charging_log;                                   //4
-#ifdef OFFLINE_MODE_EN
-    unsigned long curr_data_write_addr_cmd_log;                         //4
-    unsigned long curr_upload_addr_cmd_log;                             //4
-    unsigned long transaction_id_cmd_log;                               //4
-#endif
-    char dummy[MR_BR_UNUSED_LEN];                                                //38 or 50
-    char pkt_data_chksm;                                                         //1
+	unsigned char pkt_ser;
+	unsigned long curr_data_write_addr_telecom_log;
+	unsigned long curr_upload_addr_telecom_log;
+	char dummy[MR_BR_UNUSED_LEN];
+	char pkt_data_chksm;
 } __attribute__((packed)) MR_BR_t;
 
 void CS_Low(void);
@@ -140,12 +110,17 @@ void flashClrChargingLogs(void);
 void flashClrCmdLogs(void);
 void flashClrFreqUpdLogs(void);
 #endif
-void addDummyChargingLogs(unsigned int);
+
+void addDummyFL_TelecomLogs(unsigned int no_of_logs);
 
 void flashEraseMaster(void);                                //komal
 void flashEraseBackup(void);
 int updateFlashCurrAddr(void);
-#endif
+void flashClrTR_Logs(void);
+
+
+
+#endif	//FLASH_EN
 
 
 

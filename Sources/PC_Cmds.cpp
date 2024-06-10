@@ -21,6 +21,8 @@
 #include "E2P.h"
 #include "_debug.h"
 #include "Clock.h"
+#include "flashCore.h"
+#include "flash_logger.h"
 
 extern Rx_Buff_t  pc_uart_rx;
 extern Tx_Buff_t  pc_uart_tx;
@@ -518,6 +520,222 @@ void response(cmd_t cmd, int uart_no)
 			else
 			{
 				resp[0] = ERROR_INVALID_CMD;
+			}
+		}
+		break;
+
+		case FACTORY_RESET:
+		{
+			if(get_system_state() == CONFIG_MODE)
+			{
+				clear_logs();
+#ifdef FLASH_EN
+                clear_flash();
+#endif
+                write_defaults(0xFF);
+
+				vUART_SendStr(UART_PC, "\nPress_RST_button");
+
+				resp[0] = ACK;
+
+				preparePC_ResponsePacket(FACTORY_RESET,resp, 2, FALSE, TRUE);
+
+				while(1)
+				{}
+			}
+			else
+			{
+				resp[0] = ERROR_INVALID_STATE;
+			}
+		}
+		break;
+
+		case WRITE_FLASH:
+		{
+			if(get_system_state() == CONFIG_MODE)
+			{
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\n1FLw:");
+#endif
+				unsigned long size,addr,index = DATA_INDX;
+                char total_data[64];
+                int i;
+                addr = pc_uart_rx.rx_buffer[index++];
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 8);
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 16);
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 24);
+
+                size = pc_uart_rx.rx_buffer[index++];
+                size |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 8);
+
+                for(i = 0; i < size; i++)
+                {
+                    total_data[i] = pc_uart_rx.rx_buffer[index++];
+                }
+#ifdef FLASH_WP_ENABLE
+                remove_block_protection();
+#endif
+                WREN();
+                flashPacketProgram((char*)total_data, size, addr);
+                Wait_Busy();
+                WRDI();             // HJ 29-12-2015    // Write DisableWRDI();
+#ifdef FLASH_WP_ENABLE
+                WBPR(0);
+#endif
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\n2FLw:");
+                vUART_SendInt(UART_PC,addr);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendInt(UART_PC,size);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendBytes(UART_PC,(const uint8_t *)total_data,size);
+#endif
+			}
+			else
+			{
+
+			}
+		}
+		break;
+
+		case READ_FLASH:
+        {
+            if((get_system_state() == CONFIG_MODE))
+            {
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\n1FLr:");
+#endif
+                unsigned long size,addr,index = DATA_INDX;
+                char total_data[64];
+                addr = pc_uart_rx.rx_buffer[index++];
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 8);
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 16);
+                addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 24);
+
+                size = pc_uart_rx.rx_buffer[index++];
+                size |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 8);
+
+                WREN();
+                readContToBuff(addr, size, (char *)total_data);
+                WRDI();
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\nFLr:");
+                vUART_SendInt(UART_PC,addr);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendInt(UART_PC,size);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendBytes(UART_PC,(const uint8_t *)total_data,size);
+#endif
+            }
+            else
+            {
+                resp[0] = ERROR_INVALID_STATE;
+            }
+        }
+		break;
+
+		case ERASE_SECTOR_FLASH:
+        {
+            if((get_system_state() == CONFIG_MODE))
+            {
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\n1erase:");
+#endif
+                unsigned long sector_addr;
+                int index = DATA_INDX;
+                sector_addr = pc_uart_rx.rx_buffer[index++];
+                sector_addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 8);
+                sector_addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 16);
+                sector_addr |= ((unsigned long)pc_uart_rx.rx_buffer[index++] << 24);
+#ifdef FLASH_WP_ENABLE
+        		remove_block_protection();
+#endif
+				WREN();
+				Sector_Erase(sector_addr);
+				Wait_Busy();
+				WRDI();             // HJ 29-12-2015    // Write Disable
+#ifdef FLASH_WP_ENABLE
+        		WBPR(0);
+#endif
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\n2erase:");
+#endif
+            }
+            else
+            {
+                resp[0] = ERROR_INVALID_STATE;
+            }
+        }
+		break;
+
+		case READ_FLASH_STATUS:
+        {
+            if((get_system_state() == CONFIG_MODE))
+            {
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,(uint8_t *)"\n1fl_status:");
+#endif
+                unsigned char status = Read_Status_Register();
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,(uint8_t *)"\n2fl_status:");
+                vUART_SendChr(UART_PC,status);
+#endif
+            }
+            else
+            {
+                resp[0] = ERROR_INVALID_STATE;
+            }
+        }
+		break;
+
+		case FLASH_INIT:
+        {
+            if((get_system_state() == CONFIG_MODE))
+            {
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\nfl_init:");
+#endif
+                flashInit();
+            	updateFlashCurrAddr();          //komal
+            }
+            else
+            {
+                resp[0] = ERROR_INVALID_STATE;
+            }
+        }
+		break;
+
+		case CLEAR_LOGS:       //komal
+		{
+			if((get_system_state() == CONFIG_MODE))
+			{
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\nfl_clr:");
+#endif
+				//clear_log_id();
+				clear_logs();
+				resp[0] = ACK;
+			}
+			else
+			{
+				resp[0] = ERROR_INVALID_STATE;
+			}
+		}
+    	break;
+
+		case ADD_DUMMY_TELECOM_FL_LOGS:
+		{
+			if((get_system_state() == CONFIG_MODE))
+			{
+#ifdef DEBUG_PC_CMDS
+                vUART_SendStr(UART_PC,"\ndummy_logs:");
+#endif
+				addDummyFL_TelecomLogs(pc_uart_rx.rx_buffer[CMD_INDX + 1] + (((unsigned long)pc_uart_rx.rx_buffer[CMD_INDX + 2]) << 8));
+				resp[0] = ACK;
+			}
+			else
+			{
+				resp[0] = ERROR_INVALID_STATE;
 			}
 		}
 		break;

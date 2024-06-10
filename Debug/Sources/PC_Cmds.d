@@ -47,6 +47,8 @@ Sources/PC_Cmds.obj: ../Sources/PC_Cmds.h
 Sources/PC_Cmds.obj: ../Sources/E2P.h
 Sources/PC_Cmds.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
 Sources/PC_Cmds.obj: ../Sources/_debug.h
+Sources/PC_Cmds.obj: ../Sources/flashCore.h
+Sources/PC_Cmds.obj: ../Sources/flash_logger.h
 
 ../Sources/PC_Cmds.cpp:
 
@@ -141,4 +143,8 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 
 ../Sources/_debug.h:
+
+../Sources/flashCore.h:
+
+../Sources/flash_logger.h:
 

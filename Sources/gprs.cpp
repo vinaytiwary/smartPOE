@@ -132,6 +132,7 @@ void TCP_Handler(void)
 
                 gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                 //setGPRSConnSts(AVBL);
+                setNWstatus(AVBL);
             }
             else if(status == CON_FAIL)
             {
@@ -206,6 +207,7 @@ void TCP_Handler(void)
                 vUART_SendStr(UART_PC,"\nWCK");
 #endif
                 gprs.websocket_sts = TRUE;
+                setServerStatus(AVBL);  //PP added on 07-06-24
 
                 //set_webconn_sts(1);
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.

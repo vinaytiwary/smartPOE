@@ -41,6 +41,13 @@ typedef enum
     FACTORY_RESET,      //= 0x0D,
     SET_RTC_DATETIME,   //= 0x0E,
     GET_RTC_DATETIME,   //= 0x0F,
+    WRITE_FLASH,        //= 0x10,
+    READ_FLASH,         //= 0x11,
+    ERASE_SECTOR_FLASH, //= 0x12,
+    READ_FLASH_STATUS,  //= 0x13,
+    FLASH_INIT,         //= 0x14,
+    CLEAR_LOGS,         //= 0x15,
+    ADD_DUMMY_TELECOM_FL_LOGS,//= 0x16,
 }cmd_t;
 
 

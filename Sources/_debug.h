@@ -10,10 +10,10 @@
 
 #include "_config.h"
 
-// #define DEBUG_ADC
+// // #define DEBUG_ADC
 #define DEBUG_RTC
-// #define DEBUG_LCD_FREEZE
-// #define DEBUG_LCD_BUFF
+// // #define DEBUG_LCD_FREEZE
+// // #define DEBUG_LCD_BUFF
 
 #define DEBUG_E2P
 #define DEBUG_PC_CMDS
@@ -55,5 +55,13 @@
 #define DEBUG_WDT
 
 #define DEBUG_GPRS_RX
+
+#define DEBUG_FLASH_INIT
+#define DEBUG_SPCL_FLASH
+#define _DEBUG_FLASH_UART
+#define DEBUG_PASS
+#define DEBUG_FLASH
+#define DEBUG_FL_UNSENT
+#define DEBUG_READ_FREQ
 
 #endif /* SOURCES__DEBUG_H_ */
