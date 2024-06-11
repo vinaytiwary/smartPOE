@@ -22,6 +22,9 @@ typedef enum
 {
     SCHEDULED_LOG,
     RESPONSE_LOG,
+#ifdef FLASH_EN
+    UNSENT_LOGS,
+#endif  //FLASH_EN
 }client_message_type_t;
 
 typedef struct
@@ -37,6 +40,8 @@ char *Query_decode(char *Query_String, const char *Query_data, char *destination
 bool server_query(void);
 
 unsigned int prepare_JSON_pckt(void);
+
+unsigned int prepare_unsentJSON_pckt(void);
 
 unsigned int websocket_packet(uint8_t *request);
 

@@ -27,6 +27,10 @@
 #include "main.h"
 #include "gprs.h"
 #include "Web_Comm.h"
+#ifdef FLASH_EN
+#include "flash_logger.h"
+#include "flashCore.h"
+#endif //FLASH_EN
 
 #ifdef ETHERNET_EN
 #include "Telecom_Ethernet.h"
@@ -49,6 +53,10 @@ extern cloud_config_t cloud_config;
 extern e2p_router_config_t e2p_router_config;
 extern ram_data_t ram_data;
 extern Alarms_t Alarms;
+
+#ifdef FLASH_EN
+extern FL_log_data_t FLR_log_data;
+#endif  //FLASH_EN
 
 #ifndef ETHERNET_EN
 extern conn_state_t conn_state;
@@ -685,6 +693,80 @@ unsigned int prepare_JSON_pckt(void)
     return retVal;
 }
 
+#ifdef FLASH_EN
+unsigned int prepare_unsentJSON_pckt(void)
+{
+    char earth_temp[7];
+    unsigned long epoch_time = 0;
+	memset(earth_temp, 0, sizeof(earth_temp));
+
+    unsigned int retVal = 0;
+
+    epoch_time = convertToEpochTime(&FLR_log_data.ram_data.ram_time);
+    // epoch_time = asUnixTime(FLR_log_data.ram_data.ram_time.year, FLR_log_data.ram_data.ram_time.month, FLR_log_data.ram_data.ram_time.date, FLR_log_data.ram_data.ram_time.hour, FLR_log_data.ram_data.ram_time.min, FLR_log_data.ram_data.ram_time.sec);
+
+    if(FLR_log_data.ram_data.ram_EXTI_cnt.earth_cnt)
+	{
+		memcpy(earth_temp, "true", strlen((const char*)"true"));
+	}
+	else
+	{
+		memcpy(earth_temp, "false", strlen((const char*)"false"));
+	}
+
+#ifdef DEBUG_JSON_PKT_PREP
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FL_log:");
+    vUART_SendStr(DEBUG_UART_BASE,"\n2Ffc=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2Fef=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)earth_temp);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FACV=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.AC_Voltage);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FRC=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_current_router1);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2FOC=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_current_router2);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FRV=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2FOV=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FChgV=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2FBATTV=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2Fet=");
+    vUART_SendInt(DEBUG_UART_BASE,epoch_time);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FLa=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.Latitude);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2FLo=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.Longitude);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FRS=");
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.supply_mode_R1);
+    vUART_SendStr(DEBUG_UART_BASE,"\t2FOS=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.supply_mode_R2);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FA=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_alarms);
+#endif
+
+    memset(dummy_json_string, 0, sizeof(dummy_json_string));
+	my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
+			e2p_device_info.device_id,epoch_time,FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage/1000, FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage/1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2%1000,FLR_log_data.ram_data.ram_ADC.AC_Voltage/1000,FLR_log_data.ram_data.ram_ADC.AC_Voltage%1000,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,FLR_log_data.ram_data.supply_mode_R1,FLR_log_data.ram_data.supply_mode_R2,FLR_log_data.ram_data.Longitude/1000000L,abs(FLR_log_data.ram_data.Longitude%1000000L),FLR_log_data.ram_data.Latitude/1000000L,abs(FLR_log_data.ram_data.Latitude%1000000L), FLR_log_data.ram_data.ram_alarms);
+
+#ifdef DEBUG_JSON_PKT_PREP
+    // UWriteString((char*)"\nPrep=",DBG_UART);
+    // UWriteBytes((unsigned char*)dummy_json_string, strlen((const char*)dummy_json_string),DBG_UART);
+
+    vUART_SendStr(DEBUG_UART_BASE, "\nPrep=");
+    vUART_SendBytes(DEBUG_UART_BASE, dummy_json_string, strlen((const char*)dummy_json_string));
+#endif
+
+    retVal = websocket_packet(dummy_json_string);
+    setREQmode(AVBL);
+
+    return retVal;
+}
+#endif  //FLASH_EN
+
 #if 0 
 unsigned int websocket_packet(uint8_t *request)
 {
@@ -1068,19 +1150,32 @@ void prepare_server_pkt(void)
         {
 #ifdef DEBUG_SERVER_QUERY
             // UWriteString((char*)"\nREQ=1", DBG_UART);
-            vUART_SendStr(DEBUG_UART_BASE, "\nREQ=1");
+            vUART_SendStr(DEBUG_UART_BASE, "\nREQ=R");
 #endif
             websocket_packet(server_response_str);
             setREQmode(AVBL);
         }
         break;
 
+#ifdef FLASH_EN
+        case UNSENT_LOGS:
+        {
+#ifdef DEBUG_SERVER_QUERY
+            vUART_SendStr(DEBUG_UART_BASE, "\nREQ=U");
+#endif
+            get_unsent_logs();
+            prepare_unsentJSON_pckt();
+            setREQmode(AVBL);
+        }
+        break;
+#endif //FLASH_EN
+
         default:
         case SCHEDULED_LOG:
         {
 #ifdef DEBUG_SERVER_QUERY
             // UWriteString((char*)"\nREQ=2", DBG_UART);
-            vUART_SendStr(DEBUG_UART_BASE, "\nREQ=2");
+            vUART_SendStr(DEBUG_UART_BASE, "\nREQ=S");
 #endif
             prepare_JSON_pckt();
             setREQmode(AVBL);

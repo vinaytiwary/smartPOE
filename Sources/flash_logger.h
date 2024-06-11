@@ -50,7 +50,8 @@ typedef struct
 typedef struct
 {
 	unsigned char cnt;                      //1B
-	unsigned int unsent_telecom_logs_IOT;   //2B
+	// unsigned int unsent_telecom_logs_IOT;   //2B //iss zurm ke liye to tumhe fassi hogi fassi
+    uint16_t unsent_telecom_logs_IOT;       //2B
 	char unused[FREQ_UNUSED_LEN];           //12B		
 	char chksum;                            //1B
 }__attribute__((packed)) freq_updated_data_t;   //16 Bytes
@@ -92,6 +93,8 @@ unsigned int decrement_unsent_log_cnt(int upload_code);
 unsigned int increment_unsent_log_cnt(int trans_type);
 
 char check_unsent_log(void);
+
+void get_unsent_logs(void);
 
 void prepare_OfflineTelecomData(void);
 

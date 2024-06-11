@@ -204,7 +204,9 @@ void vADC0Init(void)
     ADC_PortInit(SIG_ODU_VOLTAGE_ADC);
     ADC_PortInit(SIG_BATTERY_VOLT_ADC);
     ADC_PortInit(SIG_12V_IN_ADC);
+#if HW_BOARD == TIOT_V2_00_BOARD
     ADC_PortInit(SIG_EARTH_VTG_ADC);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
     // Enable sample sequence 3 with a processor signal trigger.  Sequence 3
     // will do a single sample when the processor sends a signal to start the

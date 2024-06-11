@@ -34,6 +34,8 @@
 #include "WDT.h"
 #include "inc/hw_watchdog.h"
 #include "driverlib/watchdog.h"
+#include "flash_logger.h"
+#include "flashCore.h"
 
 
 Telecom_Ethernet_t Telecom_Ethernet;
@@ -431,7 +433,12 @@ void ethernet_handler(void)
                         Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
                     }
 
-                    
+#ifdef FLASH_EN                    
+                    if(check_unsent_log())  //PP added on 11-06-24
+                    {
+                        decrement_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
+                    }
+#endif  //FLASH_EN
 
                     if((getServerReqType() == ODU_VOLTAGE_UPDATE)||(getServerReqType() == SERVER_URL_UPDATE))
                     {
@@ -477,7 +484,14 @@ void ethernet_handler(void)
             //vUART_SendStr(UART_PC,"\ngetREQmode");
             //vUART_SendInt(UART_PC,getREQmode());
 #endif
-
+            /* if(check_unsent_log())  //PP added on 11-06-24   //commented this bcoz if we get a server request in between, we need to respond to that first. This condition should only have priority over SCHEDULED_LOGS.
+            {
+                set_pending_request(false);
+                resetEther_SubHandlers();
+                setClientMSGType(UNSENT_LOGS);
+                Telecom_Ethernet.ethernet_state = ETHER_PREPARE_LOGS;
+            }
+            else  */
             if(get_pending_request())
             {
                 switch(getServerReqType())

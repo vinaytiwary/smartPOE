@@ -11,7 +11,7 @@
 #include "_config.h"
 
 // //#define DEBUG_ADC
-// #define DEBUG_RTC
+#define DEBUG_RTC
 // // #define DEBUG_LCD_FREEZE
 // // #define DEBUG_LCD_BUFF
 

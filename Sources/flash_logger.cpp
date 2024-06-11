@@ -24,6 +24,7 @@
 static FL_data_t FL_data = {0,FL_TLOG_START_ADDR,FL_TLOG_START_ADDR};
 
 FL_log_data_t FL_log_data;
+FL_log_data_t FLR_log_data;
 
 freq_updated_data_t freq_updated_data;
 
@@ -639,23 +640,33 @@ void flashWriteFreqUpdatedConfig(void)
     //cli();
     ++freq_updated_data.cnt;
 
-#ifdef DEBUG_FL_UNSENT
+    unsigned long addr = FL_FREQ_UPD_DATA_START_ADDR + ((freq_updated_data.cnt - 1) * sizeof(freq_updated_data_t));
 
-	vUART_SendStr(DEBUG_UART_BASE,"\nWFr.cnt:");
+#ifdef DEBUG_FL_UNSENT
+	vUART_SendStr(DEBUG_UART_BASE,"\nWFr:");
 	vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.cnt);
 	vUART_SendChr(DEBUG_UART_BASE,',');
 	vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.unsent_telecom_logs_IOT);
+    vUART_SendChr(DEBUG_UART_BASE,',');
+    vUART_SendInt(DEBUG_UART_BASE, addr);
 #endif
 
-    unsigned long addr = FL_FREQ_UPD_DATA_START_ADDR + ((freq_updated_data.cnt - 1) * sizeof(freq_updated_data_t));
     if((addr < FL_FREQ_UPD_DATA_MAX_ADDR) && freq_updated_data.cnt)
     {
         freq_updated_data.chksum = getChecksum((unsigned char*)(&freq_updated_data), (sizeof(freq_updated_data_t) - 1/* - BD_FREQ_UNUSED_LEN*/));
+
+#ifdef DEBUG_FL_UNSENT
+        vUART_SendStr(DEBUG_UART_BASE,"\nWFr.chk:");
+        vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.chksum);
+#endif
 
         flashWriteFreqUpdData(&freq_updated_data, addr);        //R
     }
     else
     {
+#ifdef DEBUG_FL_UNSENT
+        vUART_SendStr(DEBUG_UART_BASE,"\nWFr>max/FR_cnt=0");
+#endif
         //freq_updated_data.cnt = 1;            //Lets keep cnt within 1 to 10, otherwise it will create problem after 255 transactions.
         flashClearFreqUpdatedConfig();
     }
@@ -690,7 +701,11 @@ char readFreqUpdData_flash(void)
             addr = (FL_FREQ_UPD_DATA_START_ADDR + (j++ * FL_FREQ_UPD_DATA_SIZE));
 
 #ifdef DEBUG_READ_FREQ
-			vUART_SendStr(DEBUG_UART_BASE,"\naddr:");
+			vUART_SendStr(DEBUG_UART_BASE,"\nFraddrs:");
+            vUART_SendInt(DEBUG_UART_BASE,sizeof(freq_updated_data));
+            vUART_SendChr(DEBUG_UART_BASE,',');
+			vUART_SendInt(DEBUG_UART_BASE,(addr - FL_FREQ_UPD_DATA_SIZE));
+            vUART_SendChr(DEBUG_UART_BASE,',');
 			vUART_SendInt(DEBUG_UART_BASE,addr);
 #endif
 
@@ -703,6 +718,17 @@ char readFreqUpdData_flash(void)
 //    			vUART_SendStr(DEBUG_UART_BASE,"\nfreq_updated_data:");
 //    			vUART_SendBytes(DEBUG_UART_BASE,(const uint8_t *)&freq_updated_data,sizeof(freq_updated_data));
 //#endif
+
+#ifdef DEBUG_READ_FREQ
+                vUART_SendStr(DEBUG_UART_BASE,"\nFrcnts:");
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.cnt);
+                vUART_SendChr(DEBUG_UART_BASE,',');
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data_.cnt);
+                vUART_SendStr(DEBUG_UART_BASE, "\nFrunsnt:");
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.unsent_telecom_logs_IOT);
+                vUART_SendChr(DEBUG_UART_BASE,',');
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data_.unsent_telecom_logs_IOT);
+#endif
 
                 if(freq_updated_data_.cnt == 0xFF)
                 {
@@ -719,6 +745,9 @@ char readFreqUpdData_flash(void)
                 //lets erase the sector and put this on first location
                 //freq_updated_data.cnt = 1;
                 flashClearFreqUpdatedConfig();
+#ifdef DEBUG_READ_FREQ
+                vUART_SendStr(DEBUG_UART_BASE,"\nFr=Fr+1");
+#endif
                 break;
             }
         }while((freq_updated_data.cnt + 1) == freq_updated_data_.cnt);
@@ -728,6 +757,8 @@ char readFreqUpdData_flash(void)
 #ifdef DEBUG_READ_FREQ
 			vUART_SendStr(DEBUG_UART_BASE,"\nRFr.C:");
 			vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.chksum);
+            vUART_SendChr(DEBUG_UART_BASE,',');
+            vUART_SendInt(DEBUG_UART_BASE,getChecksum((unsigned char*)(&freq_updated_data), (sizeof(freq_updated_data_t) - 1/* - BD_FREQ_UNUSED_LEN*/)));
 #endif
             read_ok = 1;
             break;
@@ -736,7 +767,9 @@ char readFreqUpdData_flash(void)
         {
 #ifdef DEBUG_READ_FREQ
 			vUART_SendStr(DEBUG_UART_BASE,"\nRFr.cF:");
-			//vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.chksum);
+			vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.chksum);
+            vUART_SendChr(DEBUG_UART_BASE,',');
+            vUART_SendInt(DEBUG_UART_BASE,getChecksum((unsigned char*)(&freq_updated_data), (sizeof(freq_updated_data_t) - 1/* - BD_FREQ_UNUSED_LEN*/)));
 #endif
             j = 1;
             read_ok = 0;
@@ -826,13 +859,55 @@ char check_unsent_log(void)
 	}
 }
 
+void get_unsent_logs(void)
+{
+    unsigned long addr;
+    if(freq_updated_data.unsent_telecom_logs_IOT)
+    {
+#ifdef DEBUG_READ_FREQ
+            vUART_SendStr(UART_PC,"\nFOUND_UNSENT:");
+            vUART_SendInt(UART_PC,freq_updated_data.unsent_telecom_logs_IOT);
+#endif
+        addr = get_addr(SCHEDULED_FL_TLOG, freq_updated_data.unsent_telecom_logs_IOT);
+#ifdef DEBUG_READ_FREQ
+            vUART_SendStr(UART_PC,"\nUaddr:");
+            vUART_SendInt(UART_PC,addr);
+#endif
+        get_log_data(SCHEDULED_FL_TLOG,addr,(char *)&FLR_log_data);    //CMD_AUTHORIZE,CMD_START_TRANSACTION,CMD_STOP_TRANSACTION,CMD_STATUS_NOTIFICATION,
+
+#ifdef DEBUG_READ_FREQ
+            // vUART_SendStr(UART_PC,"\nvalues-");
+            // vUART_SendStr(UART_PC,"cmd:");
+            // vUART_SendInt(UART_PC,ocpp_cmd_data.cmd_type);
+            // vUART_SendStr(UART_PC,"\nerrorcode");
+            // vUART_SendInt(UART_PC,ocpp_cmd_data.error_code);
+            // vUART_SendStr(UART_PC,"\nstatus/reason");
+            // vUART_SendInt(UART_PC,ocpp_cmd_data.status_reason);
+            // vUART_SendStr(UART_PC,"cmd:");
+            // vUART_SendInt(UART_PC,ocpp_cmd_data.cmd_type);
+            vUART_SendStr(UART_PC, "\nFLR_dt:");
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.date);
+            vUART_SendChr(UART_PC, '-');
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.month);
+            vUART_SendChr(UART_PC, '-');
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.year);
+            vUART_SendChr(UART_PC, ',');
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.hour);
+            vUART_SendChr(UART_PC, ':');
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.min);
+            vUART_SendChr(UART_PC, ':');
+            vUART_SendInt(UART_PC, FLR_log_data.ram_data.ram_time.sec);
+#endif
+    }
+}
+
 void save_OfflineTelecomData(void)
 {
 	prepare_OfflineTelecomData();
 	save_TELECOM_data();
 
-/* #ifdef ETHERNET_EN
-	if(get_ethernet_NWstatus() || check_unsent_log())
+#ifdef ETHERNET_EN
+	if(!get_ethernet_NWstatus() || check_unsent_log())
 	{
 #ifdef DEBUG_FL_UNSENT
 	    vUART_SendStr(DEBUG_UART_BASE,"\nunsnt");
@@ -841,12 +916,12 @@ void save_OfflineTelecomData(void)
 		flashWriteFreqUpdatedConfig();
 	}
 #else
-	if(getServerStatus() || check_unsent_log())
+	if(!getServerStatus() || check_unsent_log())
 	{
 		increment_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
 		flashWriteFreqUpdatedConfig();
 	}
-#endif 	//ETHERNET_EN */
+#endif 	//ETHERNET_EN
 }
 
 void prepare_OfflineTelecomData(void)
@@ -854,32 +929,32 @@ void prepare_OfflineTelecomData(void)
 	memcpy(&FL_log_data.ram_data, &ram_data, sizeof(ram_data_t));
 	FL_log_data.chksum = 0;
 #ifdef DEBUG_FLASH
-    vUART_SendStr(DEBUG_UART_BASE,"\nFL_log:");
-    vUART_SendStr(DEBUG_UART_BASE,"\nFfc=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FL_log:");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1Ffc=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_EXTI_cnt.freq_cnt);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFACV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FACV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.AC_Voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFRC=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FRC=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_current_router1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tFOC=");
+    vUART_SendStr(DEBUG_UART_BASE,"\t1FOC=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_current_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFRV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FRV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Voltage_router1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tFOV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\t1FOV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Voltage_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFChgV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FChgV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Charger_voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\tFBATTV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\t1FBATTV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Battery_voltage);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFLa=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FLa=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.Latitude);
-    vUART_SendStr(DEBUG_UART_BASE,"\tFLo=");
+    vUART_SendStr(DEBUG_UART_BASE,"\t1FLo=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.Longitude);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFRS=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FRS=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.supply_mode_R1);
-    vUART_SendStr(DEBUG_UART_BASE,"\tFOS=");
+    vUART_SendStr(DEBUG_UART_BASE,"\t1FOS=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.supply_mode_R2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nFA=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FA=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_alarms);
 #endif
 }

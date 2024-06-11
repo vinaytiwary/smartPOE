@@ -203,7 +203,11 @@ int main(void)
                 if(++upload_time >= 30)
                 {
                     upload_time = 0;	
-                    if(!get_pending_request() && getREQmode() == NOT_AVBL)
+#ifdef FLASH_EN
+                    if((!get_pending_request()) && (getREQmode() == NOT_AVBL) && (!check_unsent_log())) //PP added on 11-06-24
+#else
+                    if(!get_pending_request() && getREQmode() == NOT_AVBL)   //PP commented on 11-06-24
+#endif  //FLASH_EN
                     {
                         set_pending_request(true);
                         setServerReqType(NO_REQ);
@@ -223,20 +227,26 @@ int main(void)
                         vUART_SendInt(DEBUG_UART_BASE, getREQmode());
 #endif  //DEBUG_SERVER_QUERY
                     }
+                }   //if(++upload_time >= 30)
+#ifdef FLASH_EN
+                if(check_unsent_log())
+                {
+                    set_pending_request(true);
+                    setServerReqType(NO_REQ);
+                    setClientMSGType(UNSENT_LOGS);
                 }
 
-#ifdef FLASH_EN
                 if(++save_offline_time >= SAVE_OFFLINE_TIME)
                 {
                     save_offline_time = 0;
-                    if(!System_mode)
+                    // if(!System_mode)
                     {
                         save_OfflineTelecomData();
                     }
                 }
 #endif //FLASH_EN
-            } 
-		}
+            }   //if(get_system_state() != CONFIG_MODE)    
+		}   
         tx_pending_dataPC();
 	}
 #endif	//if 0
@@ -513,10 +523,11 @@ void init_config(void)
     write_defaults(0xFF);
     cloud_config_data();
 
-    clear_logs();
 #ifdef FLASH_EN
+    clear_logs();
     clear_flash();
-#endif
+#endif  //FLASH_EN
+
 #else
     if(e2p_read_voltage_config()) //PP 09-02-24 commented for testing on BOARD A which has no relay ckt correction atm //PP 07-02-24: commented for testing  //PP commented on 03-02-24 for relay testing tempporarily
     {
@@ -589,6 +600,10 @@ void init_config(void)
 #endif  
         write_defaults(E2P_CONFIG_TIME_ADDR);     
     }
+
+#ifdef FLASH_EN  
+    readFreqUpdData_flash();
+#endif //FLASH_EN
 
     // memset(&ram_data, 0, sizeof(ram_data_t));
 
