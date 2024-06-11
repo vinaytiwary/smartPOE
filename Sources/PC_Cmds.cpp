@@ -528,8 +528,8 @@ void response(cmd_t cmd, int uart_no)
 		{
 			if(get_system_state() == CONFIG_MODE)
 			{
-				clear_logs();
 #ifdef FLASH_EN
+				clear_logs();
                 clear_flash();
 #endif
                 write_defaults(0xFF);
@@ -550,6 +550,7 @@ void response(cmd_t cmd, int uart_no)
 		}
 		break;
 
+#ifdef FLASH_EN
 		case WRITE_FLASH:
 		{
 			if(get_system_state() == CONFIG_MODE)
@@ -739,6 +740,7 @@ void response(cmd_t cmd, int uart_no)
 			}
 		}
 		break;
+#endif	//FLASH_EN
 
         default:
         {

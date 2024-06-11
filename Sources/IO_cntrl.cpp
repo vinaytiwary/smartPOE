@@ -22,6 +22,7 @@
 #include "HW_pins.h"
 #include "IO_cntrl.h"
 #include "UartCore.h"
+#include "_debug.h"
 
 volatile EXTI_cnt_t EXTI_cnt;
 router_mode_t router_mode;
@@ -189,7 +190,36 @@ void vPERIPH_GPIOInit(void)
 {
     vLEDGPIOInit();
     // vInit_InputTestpins();   //commenting this as I'm using these pins for ADC testing.
+
+    GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
 }
+
+#if HW_BOARD == TIOT_V2_00_BOARD
+void readBCD_SelectorSW(void)
+{
+    uint8_t BCD_code = 0;
+    uint8_t BCD_pin0 = 0, BCD_pin1 = 0, BCD_pin2 = 0, BCD_pin3 = 0;
+
+    BCD_pin0 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S1)/BCD_SELECTOR_S1;
+    BCD_pin1 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S2)/BCD_SELECTOR_S2;
+    BCD_pin2 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S3)/BCD_SELECTOR_S3;
+    BCD_pin3 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S4)/BCD_SELECTOR_S4;
+
+#ifdef  DEBUG_BCD_SEL_SW
+    vUART_SendStr(UART_PC, "\nPB2,3,4,5:");
+    vUART_SendInt(UART_PC, BCD_pin0);
+    vUART_SendInt(UART_PC, BCD_pin1);
+    vUART_SendInt(UART_PC, BCD_pin2);
+    vUART_SendInt(UART_PC, BCD_pin3);
+#endif  //DEBUG_BCD_SEL_SW
+
+    BCD_code = ((BCD_pin0 << 0)|(BCD_pin1 << 1)|(BCD_pin2 << 2)|(BCD_pin3 << 3));
+#ifdef  DEBUG_BCD_SEL_SW
+    vUART_SendStr(UART_PC, "\nBCD:");
+    vUART_SendInt(UART_PC, BCD_code);
+#endif  //DEBUG_BCD_SEL_SW
+}
+#endif  //#if HW_BOARD == TIOT_V2_00_BOARD
 
 void vInit_InputTestpins(void)
 {

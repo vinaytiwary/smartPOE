@@ -99,7 +99,7 @@ void DEBUGUARTIntHandler(void);
 
 void LTEUARTIntHandler(void);
 
-void DISPLAYUARTIntHandler(void);
+// void DISPLAYUARTIntHandler(void);
 
 #ifdef __cplusplus
 }
@@ -111,9 +111,9 @@ void vLTEUARTInit(void);
 
 void vPERIPH_UARTInit(void);
 
-static void U4_RxIntHandler(void);
+// static void U4_RxIntHandler(void);
 
-static void U4_TxIntHandler(void);
+// static void U4_TxIntHandler(void);
 
 static void U3_RxIntHandler(void);
 

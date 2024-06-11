@@ -51,7 +51,7 @@ extern void SysTickIntHandler(void);
 extern void GPIODIntHandler(void);
 extern void DEBUGUARTIntHandler(void);
 extern void LTEUARTIntHandler(void);    //PP on 20-04-24: how did this ISR work without externing this here? realized that i didn't do it while i was externing DISPLAYUARTIntHandler(). Although I did add it to the vector table.
-extern void DISPLAYUARTIntHandler(void);
+// extern void DISPLAYUARTIntHandler(void);
 
 #ifdef WDT_IRQ_MODE
 extern void WatchdogIntHandler(void);
@@ -97,14 +97,15 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     SysTickIntHandler,                      // The SysTick handler
-//      IntDefaultHandler,                      // The SysTick handler
+    // IntDefaultHandler,                      // The SysTick handler
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    GPIODIntHandler,                        // GPIO Port D
-//    IntDefaultHandler,                      // GPIO Port D
+    // GPIODIntHandler,                        // GPIO Port D
+    IntDefaultHandler,                      // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
-    DISPLAYUARTIntHandler,                  // UART0 Rx and Tx
+    DEBUGUARTIntHandler,                    // UART0 Rx and Tx
+    // DISPLAYUARTIntHandler,                  // UART0 Rx and Tx
     // IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
@@ -166,8 +167,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // SSI3 Rx and Tx
     LTEUARTIntHandler,                      // UART3 Rx and Tx
     // IntDefaultHandler,                      // UART3 Rx and Tx
-    DEBUGUARTIntHandler,                    // UART4 Rx and Tx
-    //IntDefaultHandler,                      // UART4 Rx and Tx
+    // DEBUGUARTIntHandler,                    // UART4 Rx and Tx
+    IntDefaultHandler,                      // UART4 Rx and Tx 
     IntDefaultHandler,                      // UART5 Rx and Tx
     IntDefaultHandler,                      // UART6 Rx and Tx
     IntDefaultHandler,                      // UART7 Rx and Tx

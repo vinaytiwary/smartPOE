@@ -56,19 +56,6 @@
 #endif
 
 //*********************** UARTs ************************//
-#define DEBUG_UART_PERIPH           SYSCTL_PERIPH_UART4
-#define DEBUG_UART_BASE             UART4_BASE
-// #define DEBUG_BAUD_RATE             115200
-#define DEBUG_BAUD_RATE             38400
-#define DEBUG_UART_CONFIG           (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE)
-#define DEBUG_UART_INT              INT_UART4
-#define DEBUG_UART_INTEN_FLAG       (UART_INT_RX | UART_INT_RT)
-#define DEBUG_UART_PORT_BASE        GPIO_PORTC_BASE
-#define DEBUG_RX_PIN                GPIO_PIN_4
-#define DEBUG_TX_PIN                GPIO_PIN_5
-#define DEBUG_RX_GPIO_CFG           GPIO_PC4_U4RX
-#define DEBUG_TX_GPIO_CFG           GPIO_PC5_U4TX
-
 #define LTE_UART_PERIPH             SYSCTL_PERIPH_UART3
 #define LTE_UART_BASE               UART3_BASE
 // #define LTE_BAUD_RATE               115200
@@ -81,20 +68,25 @@
 #define LTE_TX_PIN                  GPIO_PIN_7
 #define LTE_RX_GPIO_CFG             GPIO_PC6_U3RX
 #define LTE_TX_GPIO_CFG             GPIO_PC7_U3TX
+#if   HW_BOARD == EVSE_ADC_TEST_PINS
 #define LTE_PWRKEY_PORT_BASE        GPIO_PORTB_BASE
 #define LTE_PWRKEY_PIN              GPIO_PIN_3
+#elif   HW_BOARD == TIOT_V2_00_BOARD
+#define LTE_PWRKEY_PORT_BASE        GPIO_PORTC_BASE
+#define LTE_PWRKEY_PIN              GPIO_PIN_5
+#endif
 
-#define DISPLAY_UART_PERIPH         SYSCTL_PERIPH_UART0
-#define DISPLAY_UART_BASE           UART0_BASE
-#define DISPLAY_BAUD_RATE           38400
-#define DISPLAY_UART_CONFIG         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE)
-#define DISPLAY_UART_INT            INT_UART0
-#define DISPLAY_UART_INTEN_FLAG     (UART_INT_RX | UART_INT_RT)
-#define DISPLAY_UART_PORT_BASE      GPIO_PORTA_BASE
-#define DISPLAY_RX_PIN              GPIO_PIN_0
-#define DISPLAY_TX_PIN              GPIO_PIN_1
-#define DISPLAY_RX_GPIO_CFG         GPIO_PA0_U0RX
-#define DISPLAY_TX_GPIO_CFG         GPIO_PA1_U0TX
+#define DEBUG_UART_PERIPH           SYSCTL_PERIPH_UART0
+#define DEBUG_UART_BASE             UART0_BASE
+#define DEBUG_BAUD_RATE             38400
+#define DEBUG_UART_CONFIG           (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE)
+#define DEBUG_UART_INT              INT_UART0
+#define DEBUG_UART_INTEN_FLAG       (UART_INT_RX | UART_INT_RT)
+#define DEBUG_UART_PORT_BASE        GPIO_PORTA_BASE
+#define DEBUG_RX_PIN                GPIO_PIN_0
+#define DEBUG_TX_PIN                GPIO_PIN_1
+#define DEBUG_RX_GPIO_CFG           GPIO_PA0_U0RX
+#define DEBUG_TX_GPIO_CFG           GPIO_PA1_U0TX
 
 //*********** FLASH  *************//
 #define FLASH_SPI_PERIPH             SYSCTL_PERIPH_SSI0
@@ -153,5 +145,13 @@
 #define ETHERNET_CS_GPIO_CFG        GPIO_PF3_SSI1FSS
 #define ETHERNET_MISO_GPIO_CFG      GPIO_PF0_SSI1RX
 #define ETHERNET_MOSI_GPIO_CFG      GPIO_PF1_SSI1TX
+
+/*******************10 POS BCD Selector switch*****************/
+
+#define BCD_SELECTOR_SW_BASE        GPIO_PORTB_BASE
+#define BCD_SELECTOR_S1             GPIO_PIN_2
+#define BCD_SELECTOR_S2             GPIO_PIN_3
+#define BCD_SELECTOR_S3             GPIO_PIN_4
+#define BCD_SELECTOR_S4             GPIO_PIN_5
 
 #endif /* SOURCES_HW_PINS_H_ */

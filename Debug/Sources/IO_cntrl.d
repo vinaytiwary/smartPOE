@@ -32,6 +32,7 @@ Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
 Sources/IO_cntrl.obj: ../Sources/HW_pins.h
 Sources/IO_cntrl.obj: ../Sources/IO_cntrl.h
 Sources/IO_cntrl.obj: ../Sources/UartCore.h
+Sources/IO_cntrl.obj: ../Sources/_debug.h
 
 ../Sources/IO_cntrl.cpp:
 
@@ -96,4 +97,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 ../Sources/IO_cntrl.h:
 
 ../Sources/UartCore.h:
+
+../Sources/_debug.h:
 

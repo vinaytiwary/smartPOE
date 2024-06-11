@@ -10,6 +10,8 @@
 
 #include "_config.h"
 
+#if 0
+
 typedef enum 
 {
   home,
@@ -46,5 +48,7 @@ void Display_CFGScreen(void);
 void Display_BootUpScreen(void);
 
 void AlarmDisplay(void);
+
+#endif//if 0
 
 #endif /* SOURCES_DISPLAY_H_ */

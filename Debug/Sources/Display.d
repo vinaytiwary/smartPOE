@@ -23,7 +23,6 @@ Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/incl
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdio.h
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdio.h
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdarg.h
-Sources/Display.obj: ../Sources/Display.h
 Sources/Display.obj: ../Sources/_config.h
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h
@@ -32,6 +31,7 @@ Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
+Sources/Display.obj: ../Sources/Display.h
 Sources/Display.obj: ../Sources/HW_pins.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/Display.obj: ../Sources/IO_cntrl.h
@@ -94,8 +94,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdio.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdarg.h:
 
-../Sources/Display.h:
-
 ../Sources/_config.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h:
@@ -111,6 +109,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
+
+../Sources/Display.h:
 
 ../Sources/HW_pins.h:
 

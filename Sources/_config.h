@@ -57,7 +57,7 @@
 
 // #define CHECKSTR_EXP
 
-#define ETHERNET_EN
+// #define ETHERNET_EN
 
 // #define ENABLE_WDT_RESET
 
@@ -66,5 +66,20 @@
 #endif  //ENABLE_WDT_RESET
 
 #define USE_FLASH_FOR_FREQ_UPD_DATA //Move frequently updated data from eeprom to flash
+
+#define ADC_EN
+
+#define EVSE_TEST_BOARD         (0)
+#define TIOT_V2_00_BOARD        (1)
+#define HW_BOARD                (TIOT_V2_00_BOARD)
+
+#define EVSE_ADC_TEST_PINS      (0)
+#define TIOT_ADC_PINS           (1)
+
+#if HW_BOARD == TIOT_V2_00_BOARD
+#define TARGET_ADC_PINS         (TIOT_ADC_PINS)
+#elif   HW_BOARD == EVSE_ADC_TEST_PINS
+#define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
+#endif
 
 #endif /* SOURCES__CONFIG_H_ */

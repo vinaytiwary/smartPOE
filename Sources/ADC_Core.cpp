@@ -11,15 +11,17 @@
 #include "driverlib/adc.h"
 #include "inc/TM4C1233E6PZ.h"
 
+#include "_config.h"
 #include "HW_pins.h"
 #include "UartCore.h"
 #include "ADC_Core.h"
 #include "_debug.h"
-#include "_config.h"
 
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
 volatile double ADC_RAW_MAX = 0.000;
+
+#ifdef ADC_EN
 
 //******************************* ADC ******************************************//
 
@@ -193,13 +195,16 @@ void vADC0Init(void)
     // GPIOPinTypeADC(GPIO_PORTD_BASE, GPIO_PIN_5);
     // //
 
-    ADC_PortInit(MCU_VAC_ADC);
-    ADC_PortInit(ADC_current_router2);
-    ADC_PortInit(ADC_current_router1);
+    ADC_PortInit(SIG_AC_VOLTAGE_ADC);
+    ADC_PortInit(SIG_ODU_CURRENT_ADC);
+    ADC_PortInit(SIG_RTR_CURRENT_ADC);
+#if 0
     ADC_PortInit(MCU_ADC_VCC_POE_1);
-    ADC_PortInit(MCU_ADC_VCC_POE_2);
-    ADC_PortInit(MCU_Battery_VADC);
-    ADC_PortInit(MCU_VADC);
+#endif  //if 0
+    ADC_PortInit(SIG_ODU_VOLTAGE_ADC);
+    ADC_PortInit(SIG_BATTERY_VOLT_ADC);
+    ADC_PortInit(SIG_12V_IN_ADC);
+    ADC_PortInit(SIG_EARTH_VTG_ADC);
 
     // Enable sample sequence 3 with a processor signal trigger.  Sequence 3
     // will do a single sample when the processor sends a signal to start the
@@ -325,7 +330,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 		adc[indx].av += adc[indx].arr[i];
 
 #ifdef DEBUG_ADC
-        // if((indx == BATT_ADC)||(indx == CHARGER_ADC))
+        // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nRAWadc:" );
             vUART_SendInt(UART_PC,adc[indx].arr[i]);
@@ -338,7 +343,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 	}
 
 #ifdef DEBUG_ADC
-        // if((indx == BATT_ADC)||(indx == CHARGER_ADC))
+        // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nSUM:" );
             vUART_SendInt(UART_PC,adc[indx].av );
@@ -372,7 +377,7 @@ uint32_t getRouter2_DC_current(void)
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
-    adc_avg = updateADC(ADC_current_router2, DC_CADC2);
+    adc_avg = updateADC(SIG_ODU_CURRENT_ADC, ADC_INDX_ODUC);
 
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U4) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
     analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
@@ -387,7 +392,8 @@ uint32_t getRouter2_DC_current(void)
     // UWriteInt((unsigned long)analog_vtg, DBG_UART);   
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nAVGadc:");
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE0=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE0=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE3=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);
 #endif
 
@@ -399,7 +405,7 @@ uint32_t getRouter1_DC_current(void)
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
-    adc_avg = updateADC(ADC_current_router1, DC_CADC1);
+    adc_avg = updateADC(SIG_RTR_CURRENT_ADC, ADC_INDX_RTRC);
 
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U4) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
     analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
@@ -414,13 +420,15 @@ uint32_t getRouter1_DC_current(void)
     // UWriteInt((unsigned long)analog_vtg, DBG_UART); 
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nAVGadc:");
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE5=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE5=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD5=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);   
 #endif
 
     return measurements.DC_current_router1;
 }
 
+#if 0
 uint32_t getRouter1_DCvoltage(void)
 {
     uint32_t adc_avg = 0;
@@ -448,13 +456,14 @@ uint32_t getRouter1_DCvoltage(void)
 
     return measurements.DC_Voltage_router1;
 }
+#endif //if 0
 
 uint32_t getRouter2_DCvoltage(void)
 {
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
-    adc_avg = updateADC(MCU_ADC_VCC_POE_2, DC_VADC2);
+    adc_avg = updateADC(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
 
     // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ROUTER2_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
     analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
@@ -470,7 +479,8 @@ uint32_t getRouter2_DCvoltage(void)
     // UWriteInt((unsigned long)analog_vtg, DBG_UART); 
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nAVGadc:");
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD2=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD2=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE2=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);   
 #endif
 
@@ -482,7 +492,7 @@ uint32_t getBatteryVoltage(void)
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
-    adc_avg = updateADC(MCU_Battery_VADC, BATT_ADC);
+    adc_avg = updateADC(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
 
     //analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98097) * BATTERY_RESISTOR_RATIO;
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * BATTERY_RESISTOR_RATIO;
@@ -502,7 +512,8 @@ uint32_t getBatteryVoltage(void)
     // UWriteInt((unsigned long)analog_vtg, DBG_UART);  
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nAVGadc:");
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD1=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD1=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE0=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);  
 #endif
 
@@ -514,12 +525,12 @@ uint32_t getChargerVoltage(void)
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
-    adc_avg = updateADC(MCU_VADC, CHARGER_ADC);
+    adc_avg = updateADC(SIG_12V_IN_ADC, ADC_INDX_12VIN);
 
     //analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98189) * CHARGER_RESISTOR_RATIO);  //multiplying by offset 0.98189 (1/1.0184415335) calculated from the slope between measurement and adc values on PB2 for the range 0-5v
     // analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * CHARGER_RESISTOR_RATIO);
-    // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * CHARGER_RESISTOR_RATIO);
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)); //PP (24-04-24) commented until HW is finalized
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * CHARGER_RESISTOR_RATIO);
+    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)); //PP (24-04-24) commented until HW is finalized
     
     analog_vtg *= 1000;
     //analog_vtg *= DC_CHARGER_RESISTOR_RATIO;
@@ -534,7 +545,8 @@ uint32_t getChargerVoltage(void)
     // UWriteData('\n',DBG_UART);
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nAVGadc:");
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD0=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD0=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE1=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);
 #endif
 
@@ -560,7 +572,8 @@ void GetAdcData(void)
    //getACvoltage();
 
 #ifdef DEBUG_ADC
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE1=");
+    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE1=");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD7=");
     vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.AC_Voltage);
 #endif
 //    measurements.AC_Voltage = 0;
@@ -569,7 +582,9 @@ void GetAdcData(void)
 
    getRouter2_DC_current();
 
+#if 0
    getRouter1_DCvoltage();
+#endif  // if 0
 
    getRouter2_DCvoltage();
 
@@ -594,5 +609,7 @@ void GetAdcData(void)
     vUART_SendInt(DEBUG_UART_BASE,measurements.DC_Charger_voltage);
 #endif
 }
+
+#endif  //ADC_EN
 
 

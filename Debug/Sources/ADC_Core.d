@@ -19,14 +19,14 @@ Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/inc
 Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
-Sources/ADC_Core.obj: ../Sources/HW_pins.h
+Sources/ADC_Core.obj: ../Sources/_config.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
+Sources/ADC_Core.obj: ../Sources/HW_pins.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
-Sources/ADC_Core.obj: ../Sources/_config.h
 Sources/ADC_Core.obj: ../Sources/UartCore.h
 Sources/ADC_Core.obj: ../Sources/ADC_Core.h
 Sources/ADC_Core.obj: ../Sources/_debug.h
@@ -69,7 +69,7 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
-../Sources/HW_pins.h:
+../Sources/_config.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h:
 
@@ -81,9 +81,9 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 
-C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
+../Sources/HW_pins.h:
 
-../Sources/_config.h:
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 
 ../Sources/UartCore.h:
 

@@ -14,7 +14,7 @@
 #include "driverlib/adc.h"
 #include "inc/TM4C1233E6PZ.h"
 
-#include "_config.h"
+//#include "Sources/_config.h"
 
 #define ADC_REFV		(3.3)
 #define ADC_RESOLUTION	(4095)
@@ -23,29 +23,58 @@
 
 #define TOTAL_ADC_SIGNALS	(7)
 
-#define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH8|ADC_CTL_CH9|ADC_CTL_CH13|ADC_CTL_CH14|ADC_CTL_CH15)
+// #define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH8|ADC_CTL_CH9|ADC_CTL_CH13|ADC_CTL_CH14|ADC_CTL_CH15)
+#define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH0|ADC_CTL_CH1|ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH4|ADC_CTL_CH5|ADC_CTL_CH6)
+
+#define RESISTOR1_CHARGER_12V (10)
+#define RESISTOR2_CHARGER_12V (3.3)
+#define CHARGER_RESISTOR_RATIO ((RESISTOR1_CHARGER_12V+RESISTOR2_CHARGER_12V)/RESISTOR2_CHARGER_12V)	//inverse of resistor ratio
 
 enum	//ADC indexes Used for adc raw array queue sampling
 {
-	AC_VADC = 0,	//0
-	DC_CADC2,		//1
-	DC_CADC1,		//2
-	DC_VADC1,		//3
-	DC_VADC2,		//4	
-	BATT_ADC,		//5
-	CHARGER_ADC		//6
+	ADC_INDX_ACV = 0,	//0
+	ADC_INDX_ODUC,		//1
+	ADC_INDX_RTRC,		//2
+	ADC_INDX_ODUV,		//3
+	ADC_INDX_BATTV,		//4
+	ADC_INDX_12VIN,		//5
+	ADC_INDX_ERTHV,		//6
 };
 
+
+#if (TARGET_ADC_PINS == EVSE_ADC_TEST_PINS)
 typedef enum	//used for adc channel number of the gpio pin
 {
-	MCU_VAC_ADC	= 2,			    //ADC_AIN2
-	ADC_current_router2,		    //ADC_AIN3
-	ADC_current_router1 = 8,		//ADC_AIN8
+	SIG_AC_VOLTAGE_ADC	= 2,			    //ADC_AIN2
+	SIG_ODU_CURRENT_ADC,		    //ADC_AIN3
+	SIG_RTR_CURRENT_ADC = 8,		//ADC_AIN8
 	MCU_ADC_VCC_POE_1,		        //ADC_AIN9
-	MCU_ADC_VCC_POE_2 = 13,		    //ADC_AIN13
-	MCU_Battery_VADC,			    //ADC_AIN14
-	MCU_VADC					    //ADC_AIN15
+	SIG_ODU_VOLTAGE_ADC = 13,		    //ADC_AIN13
+	SIG_BATTERY_VOLT_ADC,			    //ADC_AIN14
+	SIG_12V_IN_ADC					    //ADC_AIN15
 }ADC_Channels_t;
+
+#elif (TARGET_ADC_PINS == TIOT_ADC_PINS)
+typedef enum	//used for adc channel number of the gpio pin
+{
+	// MCU_VAC_ADC	= 2,			    //ADC_AIN2
+	// ADC_current_router2,		    //ADC_AIN3
+	// ADC_current_router1 = 8,		//ADC_AIN8
+	// MCU_ADC_VCC_POE_1,		        //ADC_AIN9
+	// MCU_ADC_VCC_POE_2 = 13,		    //ADC_AIN13
+	// MCU_Battery_VADC,			    //ADC_AIN14
+	// MCU_VADC					    //ADC_AIN15
+
+	SIG_ODU_CURRENT_ADC,		//ADC_AIN0
+	SIG_ODU_VOLTAGE_ADC,		//ADC_AIN1
+	SIG_12V_IN_ADC,				//ADC_AIN2
+	SIG_BATTERY_VOLT_ADC,		//ADC_AIN3
+	SIG_AC_VOLTAGE_ADC,			//ADC_AIN4
+	SIG_EARTH_VTG_ADC,			//ADC_AIN5
+	SIG_RTR_CURRENT_ADC,		//ADC_AIN6
+}ADC_Channels_t;
+
+#endif
 
 typedef struct
 {
@@ -81,7 +110,9 @@ uint32_t getRouter2_DC_current(void);
 
 uint32_t getRouter1_DC_current(void);
 
+#if 0
 uint32_t getRouter1_DCvoltage(void);
+#endif//if 0
 
 uint32_t getRouter2_DCvoltage(void);
 
@@ -92,6 +123,7 @@ uint32_t getChargerVoltage(void);
 uint32_t calculate_AC_ADC(void);
 
 void GetAdcData(void);
+
 
 #endif /* SOURCES_ADC_CORE_H_ */
 

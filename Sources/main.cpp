@@ -71,7 +71,9 @@ extern e2p_location_info_t e2p_location_info;
 extern e2p_config_time_t e2p_config_time;
 
 extern router_mode_t router_mode;
+#if 0
 extern sys_config_t sys_config;
+#endif  //if 0
 
 ram_data_t ram_data;
 Alarms_t Alarms;
@@ -119,7 +121,7 @@ int main(void)
 	{
 		vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(25-04-24) for testing
 		// GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
-		readADC(MCU_VAC_ADC);
+		readADC(SIG_AC_VOLTAGE_ADC);
 		// GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN);
 	}
 #endif
@@ -184,9 +186,17 @@ int main(void)
 			vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
 			// vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
 
+#if HW_BOARD == TIOT_V2_00_BOARD
+            readBCD_SelectorSW();
+#endif
+
+#ifdef ADC_EN
 			GetAdcData();
+#endif  //ADC_EN
 			update_ram_data();
+#if 0
 			Data_Screen_lcd();
+#endif  //if 0
 
             if(get_system_state() != CONFIG_MODE)
             {
@@ -215,6 +225,7 @@ int main(void)
                     }
                 }
 
+#ifdef FLASH_EN
                 if(++save_offline_time >= SAVE_OFFLINE_TIME)
                 {
                     save_offline_time = 0;
@@ -223,9 +234,9 @@ int main(void)
                         save_OfflineTelecomData();
                     }
                 }
+#endif //FLASH_EN
             } 
 		}
-
         tx_pending_dataPC();
 	}
 #endif	//if 0
@@ -345,7 +356,10 @@ void vMAIN_InitClockPeripherals(void)
 	vPERIPH_GPIOInit();
 	vPERIPH_SystickInit();
 	vPERIPH_UARTInit();
+#ifdef  ADC_EN
 	vADC0Init();
+#endif  //ADC_EN
+
 // #if defined(FLASH_EN)
 // 	//PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
 // 	//PP (24-04-24) The flash test project is on hold. It will be resumed after a few more functionalities have been have been tested: LCD, RTC, E2P etc
@@ -400,7 +414,8 @@ void write_defaults(uint32_t addr)
             memset(&e2p_device_info, 0, sizeof(e2p_device_info_t));
             // memcpy(e2p_device_info.device_id, "TELECOM222", strlen((const char*)"TELECOM222"));
             // memcpy(e2p_device_info.device_id, "TELECOM111", strlen((const char*)"TELECOM111"));
-            memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
+            // memcpy(e2p_device_info.device_id, "TELECOM444", strlen((const char*)"TELECOM444"));
+            memcpy(e2p_device_info.device_id, "TELECOM333", strlen((const char*)"TELECOM333"));
             e2p_write_device_cfg();
         }
         break;

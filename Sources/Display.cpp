@@ -9,8 +9,8 @@
 #include <stdlib.h> 
 #include <stdint.h>
 #include <stdio.h>
-#include "Display.h"
 #include "_config.h"
+#include "Display.h"
 #include "HW_pins.h"
 #include "IO_cntrl.h"
 #include "ADC_Core.h"
@@ -21,6 +21,7 @@
 #include "_debug.h"
 #include "SysTick_Timer.h"
 
+#if 0
 extern measurements_t measurements;
 extern volatile EXTI_cnt_t EXTI_cnt;
 extern ram_data_t ram_data;
@@ -305,4 +306,5 @@ void Data_Screen_lcd()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nI");
 #endif
 }
+#endif //if 0
 

@@ -64,6 +64,7 @@ void vPERIPH_SystickInit(void)
 //*********************************************************************************//
 void SysTickIntHandler(void)
 {
+    // IntMasterDisable();
     // static uint16_t ADC_RAW = 0;
 
     if(u32DelayCounter != 0U)
@@ -80,7 +81,7 @@ void SysTickIntHandler(void)
     }
 #endif
 
-    // ADC_RAW = readADC(MCU_VAC_ADC);
+    // ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
     // if(ADC_RAW > ADC_RAW_MAX)
     // {
     //     ADC_RAW_MAX = ADC_RAW;
@@ -157,6 +158,7 @@ void SysTickIntHandler(void)
         memcpy(&ram_data.ram_EXTI_cnt, (void*)&EXTI_cnt, sizeof(EXTI_cnt_t));
         memset((void*)&EXTI_cnt, 0, sizeof(EXTI_cnt_t));
     }
+    // IntMasterEnable();
 }   // End of SystickHandler
 
 //*********************************************************************************//

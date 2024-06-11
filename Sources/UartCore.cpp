@@ -76,6 +76,7 @@ void vLTEUARTInit(void)
     flushTxBuffer(LTE_UART);
 }
 
+#if 0
 void vDISPLAYUARTInit(void)
 {
     SysCtlPeripheralEnable(DISPLAY_UART_PERIPH);
@@ -91,12 +92,15 @@ void vDISPLAYUARTInit(void)
     flushTxBuffer(DISPLAY_UART);
     flushRxBuffer(DISPLAY_UART);  //PP on 19-04-24: donot forget to uncomment this later when u've made a function for this.
 }
+#endif  //if 0
 
 void vPERIPH_UARTInit(void)
 {
     vDEBUGUARTInit();
     vLTEUARTInit();
+#if 0
     vDISPLAYUARTInit();
+#endif//if 0
 }
 
 //*********************************************************************************//
@@ -131,6 +135,7 @@ void vPERIPH_UARTInit(void)
 
 extern "C" void DEBUGUARTIntHandler(void)
 {
+    // IntMasterDisable(); //PP added on 11-06-24
     uint32_t ui32Status;//, u32Data;
 
     // Get the interrrupt status. //
@@ -148,7 +153,8 @@ extern "C" void DEBUGUARTIntHandler(void)
         // UARTIntClear(DEBUG_UART_BASE, UART_INT_RX);
         UARTIntClear(DEBUG_UART_BASE, DEBUG_UART_INTEN_FLAG);
         // UARTIntClear(DEBUG_UART_BASE, ui32Status);
-        U4_RxIntHandler();
+        // U4_RxIntHandler();
+        U0_RxIntHandler();
     }
 
     if(ui32Status & UART_INT_TX)
@@ -156,7 +162,8 @@ extern "C" void DEBUGUARTIntHandler(void)
         // PP on 20-04-24: This (UARTIntClear for tx intr) should only be done when the whole buffer is sentout.
         // otherwise it breaks the packets. Especially if we're using non irq transmits along with irq transmits in the code.
         // UARTIntClear(DEBUG_UART_BASE, UART_INT_TX);
-        U4_TxIntHandler();
+        // U4_TxIntHandler();
+        U0_TxIntHandler();
     }
 #else
 
@@ -261,10 +268,12 @@ extern "C" void DEBUGUARTIntHandler(void)
         }
     }
 #endif
+    // IntMasterEnable(); //PP added on 11-06-24
 }
 
 #ifdef UART_TX_IRQ_EN
-static inline void U4_RxIntHandler(void)
+// static inline void U4_RxIntHandler(void)
+static inline void U0_RxIntHandler(void)
 {
     static int msglen=0,datacnt=0;
 
@@ -360,7 +369,8 @@ static inline void U4_RxIntHandler(void)
 
 }
 
-static inline void U4_TxIntHandler(void)
+// static inline void U4_TxIntHandler(void)
+static inline void U0_TxIntHandler(void)
 {
     pc_uart_tx.tx_indx++;
     
@@ -388,6 +398,7 @@ static inline void U4_TxIntHandler(void)
 //*********************************************************************************//
 extern "C" void LTEUARTIntHandler(void)
 {
+    // IntMasterDisable(); //PP added on 11-06-24
     uint32_t ui32Status;//, u32Data;
 
     // Get the interrrupt status. //
@@ -435,8 +446,8 @@ extern "C" void LTEUARTIntHandler(void)
             gprs_rx_buff.buffer[gprs_rx_buff.index++] = tmpudr;
         }
     }
-
 #endif  //UART_TX_IRQ_EN
+    // IntMasterEnable(); //PP added on 11-06-24
 }
 
 #ifdef UART_TX_IRQ_EN
@@ -475,8 +486,9 @@ static inline void U3_TxIntHandler(void)
         // HWREG(LTE_UART_BASE + UART_O_DR) = gprs_tx_buff.buffer[gprs_tx_buff.index];
     }
 }
-#endif
+#endif	//UART_TX_IRQ_EN
 
+#if 0
 //*********************************************************************************//
 // Function Name        :- void UART7IntHandler(void)
 // Input Parameters     :- void
@@ -580,6 +592,7 @@ static inline void U0_TxIntHandler(void)
     }
 }
 #endif  //UART_TX_IRQ_EN
+#endif  //if 0
 
 void vUART_SendChr(uint32_t ui32Base, uint8_t u8Val)
 {
@@ -674,6 +687,7 @@ void vUART_SendStr_INT(uint32_t ui32Base, const uint8_t *pui8Buffer)
         }
     }
 
+#if 0
     if(ui32Base == DISPLAY_UART_BASE)
     {
         if (pui8Buffer[0] == '\0') return;
@@ -706,6 +720,7 @@ void vUART_SendStr_INT(uint32_t ui32Base, const uint8_t *pui8Buffer)
             }
         }
     }
+#endif  //if 0
 }
 #endif  //UART_TX_IRQ_EN
 
@@ -749,6 +764,7 @@ void Usendbuffer(uint32_t ui32Base)
             vUART_SendChr(ui32Base,gprs_tx_buff.buffer[i]);
         }
     }
+#if 0
     // else if(ui32Base == DISPLAY_UART)
     else if(ui32Base == DISPLAY_UART_BASE)
     {
@@ -760,6 +776,7 @@ void Usendbuffer(uint32_t ui32Base)
         }
 
     }
+#endif //if 0
 }
 
 void vUART_CheckFrameTimeout(int uart_no)
@@ -837,11 +854,14 @@ void vUART_CheckFrameTimeout(int uart_no)
 
 void flushRxBuffer(int uart_no)
 {
+#if 0
     if(uart_no == DISPLAY_UART)
     {
         memset(&display_uart_rx,0,sizeof(Rx_Buff_t));
     }
-    else if(uart_no == UART_PC)
+    else 
+#endif  //if 0
+    if(uart_no == UART_PC)
     {
         memset(&pc_uart_rx,0,sizeof(Rx_Buff_t));
     }
@@ -853,11 +873,14 @@ void flushRxBuffer(int uart_no)
 
 void flushTxBuffer(int uart_no)
 {
+#if 0
     if(uart_no == DISPLAY_UART)
     {
         memset(&display_tx,0,sizeof(Tx_Buff_t));
     }
-    else if(uart_no == UART_PC)
+    else 
+#endif  //if 0
+    if(uart_no == UART_PC)
     {
         unsigned int last_pck_num = pc_uart_tx.curr_pck_num;
         char last_pending_cmd = pc_uart_tx.pending_command, last_wait_for_ack = pc_uart_tx.wait_for_ack;

@@ -46,6 +46,9 @@ void vGPIOPortEnable(void);
 void vGPIO_UnlockGPIO(uint32_t ui32Port, uint8_t ui8Pins);
 void vLEDGPIOInit(void);
 void vPERIPH_GPIOInit(void);
+#if HW_BOARD == TIOT_V2_00_BOARD
+void readBCD_SelectorSW(void);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 void vInit_InputTestpins(void);
 void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val);
 void vInput_PollingRead(void);

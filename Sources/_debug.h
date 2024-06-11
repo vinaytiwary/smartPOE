@@ -10,8 +10,8 @@
 
 #include "_config.h"
 
-// // #define DEBUG_ADC
-#define DEBUG_RTC
+// //#define DEBUG_ADC
+// #define DEBUG_RTC
 // // #define DEBUG_LCD_FREEZE
 // // #define DEBUG_LCD_BUFF
 
@@ -63,5 +63,7 @@
 #define DEBUG_FLASH
 #define DEBUG_FL_UNSENT
 #define DEBUG_READ_FREQ
+
+#define DEBUG_BCD_SEL_SW
 
 #endif /* SOURCES__DEBUG_H_ */
