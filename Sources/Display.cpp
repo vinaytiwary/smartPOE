@@ -145,7 +145,7 @@ void Data_Screen_lcd()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nA");
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n3ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
@@ -176,7 +176,7 @@ void Data_Screen_lcd()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nB");
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n4ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
@@ -202,7 +202,7 @@ void Data_Screen_lcd()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nC");
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n5ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
@@ -220,10 +220,10 @@ void Data_Screen_lcd()
 
     memset(tmpstr,0,sizeof(tmpstr));
     //memcpy(tmpstr,"AC VOLTAGE:Val",strlen("AC VOLTAGE:Val"));
-    // sprintf(tmpstr,"AC V:%03u.%03u",measurements.AC_Voltage/1000,measurements.AC_Voltage%1000);
-    // sprintf(tmpstr,"ACV:%03u.%02u",ram_data.ram_ADC.AC_Voltage/1000,ram_data.ram_ADC.AC_Voltage%1000);
-    // my_sprintf(tmpstr,3,"ACV:%03u.%02u",ram_data.ram_ADC.AC_Voltage/1000,ram_data.ram_ADC.AC_Voltage%1000);
-    my_sprintf(tmpstr,3,"ACV:%03d.%02d",ram_data.ram_ADC.AC_Voltage/1000,ram_data.ram_ADC.AC_Voltage%1000);
+    // sprintf(tmpstr,"AC V:%03u.%03u",measurements.PN_AC_Voltage/1000,measurements.PN_AC_Voltage%1000);
+    // sprintf(tmpstr,"ACV:%03u.%02u",ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000);
+    // my_sprintf(tmpstr,3,"ACV:%03u.%02u",ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000);
+    my_sprintf(tmpstr,3,"ACV:%03d.%02d",ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000);
     PrepareLcdBuffer((unsigned char*)tmpstr,0,2);
     //delay_millis(5);
 
@@ -231,7 +231,7 @@ void Data_Screen_lcd()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nD");
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n6ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');

@@ -32,7 +32,7 @@ volatile uint32_t u32DelayCounter;
 scheduler_t scheduler;
 volatile uint32_t millis_cnt = 0;
 
-extern volatile double ADC_RAW_MAX;
+extern volatile double PN_ADC_RAW_MAX;
 extern volatile EXTI_cnt_t EXTI_cnt;
 
 extern volatile gprs_rx_isr_handler_t gprs_rx_isr_handler;
@@ -41,6 +41,9 @@ extern volatile Rx_Buff_t pc_uart_rx, display_uart_rx;
 
 extern gprs_t gprs;
 extern ram_data_t ram_data;
+
+extern volatile double PN_ADC_RAW_MAX;
+extern volatile double NE_ADC_RAW_MAX;
 
 #ifdef ETHERNET_EN
 extern volatile unsigned long  _millis;
@@ -65,7 +68,8 @@ void vPERIPH_SystickInit(void)
 void SysTickIntHandler(void)
 {
     // IntMasterDisable();
-    // static uint16_t ADC_RAW = 0;
+    static uint16_t PN_ADC_RAW = 0;
+    static uint16_t NE_ADC_RAW = 0;
 
     if(u32DelayCounter != 0U)
     {
@@ -81,12 +85,27 @@ void SysTickIntHandler(void)
     }
 #endif
 
-    // ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
-    // if(ADC_RAW > ADC_RAW_MAX)
-    // {
-    //     ADC_RAW_MAX = ADC_RAW;
-    //     ADC_RAW = 0;
-    // }
+    if(millis_cnt%2==0)
+    {
+        // PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
+        // if(PN_ADC_RAW > PN_ADC_RAW_MAX)
+        // {
+        //     PN_ADC_RAW_MAX = PN_ADC_RAW;
+        //     PN_ADC_RAW = 0;
+        // }
+    }
+    else
+    {
+        // NE_ADC_RAW = readADC(SIG_EARTH_VTG_ADC);
+        // if(NE_ADC_RAW > NE_ADC_RAW_MAX)
+        // {
+        //     NE_ADC_RAW_MAX = NE_ADC_RAW;
+        //     NE_ADC_RAW = 0;
+        // }
+    }
+    
+
+    
 
     scheduler.u16Cntr10ms++;
     scheduler.u16Cntr20ms++;
@@ -104,17 +123,18 @@ void SysTickIntHandler(void)
         display_uart_rx.elapsed++;
     }
 
-//#if HW_VER == VER_1
-//            vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN | LED3_PIN | LED4_PIN), (LED1_PIN | LED3_PIN));
-//#elif HW_VER == VER_2
-//            MCP23017_pin_toggle(LED_PORT,STATUS_LED_PIN);
-//#elif HW_VER == VER_3
-//            // vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
-//            vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
-////#ifndef ETHERNET_EN
-////            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
-////#endif
+#if HW_VER == VER_1
+           vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN | LED3_PIN | LED4_PIN), (LED1_PIN | LED3_PIN));
+#elif HW_VER == VER_2
+           MCP23017_pin_toggle(LED_PORT,STATUS_LED_PIN);
+#elif HW_VER == VER_3
+        //    vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
+        //    vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+        vGPIO_Toggle(LED_PORT_BASE, LED2_PIN, LED2_PIN );
+//#ifndef ETHERNET_EN
+//            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
 //#endif
+#endif
 
     if(scheduler.u16Cntr10ms >= 10U)
     {
@@ -127,7 +147,8 @@ void SysTickIntHandler(void)
         scheduler.u16Cntr20ms = 0;
         scheduler.flg20ms = HIGH;
 
-        // calculate_AC_ADC();
+        // calculate_PN_AC_ADC();
+        // calculate_NE_AC_ADC();
         //vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(24-04-24) for testing
     }
 
@@ -141,7 +162,6 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr100ms = 0;
         scheduler.flg100ms = HIGH;
-        ToggleLEDs();
     }
 
     if(scheduler.u16Cntr600ms >= 600U)

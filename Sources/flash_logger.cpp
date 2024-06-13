@@ -933,7 +933,7 @@ void prepare_OfflineTelecomData(void)
     vUART_SendStr(DEBUG_UART_BASE,"\n1Ffc=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_EXTI_cnt.freq_cnt);
     vUART_SendStr(DEBUG_UART_BASE,"\n1FACV=");
-    vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\n1FRC=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_current_router1);
     vUART_SendStr(DEBUG_UART_BASE,"\t1FOC=");

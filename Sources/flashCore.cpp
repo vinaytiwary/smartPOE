@@ -275,7 +275,7 @@ void addDummyFL_TelecomLogs(unsigned int no_of_logs)
     FL_log_data_t dummy_FL_Log;
     memset(&dummy_FL_Log, 0, sizeof(FL_log_data_t));
 
-    dummy_FL_Log.ram_data.ram_ADC.AC_Voltage = 260000;
+    dummy_FL_Log.ram_data.ram_ADC.PN_AC_Voltage = 260000;
     dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage = 12000;
     dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = 12000;
     dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = 500;

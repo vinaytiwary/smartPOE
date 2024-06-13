@@ -23,8 +23,9 @@ typedef enum
   MODE_12V,
   MODE_24V,
   MODE_36V,
-  MODE_48V
-}__attribute__((packed))router_mode_t;
+  MODE_48V,
+  MODE_56V
+}__attribute__((packed))voltage_mode_t;
 
 typedef struct
 {
@@ -54,5 +55,9 @@ void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val);
 void vInput_PollingRead(void);
 void vEXTIpinInit(void);
 void ToggleLEDs(void);
+
+void init_ODU_Supplypins(void);
+
+void SetODU_Mode(voltage_mode_t BCD_SW);
 
 #endif /* SOURCES_IO_CNTRL_H_ */

@@ -71,8 +71,8 @@
 
 #define EVSE_TEST_BOARD         (0)
 #define TIOT_V2_00_BOARD        (1)
-// #define HW_BOARD                (TIOT_V2_00_BOARD)
-#define HW_BOARD                (EVSE_TEST_BOARD)
+#define HW_BOARD                (TIOT_V2_00_BOARD)
+// #define HW_BOARD                (EVSE_TEST_BOARD)
 
 #define EVSE_ADC_TEST_PINS      (0)
 #define TIOT_ADC_PINS           (1)

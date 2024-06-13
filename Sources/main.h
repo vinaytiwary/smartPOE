@@ -17,8 +17,8 @@
 
 #define MINUTE		          (60)
 
-// #define SAVE_OFFLINE_TIME		(30 * MINUTE)
-#define SAVE_OFFLINE_TIME		(1 * MINUTE)
+#define SAVE_OFFLINE_TIME		(30 * MINUTE)
+// #define SAVE_OFFLINE_TIME		(1 * MINUTE)
 
 typedef enum
 {

@@ -25,7 +25,7 @@
 #include "_debug.h"
 
 volatile EXTI_cnt_t EXTI_cnt;
-router_mode_t router_mode;
+voltage_mode_t voltage_mode;
 
 //********************** GPIOD_IRQ_Handler *************************//
 //extern "C" void GPIODIntHandler(void)
@@ -191,6 +191,8 @@ void vPERIPH_GPIOInit(void)
     vLEDGPIOInit();
     // vInit_InputTestpins();   //commenting this as I'm using these pins for ADC testing.
 
+    init_ODU_Supplypins();
+
     GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
 }
 
@@ -198,6 +200,7 @@ void vPERIPH_GPIOInit(void)
 void readBCD_SelectorSW(void)
 {
     uint8_t BCD_code = 0;
+    static uint8_t prev_BCDcode = 0;    //incase the roatry switch is >3 position.
     uint8_t BCD_pin0 = 0, BCD_pin1 = 0, BCD_pin2 = 0, BCD_pin3 = 0;
 
     BCD_pin0 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S1)/BCD_SELECTOR_S1;
@@ -215,9 +218,31 @@ void readBCD_SelectorSW(void)
 
     BCD_code = ((BCD_pin0 << 0)|(BCD_pin1 << 1)|(BCD_pin2 << 2)|(BCD_pin3 << 3));
 #ifdef  DEBUG_BCD_SEL_SW
-    vUART_SendStr(UART_PC, "\nBCD:");
+    vUART_SendStr(UART_PC, "\n1BCD:");
     vUART_SendInt(UART_PC, BCD_code);
 #endif  //DEBUG_BCD_SEL_SW
+
+    if((BCD_code >= 0) && (BCD_code <= 4))
+    {
+        // // BCD_code = (BCD_code == 2)? ((BCD_code + 1) * 10): (BCD_code == 3)? (((BCD_code + 1) * 14)) : ((BCD_code + 1) * 12);
+        // BCD_code = (BCD_code == 2)? 30 : (BCD_code == 4)? 56 : ((BCD_code + 1) * 12);
+        // prev_BCDcode = BCD_code;
+        BCD_code += 1;
+        prev_BCDcode = BCD_code;
+    }
+    else
+    {
+        BCD_code = prev_BCDcode;
+#ifdef  DEBUG_BCD_SEL_SW
+        vUART_SendStr(UART_PC, "\nINV_BCD:");
+        vUART_SendInt(UART_PC, BCD_code);
+#endif  //DEBUG_BCD_SEL_SW        
+    }
+#ifdef  DEBUG_BCD_SEL_SW
+    vUART_SendStr(UART_PC, "\n2BCD:");
+    vUART_SendInt(UART_PC, BCD_code);
+#endif  //DEBUG_BCD_SEL_SW  
+    SetODU_Mode((voltage_mode_t)BCD_code);
 }
 #endif  //#if HW_BOARD == TIOT_V2_00_BOARD
 
@@ -302,3 +327,98 @@ void ToggleLEDs(void)
 //#endif
 #endif
 }
+
+#if HW_BOARD == TIOT_V2_00_BOARD
+
+void init_ODU_Supplypins(void)
+{
+    GPIOPinTypeGPIOOutput(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN);
+    GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, GPIO_LOW);    //Turn OFF ODU relay at startup
+    // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, BUCK_BOOSTER_EN1_PIN);  //Turn OFF XL6019 A startup by setting 24V en pin HIGH.
+    // GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);    //Turn OFF 30V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, BUCK_BOOSTER_EN2_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);    //Turn OFF 48V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);    //Turn OFF 56V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+}
+
+void SetODU_Mode(voltage_mode_t BCD_SW)
+{
+    switch(BCD_SW)
+    {
+        case MODE_56V:
+        {
+#ifdef  DEBUG_GPIO
+            vUART_SendStr(UART_PC, "\n56VM");
+#endif  //DEBUG_GPIO
+            GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, BUCK_BOOSTER_EN2_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+        }
+        break;
+
+        case MODE_48V:
+        {
+#ifdef  DEBUG_GPIO
+            vUART_SendStr(UART_PC, "\n48VM");
+#endif  //DEBUG_GPIO
+            GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, BUCK_BOOSTER_EN2_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
+        }
+        break;
+
+        case MODE_36V:
+        {
+#ifdef  DEBUG_GPIO
+            vUART_SendStr(UART_PC, "\n30VM");
+#endif  //DEBUG_GPIO
+            GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+        }
+        break;
+
+        case MODE_24V:
+        {
+#ifdef  DEBUG_GPIO
+            vUART_SendStr(UART_PC, "\n24VM");
+#endif  //DEBUG_GPIO
+            GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
+        }
+        break;
+
+        case MODE_12V:
+        case HOME:
+        default:
+        {
+#ifdef  DEBUG_GPIO
+            vUART_SendStr(UART_PC, "\n12VM");
+#endif  //DEBUG_GPIO
+            GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, BUCK_BOOSTER_EN1_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
+        }
+        break;
+    }
+}
+
+#endif  // HW_BOARD == TIOT_V2_00_BOARD

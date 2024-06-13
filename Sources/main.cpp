@@ -70,7 +70,7 @@ extern e2p_device_info_t e2p_device_info;
 extern e2p_location_info_t e2p_location_info;
 extern e2p_config_time_t e2p_config_time;
 
-extern router_mode_t router_mode;
+extern voltage_mode_t voltage_mode;
 #if 0
 extern sys_config_t sys_config;
 #endif  //if 0
@@ -170,6 +170,7 @@ int main(void)
         {
             scheduler.flg100ms = LOW;
             // ToggleLEDs();
+            vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
             decodeMsgPC_Uart();
 		}
 
@@ -197,6 +198,10 @@ int main(void)
 #if 0
 			Data_Screen_lcd();
 #endif  //if 0
+
+#ifdef DEBUG_ADC_SIG
+            get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
+#endif  // DEBUG_ADC_SIG
 
             if(get_system_state() != CONFIG_MODE)
             {
@@ -293,7 +298,7 @@ void update_ram_data(void)
 
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n2ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
@@ -538,10 +543,10 @@ void init_config(void)
         // HAL_GPIO_SetPin(PD, _BIT(4));
         // HAL_GPIO_SetPin(PD, _BIT(1));
 
-        router_mode = e2p_router_config.router1;
-	    // SetRouterMode(router_mode, ROUTER_1); // PP commented on 25-04-24: will do this later
-	    router_mode = e2p_router_config.router2; 
-	    // SetRouterMode(router_mode, ROUTER_2); // PP commented on 25-04-24: will do this later
+        voltage_mode = e2p_router_config.router1;
+	    // SetRouterMode(voltage_mode, ROUTER_1); // PP commented on 25-04-24: will do this later
+	    voltage_mode = e2p_router_config.router2; 
+	    // SetRouterMode(voltage_mode, ROUTER_2); // PP commented on 25-04-24: will do this later
     }
     else
     {

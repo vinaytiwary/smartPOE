@@ -33,8 +33,8 @@
 
 typedef struct 
 {
-  router_mode_t router1;    //1B
-  router_mode_t router2;    //1B
+  voltage_mode_t router1;    //1B
+  voltage_mode_t router2;    //1B
   char reserved[5];         //5B
   char checksum;            //1B
 }__attribute__((packed))e2p_router_config_t;    //8B

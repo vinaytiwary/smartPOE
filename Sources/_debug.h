@@ -10,10 +10,14 @@
 
 #include "_config.h"
 
-// //#define DEBUG_ADC
+// #define DEBUG_ADC
+#define DEBUG_ADC_SIG
+#define DEBUG_AC_ADC
+#define DEBUG_ODU_ADC
 #define DEBUG_RTC
 // // #define DEBUG_LCD_FREEZE
 // // #define DEBUG_LCD_BUFF
+#define DEBUG_GPIO
 
 #define DEBUG_E2P
 #define DEBUG_PC_CMDS

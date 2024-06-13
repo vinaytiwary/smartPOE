@@ -19,7 +19,8 @@
 
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
-volatile double ADC_RAW_MAX = 0.000;
+volatile double PN_ADC_RAW_MAX = 0.000;
+volatile double NE_ADC_RAW_MAX = 0.000;
 
 #ifdef ADC_EN
 
@@ -271,8 +272,11 @@ uint32_t readADC(uint8_t seqno)
     adc_value = pui32ADC0Value[0];
 
 #ifdef DEBUG_ADC
+    // if((seqno == SIG_ODU_VOLTAGE_ADC)||(seqno == SIG_ODU_CURRENT_ADC))
+    {
         vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)"\nRAW=");
         vUART_SendInt(DEBUG_UART_BASE,adc_value);
+    }    
 #endif
     return adc_value;
 }
@@ -333,6 +337,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 
 #ifdef DEBUG_ADC
         // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
+        // if((ch == SIG_ODU_VOLTAGE_ADC)||((ch == SIG_ODU_CURRENT_ADC)))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nRAWadc:" );
             vUART_SendInt(UART_PC,adc[indx].arr[i]);
@@ -346,6 +351,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 
 #ifdef DEBUG_ADC
         // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
+        // if((ch == SIG_ODU_VOLTAGE_ADC)||((ch == SIG_ODU_CURRENT_ADC)))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nSUM:" );
             vUART_SendInt(UART_PC,adc[indx].av );
@@ -374,15 +380,15 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 #else
 #endif
 
-uint32_t getRouter2_DC_current(void)
+uint32_t getODUCurrent(void)
 {
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
     adc_avg = updateADC(SIG_ODU_CURRENT_ADC, ADC_INDX_ODUC);
 
-    // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U4) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U3) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
+    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
     analog_vtg *= 1000;
 
     measurements.DC_current_router2 = analog_vtg;
@@ -460,15 +466,15 @@ uint32_t getRouter1_DCvoltage(void)
 }
 #endif //if 0
 
-uint32_t getRouter2_DCvoltage(void)
+uint32_t getODUVoltage(void)
 {
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
     adc_avg = updateADC(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
 
-    // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ROUTER2_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
-    analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
+    analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ODUV_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
+    // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
     analog_vtg *= 1000;
 
     //measurements.DC_Voltage_router2 = analog_vtg*10215;
@@ -522,16 +528,16 @@ uint32_t getBatteryVoltage(void)
     return measurements.DC_Battery_voltage;
 }
 
-uint32_t getChargerVoltage(void)
+uint32_t getSMPSVoltage(void)
 {
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
     adc_avg = updateADC(SIG_12V_IN_ADC, ADC_INDX_12VIN);
 
-    //analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98189) * CHARGER_RESISTOR_RATIO);  //multiplying by offset 0.98189 (1/1.0184415335) calculated from the slope between measurement and adc values on PB2 for the range 0-5v
-    // analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * CHARGER_RESISTOR_RATIO);
-    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * CHARGER_RESISTOR_RATIO);
+    //analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98189) * SMPS_12VIN_RESISTOR_RATIO);  //multiplying by offset 0.98189 (1/1.0184415335) calculated from the slope between measurement and adc values on PB2 for the range 0-5v
+    // analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * SMPS_12VIN_RESISTOR_RATIO);
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * SMPS_12VIN_RESISTOR_RATIO);
     // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)); //PP (24-04-24) commented until HW is finalized
     
     analog_vtg *= 1000;
@@ -555,48 +561,64 @@ uint32_t getChargerVoltage(void)
     return measurements.DC_Charger_voltage;
 }
 
-uint32_t calculate_AC_ADC(void)
+uint32_t calculate_PN_AC_ADC(void)
 {
-    measurements.AC_Voltage = (ADC_RAW_MAX * 83.8709677)/1000;
-    //measurements.AC_Voltage = (ADC_RAW_MAX * 83.871)/1000;
-    ADC_RAW_MAX = 0;
+    measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 83.8709677)/1000;
+    //measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 83.871)/1000;
+    PN_ADC_RAW_MAX = 0;
 
-    // measurements.AC_Voltage = (measurements.AC_Voltage < 200)? 0 : measurements.AC_Voltage;
+    // measurements.PN_AC_Voltage = (measurements.PN_AC_Voltage < 200)? 0 : measurements.PN_AC_Voltage;
 
-    // return (measurements.AC_Voltage * 1000);
-    measurements.AC_Voltage *= 1000;
+    // return (measurements.PN_AC_Voltage * 1000);
+    measurements.PN_AC_Voltage *= 1000;
 
-    return measurements.AC_Voltage;
+    return measurements.PN_AC_Voltage;
+}
+
+uint32_t calculate_NE_AC_ADC(void)
+{
+    measurements.NE_AC_Voltage = (NE_ADC_RAW_MAX * 83.8709677)/1000;
+    //measurements.NE_AC_Voltage = (NE_ADC_RAW_MAX * 83.871)/1000;
+    NE_ADC_RAW_MAX = 0;
+
+    // measurements.NE_AC_Voltage = (measurements.NE_AC_Voltage < 200)? 0 : measurements.NE_AC_Voltage;
+
+    // return (measurements.NE_AC_Voltage * 1000);
+    measurements.NE_AC_Voltage *= 1000;
+
+    return measurements.NE_AC_Voltage;
 }
 
 void GetAdcData(void)
 {
    //getACvoltage();
 
-#ifdef DEBUG_ADC
+#ifdef DEBUG_AC_ADC
     // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE1=");
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD7=");
-    vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.PN_AC_Voltage);
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD6=");
+    vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.NE_AC_Voltage);
 #endif
-//    measurements.AC_Voltage = 0;
+//    measurements.PN_AC_Voltage = 0;
 
    getRouter1_DC_current();
 
-   getRouter2_DC_current();
+   getODUCurrent();
 
 #if 0
    getRouter1_DCvoltage();
 #endif  // if 0
 
-   getRouter2_DCvoltage();
+   getODUVoltage();
 
    getBatteryVoltage();
 
-   getChargerVoltage();
+   getSMPSVoltage();
 
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n1ACV,RC,ODUC,RV,ODUV,BV,SV:");
-    vUART_SendInt(DEBUG_UART_BASE,measurements.AC_Voltage);
+    vUART_SendInt(DEBUG_UART_BASE,measurements.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,measurements.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
@@ -611,6 +633,67 @@ void GetAdcData(void)
     vUART_SendInt(DEBUG_UART_BASE,measurements.DC_Charger_voltage);
 #endif
 }
+
+#ifdef DEBUG_ADC_SIG
+void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx)
+{
+    vUART_SendStr(UART_PC, "\nASIG:");
+    vUART_SendInt(UART_PC, ch);
+    vUART_SendChr(UART_PC, ',');
+    vUART_SendInt(UART_PC, indx);
+
+    vUART_SendStr(UART_PC, "\nASIG_arr");
+
+    for(uint8_t i = 0; i < (NUM_OF_SAMPLES - 1); i++)
+    {
+        vUART_SendChr(UART_PC, ',');
+        vUART_SendInt(UART_PC, adc[indx].arr[i]);
+    }
+
+    vUART_SendStr(UART_PC, "\nAMAX,MIN:");
+    vUART_SendInt(UART_PC, adc[indx].max_adc);
+    vUART_SendChr(UART_PC, ',');
+    vUART_SendInt(UART_PC, adc[indx].min_adc);
+
+    vUART_SendStr(UART_PC, "\nASIG_av:");
+    vUART_SendInt(UART_PC, adc[indx].av);
+
+    vUART_SendStr(UART_PC, "#ele,#ele-max-min:");
+    vUART_SendInt(UART_PC, adc[indx].num_of_elements);
+    vUART_SendChr(UART_PC, ',');
+    vUART_SendInt(UART_PC, (adc[indx].num_of_elements-2));
+
+    vUART_SendStr(UART_PC, "\nAFinal:");
+    if(ch == SIG_ODU_CURRENT_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.DC_current_router2);
+    }
+    else if(ch == SIG_ODU_VOLTAGE_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.DC_Voltage_router2);
+    }
+    else if(ch == SIG_12V_IN_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.DC_Charger_voltage);
+    }
+    else if(ch == SIG_BATTERY_VOLT_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.DC_Battery_voltage);
+    }
+    else if(ch == SIG_AC_VOLTAGE_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.PN_AC_Voltage);
+    }
+    else if(ch == SIG_EARTH_VTG_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.NE_AC_Voltage);
+    }
+    else if(ch == SIG_RTR_CURRENT_ADC)
+    {
+        vUART_SendInt(UART_PC, measurements.DC_current_router1);
+    }
+}
+#endif  //DEBUG_ADC_SIG
 
 #endif  //ADC_EN
 

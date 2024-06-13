@@ -154,4 +154,25 @@
 #define BCD_SELECTOR_S3             GPIO_PIN_4
 #define BCD_SELECTOR_S4             GPIO_PIN_5
 
+/*******************ODU Supply Enable PINS *****************/
+
+#if HW_BOARD == TIOT_V2_00_BOARD
+
+#define ODU_SUPPLY_RELAY_BASE         GPIO_PORTE_BASE
+#define ODU_SUPPLY_RELAY_PIN          GPIO_PIN_7
+
+#define BUCK_BOOSTER_EN1_BASE         GPIO_PORTE_BASE
+#define BUCK_BOOSTER_EN1_PIN          GPIO_PIN_4
+
+#define BUCK_BOOSTER_EN2_BASE         GPIO_PORTE_BASE
+#define BUCK_BOOSTER_EN2_PIN          GPIO_PIN_5
+
+#define BUCK_BOOSTER_EN3_BASE         GPIO_PORTE_BASE
+#define BUCK_BOOSTER_EN3_PIN          GPIO_PIN_6
+
+#define BUCK_BOOSTER_EN4_BASE         GPIO_PORTB_BASE
+#define BUCK_BOOSTER_EN4_PIN          GPIO_PIN_0
+
+#endif//HW_BOARD == TIOT_V2_00_BOARD
+
 #endif /* SOURCES_HW_PINS_H_ */

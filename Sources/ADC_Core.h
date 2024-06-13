@@ -23,12 +23,24 @@
 
 #define TOTAL_ADC_SIGNALS	(7)
 
-// #define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH8|ADC_CTL_CH9|ADC_CTL_CH13|ADC_CTL_CH14|ADC_CTL_CH15)
+#if (TARGET_ADC_PINS == EVSE_ADC_TEST_PINS)
+#define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH8|ADC_CTL_CH9|ADC_CTL_CH13|ADC_CTL_CH14|ADC_CTL_CH15)
+#elif (TARGET_ADC_PINS == TIOT_ADC_PINS)
 #define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH0|ADC_CTL_CH1|ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH4|ADC_CTL_CH5|ADC_CTL_CH6)
+#endif	//TARGET_ADC_PINS == TIOT_ADC_PINS
 
-#define RESISTOR1_CHARGER_12V (10)
-#define RESISTOR2_CHARGER_12V (3.3)
-#define CHARGER_RESISTOR_RATIO ((RESISTOR1_CHARGER_12V+RESISTOR2_CHARGER_12V)/RESISTOR2_CHARGER_12V)	//inverse of resistor ratio
+#define RESISTOR1_SMPS_12VIN (10)
+#define RESISTOR2_SMPS_12VIN (3.3)
+#define SMPS_12VIN_RESISTOR_RATIO ((RESISTOR1_SMPS_12VIN+RESISTOR2_SMPS_12VIN)/RESISTOR2_SMPS_12VIN)	//inverse of resistor ratio
+
+#define RESISTOR1_ODUV (100)
+#define RESISTOR2_ODUV (5.6)
+#define ODUV_RESISTOR_RATIO ((RESISTOR1_ODUV+RESISTOR2_ODUV)/RESISTOR2_ODUV)	//inverse of resistor ratio
+
+#define INPUT_RESISTOR		(2.2)
+#define FEEDBACK_RESISTOR	(10)
+#define GAIN_OPAMP_U3		(INPUT_RESISTOR/FEEDBACK_RESISTOR)		//inverse of Gain
+#define OPAMP_INPUT_SHUNT_RESISTOR	(2)		//inverse of the shunt resistor (0.5)
 
 enum	//ADC indexes Used for adc raw array queue sampling
 {
@@ -89,13 +101,14 @@ typedef struct
 
 typedef struct 
 {
-	uint32_t AC_Voltage;
+	uint32_t PN_AC_Voltage;
 	uint32_t DC_current_router1;
 	uint32_t DC_current_router2;
 	uint32_t DC_Voltage_router1;
 	uint32_t DC_Voltage_router2;
 	uint32_t DC_Battery_voltage;
-	uint32_t DC_Charger_voltage;	
+	uint32_t DC_Charger_voltage;
+	uint32_t NE_AC_Voltage;	
 }__attribute__((packed))measurements_t;
 
 void ADC_PortInit(int num);
@@ -106,7 +119,7 @@ uint32_t readADC(uint8_t seqno);
 
 uint16_t updateADC(ADC_Channels_t ch, uint8_t indx);
 
-uint32_t getRouter2_DC_current(void);
+uint32_t getODUCurrent(void);
 
 uint32_t getRouter1_DC_current(void);
 
@@ -114,16 +127,19 @@ uint32_t getRouter1_DC_current(void);
 uint32_t getRouter1_DCvoltage(void);
 #endif//if 0
 
-uint32_t getRouter2_DCvoltage(void);
+uint32_t getODUVoltage(void);
 
 uint32_t getBatteryVoltage(void);
 
-uint32_t getChargerVoltage(void);
+uint32_t getSMPSVoltage(void);
 
-uint32_t calculate_AC_ADC(void);
+uint32_t calculate_PN_AC_ADC(void);
+
+uint32_t calculate_NE_AC_ADC(void);
 
 void GetAdcData(void);
 
+void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx);
 
 #endif /* SOURCES_ADC_CORE_H_ */
 

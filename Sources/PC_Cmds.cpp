@@ -351,13 +351,13 @@ void response(cmd_t cmd, int uart_no)
 					break;
 				}
 
-				// e2p_router_config.router1 = ((!R1_mode) || (R1_mode >= 5))? e2p_router_config.router1 : (router_mode_t)R1_mode;
+				// e2p_router_config.router1 = ((!R1_mode) || (R1_mode >= 5))? e2p_router_config.router1 : (voltage_mode_t)R1_mode;
 
-				// e2p_router_config.router2 = ((!ODU_mode) || (ODU_mode >= 5))? e2p_router_config.router2 : (router_mode_t)ODU_mode;
+				// e2p_router_config.router2 = ((!ODU_mode) || (ODU_mode >= 5))? e2p_router_config.router2 : (voltage_mode_t)ODU_mode;
 
-				e2p_router_config.router1 = (router_mode_t)R1_mode;
+				e2p_router_config.router1 = (voltage_mode_t)R1_mode;
 
-				e2p_router_config.router2 = (router_mode_t)ODU_mode;
+				e2p_router_config.router2 = (voltage_mode_t)ODU_mode;
 
 				e2p_write_voltage_config();
 

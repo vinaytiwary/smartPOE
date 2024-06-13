@@ -52,7 +52,7 @@ void e2p_write_voltage_config()
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nWRR:");
     vUART_SendBytes(DEBUG_UART_BASE, (const uint8_t*)&e2p_router_config,sizeof(e2p_router_config_t));
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nsizeof(rcfg)=");
-    vUART_SendInt(DEBUG_UART_BASE,sizeof(router_mode_t));
+    vUART_SendInt(DEBUG_UART_BASE,sizeof(voltage_mode_t));
 #endif
 
     // __enable_irq();
