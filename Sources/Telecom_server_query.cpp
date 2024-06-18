@@ -647,14 +647,14 @@ unsigned int prepare_JSON_pckt(void)
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
     vUART_SendStr(DEBUG_UART_BASE,"\tref=");
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)earth_temp);
-    vUART_SendStr(DEBUG_UART_BASE,"\nrACV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\nrACP=");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\nrRC=");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendStr(DEBUG_UART_BASE,"\tOC=");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\nRV=");
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router1);
+    vUART_SendStr(DEBUG_UART_BASE,"\nrACN=");
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.NE_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\tOV=");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router2);
     vUART_SendStr(DEBUG_UART_BASE,"\nChgV=");
@@ -676,8 +676,11 @@ unsigned int prepare_JSON_pckt(void)
 #endif
 
     memset(dummy_json_string, 0, sizeof(dummy_json_string));
-	my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
-			e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.DC_Voltage_router1/1000,ram_data.ram_ADC.DC_Voltage_router1%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms);
+	// my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
+	// 		e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.DC_Voltage_router1/1000,ram_data.ram_ADC.DC_Voltage_router1%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms);
+
+    my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
+			e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.NE_AC_Voltage/1000,ram_data.ram_ADC.NE_AC_Voltage%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms);
 
 #ifdef DEBUG_JSON_PKT_PREP
     // UWriteString((char*)"\nPrep=",DBG_UART);
@@ -720,14 +723,14 @@ unsigned int prepare_unsentJSON_pckt(void)
     vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt);
     vUART_SendStr(DEBUG_UART_BASE,"\t2Fef=");
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)earth_temp);
-    vUART_SendStr(DEBUG_UART_BASE,"\n2FACV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FACP=");
     vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\n2FRC=");
     vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_current_router1);
     vUART_SendStr(DEBUG_UART_BASE,"\t2FOC=");
     vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_current_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\n2FRV=");
-    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1);
+    vUART_SendStr(DEBUG_UART_BASE,"\n2FACN=");
+    vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.NE_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\t2FOV=");
     vUART_SendInt(DEBUG_UART_BASE,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2);
     vUART_SendStr(DEBUG_UART_BASE,"\n2FChgV=");
@@ -749,8 +752,10 @@ unsigned int prepare_unsentJSON_pckt(void)
 #endif
 
     memset(dummy_json_string, 0, sizeof(dummy_json_string));
-	my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
-			e2p_device_info.device_id,epoch_time,FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage/1000, FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage/1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2%1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage/1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage%1000,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,FLR_log_data.ram_data.supply_mode_R1,FLR_log_data.ram_data.supply_mode_R2,FLR_log_data.ram_data.Longitude/1000000L,abs(FLR_log_data.ram_data.Longitude%1000000L),FLR_log_data.ram_data.Latitude/1000000L,abs(FLR_log_data.ram_data.Latitude%1000000L), FLR_log_data.ram_data.ram_alarms);
+	// my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
+	// 		e2p_device_info.device_id,epoch_time,FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage/1000, FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage/1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2%1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage/1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage%1000,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,FLR_log_data.ram_data.supply_mode_R1,FLR_log_data.ram_data.supply_mode_R2,FLR_log_data.ram_data.Longitude/1000000L,abs(FLR_log_data.ram_data.Longitude%1000000L),FLR_log_data.ram_data.Latitude/1000000L,abs(FLR_log_data.ram_data.Latitude%1000000L), FLR_log_data.ram_data.ram_alarms);
+    my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
+			e2p_device_info.device_id,epoch_time,FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage/1000, FLR_log_data.ram_data.ram_ADC.DC_Battery_voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage/1000,FLR_log_data.ram_data.ram_ADC.DC_Charger_voltage%1000,FLR_log_data.ram_data.ram_ADC.NE_AC_Voltage/1000,FLR_log_data.ram_data.ram_ADC.NE_AC_Voltage%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router1%1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_Voltage_router2%1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2/1000,FLR_log_data.ram_data.ram_ADC.DC_current_router2%1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage/1000,FLR_log_data.ram_data.ram_ADC.PN_AC_Voltage%1000,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(FLR_log_data.ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,FLR_log_data.ram_data.supply_mode_R1,FLR_log_data.ram_data.supply_mode_R2,FLR_log_data.ram_data.Longitude/1000000L,abs(FLR_log_data.ram_data.Longitude%1000000L),FLR_log_data.ram_data.Latitude/1000000L,abs(FLR_log_data.ram_data.Latitude%1000000L), FLR_log_data.ram_data.ram_alarms);
 
 #ifdef DEBUG_JSON_PKT_PREP
     // UWriteString((char*)"\nPrep=",DBG_UART);

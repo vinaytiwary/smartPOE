@@ -85,6 +85,7 @@ void SysTickIntHandler(void)
     }
 #endif
 
+#if HW_BOARD == TIOT_V2_00_BOARD
     if(millis_cnt%2==0)
     {
         // PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
@@ -103,7 +104,7 @@ void SysTickIntHandler(void)
         //     NE_ADC_RAW = 0;
         // }
     }
-    
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
     
 
@@ -146,9 +147,11 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr20ms = 0;
         scheduler.flg20ms = HIGH;
-
+#if HW_BOARD == TIOT_V2_00_BOARD
         // calculate_PN_AC_ADC();
         // calculate_NE_AC_ADC();
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
+
         //vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(24-04-24) for testing
     }
 

@@ -532,7 +532,11 @@ void response(cmd_t cmd, int uart_no)
 				clear_logs();
                 clear_flash();
 #endif
-                write_defaults(0xFF);
+                // write_defaults(0xFF);
+				write_defaults(E2P_VOLTGE_CONFIG_ADDR);
+				write_defaults(E2P_CLOUD_CFG_ADDR);
+				write_defaults(E2P_DEVICE_LOC_ADDR);
+				write_defaults(E2P_CONFIG_TIME_ADDR);
 
 				vUART_SendStr(UART_PC, "\nPress_RST_button");
 

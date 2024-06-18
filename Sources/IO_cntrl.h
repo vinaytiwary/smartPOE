@@ -10,6 +10,7 @@
 
 #include "stdint.h"
 #include <stdbool.h>
+#include "_config.h"
 
 typedef enum
 {
@@ -56,7 +57,9 @@ void vInput_PollingRead(void);
 void vEXTIpinInit(void);
 void ToggleLEDs(void);
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 void init_ODU_Supplypins(void);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 void SetODU_Mode(voltage_mode_t BCD_SW);
 

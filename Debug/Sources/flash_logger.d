@@ -37,13 +37,13 @@ Sources/flash_logger.obj: ../Sources/IO_cntrl.h
 Sources/flash_logger.obj: ../Sources/ADC_Core.h
 Sources/flash_logger.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/flash_logger.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/flash_logger.obj: ../Sources/_debug.h
 Sources/flash_logger.obj: ../Sources/Clock.h
 Sources/flash_logger.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h
 Sources/flash_logger.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h
 Sources/flash_logger.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h
 Sources/flash_logger.obj: ../Sources/flashCore.h
 Sources/flash_logger.obj: ../Sources/_common.h
-Sources/flash_logger.obj: ../Sources/_debug.h
 Sources/flash_logger.obj: ../Sources/UartCore.h
 Sources/flash_logger.obj: ../Sources/HW_pins.h
 Sources/flash_logger.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
@@ -124,6 +124,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
+../Sources/_debug.h:
+
 ../Sources/Clock.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h:
@@ -135,8 +137,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 ../Sources/flashCore.h:
 
 ../Sources/_common.h:
-
-../Sources/_debug.h:
 
 ../Sources/UartCore.h:
 

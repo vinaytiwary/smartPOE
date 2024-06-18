@@ -37,6 +37,7 @@ Sources/PC_Cmds.obj: ../Sources/IO_cntrl.h
 Sources/PC_Cmds.obj: ../Sources/ADC_Core.h
 Sources/PC_Cmds.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/PC_Cmds.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/PC_Cmds.obj: ../Sources/_debug.h
 Sources/PC_Cmds.obj: ../Sources/Clock.h
 Sources/PC_Cmds.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h
 Sources/PC_Cmds.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h
@@ -46,7 +47,6 @@ Sources/PC_Cmds.obj: ../Sources/gps.h
 Sources/PC_Cmds.obj: ../Sources/PC_Cmds.h
 Sources/PC_Cmds.obj: ../Sources/E2P.h
 Sources/PC_Cmds.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
-Sources/PC_Cmds.obj: ../Sources/_debug.h
 Sources/PC_Cmds.obj: ../Sources/flashCore.h
 Sources/PC_Cmds.obj: ../Sources/flash_logger.h
 
@@ -124,6 +124,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
+../Sources/_debug.h:
+
 ../Sources/Clock.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h:
@@ -141,8 +143,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 ../Sources/E2P.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
-
-../Sources/_debug.h:
 
 ../Sources/flashCore.h:
 

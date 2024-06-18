@@ -199,9 +199,12 @@ int main(void)
 			Data_Screen_lcd();
 #endif  //if 0
 
-#ifdef DEBUG_ADC_SIG
-            get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
-#endif  // DEBUG_ADC_SIG
+// #if HW_BOARD == TIOT_V2_00_BOARD
+// #ifdef DEBUG_ADC_SIG
+//             get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
+// #endif  // DEBUG_ADC_SIG
+// #endif  //HW_BOARD == TIOT_V2_00_BOARD
+
 
             if(get_system_state() != CONFIG_MODE)
             {
@@ -297,14 +300,15 @@ void update_ram_data(void)
     }
 
 #ifdef DEBUG_ADC
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n2ACV,RC,ODUC,RV,ODUV,BV,SV:");
+    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n2ACP,RC,ODUC,ACN,ODUV,BV,SV:");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router1);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_current_router2);
     vUART_SendChr(DEBUG_UART_BASE, ',');
-    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router1);
+    // vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router1);
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.NE_AC_Voltage);
     vUART_SendChr(DEBUG_UART_BASE, ',');
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.DC_Voltage_router2);
     vUART_SendChr(DEBUG_UART_BASE, ',');

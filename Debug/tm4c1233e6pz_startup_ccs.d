@@ -14,15 +14,15 @@ tm4c1233e6pz_startup_ccs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6
 tm4c1233e6pz_startup_ccs.obj: ../Sources/SysTick_Timer.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h
 tm4c1233e6pz_startup_ccs.obj: ../Sources/IO_cntrl.h
-tm4c1233e6pz_startup_ccs.obj: ../Sources/UartCore.h
-tm4c1233e6pz_startup_ccs.obj: ../Sources/HW_pins.h
+tm4c1233e6pz_startup_ccs.obj: ../Sources/_config.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/sysctl.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
+tm4c1233e6pz_startup_ccs.obj: ../Sources/UartCore.h
+tm4c1233e6pz_startup_ccs.obj: ../Sources/HW_pins.h
 tm4c1233e6pz_startup_ccs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
-tm4c1233e6pz_startup_ccs.obj: ../Sources/_config.h
 tm4c1233e6pz_startup_ccs.obj: ../Sources/WDT.h
 
 ../tm4c1233e6pz_startup_ccs.c:
@@ -53,9 +53,7 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h:
 
 ../Sources/IO_cntrl.h:
 
-../Sources/UartCore.h:
-
-../Sources/HW_pins.h:
+../Sources/_config.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_memmap.h:
 
@@ -67,9 +65,11 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 
-C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
+../Sources/UartCore.h:
 
-../Sources/_config.h:
+../Sources/HW_pins.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 
 ../Sources/WDT.h:
 

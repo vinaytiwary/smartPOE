@@ -82,10 +82,18 @@ void vETHERNETSPIInit(void)
 void ethernet_init(void)
 {
 //    uint8_t sts = 0;
-    uint8_t mac[6] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+    // uint8_t mac[6] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+    uint8_t mac[6] = { 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B };
     Ethernet.begin(mac); //Configure IP address via DHCP
     //Serial.print(F("localIP: "));
 #ifdef DEBUG_ETHERNET
+    vUART_SendStr(UART_PC, "\nMAC:");
+    vUART_SendInt(UART_PC, mac[0]);
+    vUART_SendInt(UART_PC, mac[1]);
+    vUART_SendInt(UART_PC, mac[2]);
+    vUART_SendInt(UART_PC, mac[3]);
+    vUART_SendInt(UART_PC, mac[4]);
+    vUART_SendInt(UART_PC, mac[5]);
     vUART_SendStr(UART_PC, "\nlocalIP: ");
     IPAddress localIP = Ethernet.localIP();
     vUART_SendInt(UART_PC, localIP[0]);

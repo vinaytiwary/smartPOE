@@ -37,6 +37,7 @@ Sources/SysTick_Timer.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/SysTick_Timer.obj: ../Sources/_common.h
 Sources/SysTick_Timer.obj: ../Sources/ADC_Core.h
 Sources/SysTick_Timer.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
+Sources/SysTick_Timer.obj: ../Sources/_debug.h
 Sources/SysTick_Timer.obj: ../Sources/gprs.h
 Sources/SysTick_Timer.obj: ../Sources/UartCore.h
 Sources/SysTick_Timer.obj: ../Sources/main.h
@@ -118,6 +119,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 ../Sources/ADC_Core.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
+
+../Sources/_debug.h:
 
 ../Sources/gprs.h:
 

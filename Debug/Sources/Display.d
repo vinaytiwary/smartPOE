@@ -38,6 +38,7 @@ Sources/Display.obj: ../Sources/IO_cntrl.h
 Sources/Display.obj: ../Sources/ADC_Core.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/Display.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/Display.obj: ../Sources/_debug.h
 Sources/Display.obj: ../Sources/UartCore.h
 Sources/Display.obj: ../Sources/main.h
 Sources/Display.obj: ../Sources/Clock.h
@@ -45,7 +46,6 @@ Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/incl
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h
 Sources/Display.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h
 Sources/Display.obj: ../Sources/_common.h
-Sources/Display.obj: ../Sources/_debug.h
 Sources/Display.obj: ../Sources/SysTick_Timer.h
 
 ../Sources/Display.cpp:
@@ -124,6 +124,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
+../Sources/_debug.h:
+
 ../Sources/UartCore.h:
 
 ../Sources/main.h:
@@ -137,8 +139,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h:
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 
 ../Sources/_common.h:
-
-../Sources/_debug.h:
 
 ../Sources/SysTick_Timer.h:
 

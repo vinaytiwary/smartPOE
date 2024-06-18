@@ -44,6 +44,7 @@ Sources/main.obj: ../Sources/HW_pins.h
 Sources/main.obj: ../Sources/ADC_Core.h
 Sources/main.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/main.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/main.obj: ../Sources/_debug.h
 Sources/main.obj: ../Sources/DS3231.h
 Sources/main.obj: ../Sources/Clock.h
 Sources/main.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h
@@ -60,7 +61,6 @@ Sources/main.obj: ../Sources/_common.h
 Sources/main.obj: ../Sources/Telecom_Ethernet.h
 Sources/main.obj: ../Sources/Telecom_server_query.h
 Sources/main.obj: ../Sources/main.h
-Sources/main.obj: ../Sources/_debug.h
 Sources/main.obj: ../Sources/WDT.h
 Sources/main.obj: ../Sources/flash_logger.h
 Sources/main.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/UIPEthernet/UIPEthernet.h
@@ -188,6 +188,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
+../Sources/_debug.h:
+
 ../Sources/DS3231.h:
 
 ../Sources/Clock.h:
@@ -219,8 +221,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 ../Sources/Telecom_server_query.h:
 
 ../Sources/main.h:
-
-../Sources/_debug.h:
 
 ../Sources/WDT.h:
 

@@ -14,7 +14,8 @@
 #include "driverlib/adc.h"
 #include "inc/TM4C1233E6PZ.h"
 
-//#include "Sources/_config.h"
+#include "_config.h"
+#include "_debug.h"
 
 #define ADC_REFV		(3.3)
 #define ADC_RESOLUTION	(4095)
@@ -104,7 +105,7 @@ typedef struct
 	uint32_t PN_AC_Voltage;
 	uint32_t DC_current_router1;
 	uint32_t DC_current_router2;
-	uint32_t DC_Voltage_router1;
+	// uint32_t DC_Voltage_router1;	//keep this commented to maintain Flash size
 	uint32_t DC_Voltage_router2;
 	uint32_t DC_Battery_voltage;
 	uint32_t DC_Charger_voltage;
@@ -139,7 +140,11 @@ uint32_t calculate_NE_AC_ADC(void);
 
 void GetAdcData(void);
 
+#if HW_BOARD == TIOT_V2_00_BOARD
+#ifdef DEBUG_ADC_SIG
 void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx);
+#endif	//DEBUG_ADC_SIG
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 #endif /* SOURCES_ADC_CORE_H_ */
 

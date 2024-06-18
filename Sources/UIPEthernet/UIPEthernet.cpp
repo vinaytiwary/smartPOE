@@ -75,7 +75,8 @@ void UIPEthernetClass::init(const uint8_t pin)
 
 int UIPEthernetClass::dhcp_handler()
 {
-    uint8_t mac[6] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+    // uint8_t mac[6] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+    uint8_t mac[6] = {0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B};
     _dhcp = &s_dhcp;
 
     int ret = _dhcp->beginWithDHCP((uint8_t*)mac);

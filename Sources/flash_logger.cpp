@@ -932,14 +932,14 @@ void prepare_OfflineTelecomData(void)
     vUART_SendStr(DEBUG_UART_BASE,"\n1FL_log:");
     vUART_SendStr(DEBUG_UART_BASE,"\n1Ffc=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_EXTI_cnt.freq_cnt);
-    vUART_SendStr(DEBUG_UART_BASE,"\n1FACV=");
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FACP=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.PN_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\n1FRC=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_current_router1);
     vUART_SendStr(DEBUG_UART_BASE,"\t1FOC=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_current_router2);
-    vUART_SendStr(DEBUG_UART_BASE,"\n1FRV=");
-    vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Voltage_router1);
+    vUART_SendStr(DEBUG_UART_BASE,"\n1FACN=");
+    vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.NE_AC_Voltage);
     vUART_SendStr(DEBUG_UART_BASE,"\t1FOV=");
     vUART_SendInt(DEBUG_UART_BASE,FL_log_data.ram_data.ram_ADC.DC_Voltage_router2);
     vUART_SendStr(DEBUG_UART_BASE,"\n1FChgV=");

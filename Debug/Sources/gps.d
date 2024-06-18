@@ -63,9 +63,9 @@ Sources/gps.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/
 Sources/gps.obj: ../Sources/ADC_Core.h
 Sources/gps.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
 Sources/gps.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h
+Sources/gps.obj: ../Sources/_debug.h
 Sources/gps.obj: ../Sources/main.h
 Sources/gps.obj: ../Sources/SysTick_Timer.h
-Sources/gps.obj: ../Sources/_debug.h
 Sources/gps.obj: ../Sources/Telecom_server_query.h
 
 ../Sources/gps.cpp:
@@ -194,11 +194,11 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 
+../Sources/_debug.h:
+
 ../Sources/main.h:
 
 ../Sources/SysTick_Timer.h:
-
-../Sources/_debug.h:
 
 ../Sources/Telecom_server_query.h:
 

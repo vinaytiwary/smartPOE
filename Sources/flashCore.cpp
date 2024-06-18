@@ -280,7 +280,8 @@ void addDummyFL_TelecomLogs(unsigned int no_of_logs)
     dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = 12000;
     dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = 500;
     dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = 500;
-    dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+    dummy_FL_Log.ram_data.ram_ADC.NE_AC_Voltage = 270000;
     dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = 30000;
     dummy_FL_Log.ram_data.ram_alarms = 0;
     dummy_FL_Log.ram_data.Status = 0;
