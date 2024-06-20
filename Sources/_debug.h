@@ -78,4 +78,6 @@
 // #define DEBUG_RELAY_STATE_LCD
 #define DEBUG_RELAY_STATE
 
+#define DEBUG_ALARMS
+
 #endif /* SOURCES__DEBUG_H_ */

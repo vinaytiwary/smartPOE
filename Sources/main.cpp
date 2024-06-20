@@ -44,6 +44,10 @@
 #include "flashCore.h"
 #include "flash_logger.h"
 
+#ifdef ENABLE_GLCD
+#include "GLCD.h"
+#endif  //ENABLE_GLCD
+
 #ifdef ETHERNET_EN
 #include "Sources/UIPEthernet/UIPEthernet.h"
 #include <Sources/UIPEthernet/ethernet_comp.h>
@@ -174,6 +178,9 @@ int main(void)
             // ToggleLEDs();
             vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
             decodeMsgPC_Uart();
+#ifdef ENABLE_GLCD
+            updateGlcd();
+#endif  // ENABLE_GLCD
 		}
 
 		if(scheduler.flg600ms == HIGH)
@@ -399,6 +406,11 @@ void vMAIN_InitClockPeripherals(void)
 	vPERIPH_GPIOInit();
 	vPERIPH_SystickInit();
 	vPERIPH_UARTInit();
+
+#ifdef ENABLE_GLCD
+	GLCD_Initalize();
+#endif  //ENABLE_GLCD
+
 #ifdef  ADC_EN
 	vADC0Init();
 #endif  //ADC_EN
@@ -661,7 +673,7 @@ void init_config(void)
 relay_ctrl_sts_t getRelay_CtrlState(void)
 {
     relay_ctrl_sts_t relay_ctrl_sts = MAINS_MODE;
-    if((Alarms.ACEarth_fault) && (Alarms.MAINS_fault))
+    if((Alarms.ACEarth_fault) && (Alarms.MAINS_fault) && (Alarms.Supply_mode))
     {
         relay_ctrl_sts = BATT_MODE;
         /*
@@ -677,7 +689,7 @@ relay_ctrl_sts_t getRelay_CtrlState(void)
         }
         */
     }
-    else if((Alarms.ACEarth_fault) && (!Alarms.MAINS_fault))
+    else if((Alarms.ACEarth_fault) && (!Alarms.MAINS_fault) && (!Alarms.Supply_mode))
     {
         relay_ctrl_sts = EARTH_FAULT;
         // return EARTH_FAULT;
@@ -705,6 +717,7 @@ void update_alarm_status(void)
 
     Alarms.ACEarth_fault = (!ram_data.ram_EXTI_cnt.earth_cnt) ? true : false;
     setRAM_Alarm(EARTHING_FAULT, Alarms.ACEarth_fault);
+
 #ifdef  DEBUG_MAINS_FAULT
     if(Alarms.ACEarth_fault)
     {
@@ -721,7 +734,7 @@ void update_alarm_status(void)
     setRAM_Alarm(SMPS_FAULT, Alarms.Chg_fault);
 
 
-    if((!ram_data.ram_EXTI_cnt.freq_cnt) || (ram_data.ram_EXTI_cnt.freq_cnt < 40) /*|| (Alarms.Chg_fault)*/)
+    if((!ram_data.ram_EXTI_cnt.freq_cnt) || (ram_data.ram_EXTI_cnt.freq_cnt < 40) || (Alarms.Chg_fault))
     {
         ram_data.ram_ADC.PN_AC_Voltage = 0;
         Alarms.Supply_mode = true;
@@ -774,6 +787,9 @@ void update_alarm_status(void)
     Alarms.Router2_V_fault = ((ram_data.ram_ADC.DC_Voltage_router2/1000 < (ram_data.supply_mode_R2 - 2)) || (ram_data.ram_ADC.DC_Voltage_router2/1000 > (ram_data.supply_mode_R2 + 2))) ? true : false;
     setRAM_Alarm(ODU_V_FAULT, Alarms.Router2_V_fault);
 
-
+#ifdef DEBUG_ALARMS
+    vUART_SendStr(UART_PC, "\nRAL=");
+    vUART_SendInt(UART_PC, getRAM_Alarm());
+#endif  //DEBUG_ALARMS
 }
 

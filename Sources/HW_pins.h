@@ -113,17 +113,17 @@
 #define FLASH_RST_PIN                GPIO_PIN_6
 
 /******************RELAYS PINS**********************************/
-#define RELAY_RTR_PORT                  GPIO_PORTG_BASE
-#define RELAY_ODU_PORT                  GPIO_PORTE_BASE
+#define RELAY_RTR_PORT               GPIO_PORTG_BASE
+#define RELAY_ODU_PORT               GPIO_PORTE_BASE
 
-#define RELAY_ODU                GPIO_PIN_7
-#define RELAY_RTR                GPIO_PIN_0
+#define RELAY_ODU                    GPIO_PIN_7
+#define RELAY_RTR                    GPIO_PIN_0
 #define RELAY_RTR_SEL                GPIO_PIN_3
 
 
 
-#define BATT_CTRL_PORT          GPIO_PORTD_BASE
-#define BATT_CTRL_PIN           GPIO_PIN_3
+#define BATT_CTRL_PORT               GPIO_PORTD_BASE
+#define BATT_CTRL_PIN                GPIO_PIN_3
 //************ DS3231 (RTC IC) **************//
 #define DS3231_I2C_PERIPH         SYSCTL_PERIPH_I2C1
 #define DS3231_I2C_BASE           I2C1_BASE

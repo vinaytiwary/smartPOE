@@ -11,6 +11,7 @@ CPP_SRCS += \
 ../Sources/DS3231.cpp \
 ../Sources/Display.cpp \
 ../Sources/E2P.cpp \
+../Sources/GLCD.cpp \
 ../Sources/IO_cntrl.cpp \
 ../Sources/PC_Cmds.cpp \
 ../Sources/SPI.cpp \
@@ -34,6 +35,7 @@ OBJS += \
 ./Sources/DS3231.obj \
 ./Sources/Display.obj \
 ./Sources/E2P.obj \
+./Sources/GLCD.obj \
 ./Sources/IO_cntrl.obj \
 ./Sources/PC_Cmds.obj \
 ./Sources/SPI.obj \
@@ -57,6 +59,7 @@ CPP_DEPS += \
 ./Sources/DS3231.d \
 ./Sources/Display.d \
 ./Sources/E2P.d \
+./Sources/GLCD.d \
 ./Sources/IO_cntrl.d \
 ./Sources/PC_Cmds.d \
 ./Sources/SPI.d \
@@ -80,6 +83,7 @@ OBJS__QUOTED += \
 "Sources\DS3231.obj" \
 "Sources\Display.obj" \
 "Sources\E2P.obj" \
+"Sources\GLCD.obj" \
 "Sources\IO_cntrl.obj" \
 "Sources\PC_Cmds.obj" \
 "Sources\SPI.obj" \
@@ -103,6 +107,7 @@ CPP_DEPS__QUOTED += \
 "Sources\DS3231.d" \
 "Sources\Display.d" \
 "Sources\E2P.d" \
+"Sources\GLCD.d" \
 "Sources\IO_cntrl.d" \
 "Sources\PC_Cmds.d" \
 "Sources\SPI.d" \
@@ -126,6 +131,7 @@ CPP_SRCS__QUOTED += \
 "../Sources/DS3231.cpp" \
 "../Sources/Display.cpp" \
 "../Sources/E2P.cpp" \
+"../Sources/GLCD.cpp" \
 "../Sources/IO_cntrl.cpp" \
 "../Sources/PC_Cmds.cpp" \
 "../Sources/SPI.cpp" \

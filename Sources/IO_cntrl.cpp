@@ -28,6 +28,10 @@
 #include "E2P.h"
 #include "_common.h"
 
+#ifdef ENABLE_GLCD
+#include "GLCD.h"         //only for testing
+#endif  //ENABLE_GLCD
+
 voltage_mode_t voltage_mode;
 volatile EXTI_cnt_t EXTI_cnt;
 //router_mode_t router_mode;
@@ -582,7 +586,7 @@ void controlRelays(void)
 
                     mid_hysteresis_ODUrelay_state = true;
 #ifdef DEBUG_RELAY
-                    vUART_SendStr(UART_PC, "\nBMH:RTR_ON,RS_INV,ODU_ON");
+                    vUART_SendStr(UART_PC, "\n1BMH:RTR_ON,RS_INV,ODU_ON");
 #endif
                 }
                 else
@@ -600,13 +604,15 @@ void controlRelays(void)
                     ram_data.ram_ADC.DC_current_router1 = 0;
 
                     mid_hysteresis_ODUrelay_state = false;
+#ifdef DEBUG_RELAY
+                    vUART_SendStr(UART_PC, "\n2BMH:RTR_OFF,RS_INV,ODU_OFF");
+#endif
                 }
 #ifdef DEBUG_RELAY
                 vUART_SendStr(UART_PC, "\n2BH:");
                 vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Battery_voltage);
                 vUART_SendChr(UART_PC, ',');
                 vUART_SendInt(UART_PC, BATT_HYSTERESIS_HIGH);
-                vUART_SendStr(UART_PC, "\nBML:RTR_OFF,RS_INV,ODU_OFF");
 #endif
                 mid_hysteresis_RTRrelay_state = true;
             }

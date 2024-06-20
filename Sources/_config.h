@@ -83,4 +83,6 @@
 #define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
 #endif
 
+// #define ENABLE_GLCD
+
 #endif /* SOURCES__CONFIG_H_ */
