@@ -277,7 +277,7 @@ uint32_t readADC(uint8_t seqno)
     adc_value = pui32ADC0Value[0];
 
 #ifdef DEBUG_ADC
-    if((seqno == SIG_ODU_VOLTAGE_ADC)/* ||(seqno == SIG_ODU_CURRENT_ADC) */)
+    // if((seqno == SIG_ODU_VOLTAGE_ADC)||(seqno == SIG_ODU_CURRENT_ADC))
     {
         vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)"\nRAW=");
         vUART_SendInt(DEBUG_UART_BASE,adc_value);
@@ -342,7 +342,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 
 #ifdef DEBUG_ADC
         // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
-        if((ch == SIG_ODU_VOLTAGE_ADC)/* ||((ch == SIG_ODU_CURRENT_ADC)) */)
+        // if((ch == SIG_ODU_VOLTAGE_ADC)||((ch == SIG_ODU_CURRENT_ADC)))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nRAWadc:" );
             vUART_SendInt(UART_PC,adc[indx].arr[i]);
@@ -356,7 +356,7 @@ uint16_t updateADC(ADC_Channels_t ch, uint8_t indx)
 
 #ifdef DEBUG_ADC
         // if((indx == ADC_INDX_BATTV)||(indx == ADC_INDX_12VIN))
-        if((ch == SIG_ODU_VOLTAGE_ADC)/* ||((ch == SIG_ODU_CURRENT_ADC)) */)
+        // if((ch == SIG_ODU_VOLTAGE_ADC)||((ch == SIG_ODU_CURRENT_ADC)))
         {
             vUART_SendStr(UART_PC,(uint8_t*)"\nSUM:" );
             vUART_SendInt(UART_PC,adc[indx].av );
@@ -392,8 +392,8 @@ uint32_t getODUCurrent(void)
 
     adc_avg = updateADC(SIG_ODU_CURRENT_ADC, ADC_INDX_ODUC);
 
-    // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U3) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U3) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
+    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
     analog_vtg *= 1000;
 
     measurements.DC_current_router2 = analog_vtg;
@@ -420,8 +420,8 @@ uint32_t getRouter1_DC_current(void)
 
     adc_avg = updateADC(SIG_RTR_CURRENT_ADC, ADC_INDX_RTRC);
 
-    // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U4) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * GAIN_OPAMP_U3) * OPAMP_INPUT_SHUNT_RESISTOR;   //PP (24-04-24) commented until HW is finalized
+    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
     analog_vtg *= 1000;
 
     measurements.DC_current_router1 = analog_vtg;
@@ -478,8 +478,8 @@ uint32_t getODUVoltage(void)
 
     adc_avg = updateADC(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
 
-    // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ODUV_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
-    analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
+    analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ODUV_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
+    // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
     analog_vtg *= 1000;
 
     //measurements.DC_Voltage_router2 = analog_vtg*10215;
@@ -502,6 +502,8 @@ uint32_t getODUVoltage(void)
 
 uint32_t getBatteryVoltage(void)
 {
+    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, GPIO_LOW);  //PP added on 20-06-24
+
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
@@ -509,8 +511,9 @@ uint32_t getBatteryVoltage(void)
 
     //analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98097) * BATTERY_RESISTOR_RATIO;
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * BATTERY_RESISTOR_RATIO;
-    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)) * BATTERY_RESISTOR_RATIO; //PP (24-04-24) commented until HW is finalized
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
+     analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)) * BATTERY_RESISTOR_RATIO; //PP (24-04-24) commented until HW is finalized
+//    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)) * ((10000+3300)/3300); //PP (24-04-24) commented until HW is finalized
+//    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION));
 
     analog_vtg *= 1000;
     //analog_vtg *= DC_BATTERY_RESISTOR_RATIO;
@@ -530,6 +533,7 @@ uint32_t getBatteryVoltage(void)
 //     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);  
 // #endif
 
+    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN); //PP added on 20-06-24
     return measurements.DC_Battery_voltage;
 }
 
@@ -542,8 +546,8 @@ uint32_t getSMPSVoltage(void)
 
     //analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98189) * SMPS_12VIN_RESISTOR_RATIO);  //multiplying by offset 0.98189 (1/1.0184415335) calculated from the slope between measurement and adc values on PB2 for the range 0-5v
     // analog_vtg = (((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * SMPS_12VIN_RESISTOR_RATIO);
-    // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * SMPS_12VIN_RESISTOR_RATIO);
-    analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)); //PP (24-04-24) commented until HW is finalized
+    analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * SMPS_12VIN_RESISTOR_RATIO);
+    // analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)); //PP (24-04-24) commented until HW is finalized
     
     analog_vtg *= 1000;
     //analog_vtg *= DC_CHARGER_RESISTOR_RATIO;

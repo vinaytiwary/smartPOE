@@ -29,10 +29,14 @@
 #include "Clock.h"
 #include "_common.h"
 #include "gprs.h"
+#include "gps.h"
 
 time_stamp_t time_stamp;
 // extern OCPP_Data_t OCPP_Data;
 time_main_t time_main;
+
+extern gps_date_time_t gps_date_time;
+extern gprs_date_time_t gprs_date_time;
 void update_date_time(void)
 {
     unsigned char date;
@@ -692,6 +696,218 @@ bool isDT_ok(void)
     return false;
 }
 
+#ifdef ETHERNET_EN
+void time_sync(void)
+{
+    if(!isDT_ok())
+    {
+        if(gps_date_time.update_time_aval == true)
+        {
+            gps_date_time.update_time_aval = false;
+#ifdef DEBUG_SYNC_MODEM
+				//printf("\nB2");
+#endif
+				
+            if ((gps_date_time.yy <= time_stamp.year) && (gps_date_time.mm <= time_stamp.month) && (gps_date_time.dd <= time_stamp.date) && (gps_date_time.hr <= time_stamp.hour))
+            {
+#ifdef DEBUG_SYNC_MODEM
+                //printf("\nC2");
+#endif
+                //UWriteString(" No Error in Date", UART0);
+            }
+            else
+            {
+                unsigned char data[8];
+#ifdef DEBUG_RTC_SYNC
+    /*
+                UWriteString("\nmain_ts:\t",UART_PC);
+                UWriteInt(time_main.year, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.month, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.date, UART_PC);
+                UWriteData(',',UART_PC);
+                UWriteInt(time_main.hour, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.minute, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.sec, UART_PC);*/
+                vUART_SendStr(UART_PC,"\nRTCsync:\t");
+                vUART_SendInt(UART_PC,gps_date_time.yy );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gps_date_time.mm );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gps_date_time.dd);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendInt(UART_PC,gps_date_time.hr);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gps_date_time.min);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gps_date_time.sec);
+#endif
+                data[6] = (((gps_date_time.yy / 10) * 16) | (gps_date_time.yy % 10));
+                //RTC_Write(0x06, data);		//Year
+                data[5] = (((gps_date_time.mm / 10) * 16) | (gps_date_time.mm % 10));
+                //RTC_Write(0x05, data & 0x1F);		//Month
+                data[4] = (((gps_date_time.dd / 10) * 16) | (gps_date_time.dd % 10));
+                //RTC_Write(0x04, data & 0x3F);		//Date
+                //RTC_Write(0x03, 1 & 0x07);		//Day: 1-7, 1=Sunday
+#ifdef RTC_DS3231
+                //RTC_Write(0x03, (1 & 0x07));
+                data[3] = (1 & 0x07);
+#endif
+#ifdef RTC_MCP79410
+                //RTC_Write(0x03, ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT)));		//Day: 1-7, 1=Sunday
+                data[3] = ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT));
+#endif
+                if(gps_date_time.hr >= 12)
+                {
+                    if(gps_date_time.hr > 12)
+                    {
+                        gps_date_time.hr %= 12;
+                    }
+
+                    gps_date_time.hr = ((gps_date_time.hr/10)<<4) | (gps_date_time.hr%10);		//hr
+                    gps_date_time.hr |= (1<<5);
+                }
+                else
+                {
+                    if(gps_date_time.hr == 0)
+                    {
+                        gps_date_time.hr = 12;
+                    }
+                    gps_date_time.hr = ((gps_date_time.hr/10)<<4) | (gps_date_time.hr%10);		//hr
+                }
+                gps_date_time.hr |= (1<<6);		//Anand 02.07.2014
+                data[2] = (gps_date_time.hr & 0x7F);
+                //RTC_Write(0x02, (gprs_date_time.hr & 0x7F));		//hr
+                data[1] = (((gps_date_time.min / 10) * 16) | (gps_date_time.min % 10));
+                //RTC_Write(0x01, (data & 0x7F)); //min
+                //DS1307Write(0x00, 0);
+                data[0] = (((gps_date_time.sec / 10) * 16) | (gps_date_time.sec % 10));
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+#ifdef RTC_DS3231
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+                data[0] = (data[0] & 0x7F);
+#endif
+#ifdef RTC_MCP79410
+                data[0] = ((data[0] & 0x7F) | (1 << RTC_OSC_EN_BIT));
+#endif
+                Write_RTC(data, 7);
+
+                gps_date_time.update_time_aval = FALSE;		
+            }
+        }
+    }
+}
+#else
+
+void time_sync(void)
+{
+    if(!isDT_ok())
+    {
+        if(gprs_date_time.update_time_aval == true)
+        {
+            gprs_date_time.update_time_aval = false;
+#ifdef DEBUG_SYNC_MODEM
+                //printf("\nB2");
+#endif
+
+            if ((gprs_date_time.yy <= time_stamp.year) && (gprs_date_time.mm <= time_stamp.month) && (gprs_date_time.dd <= time_stamp.date) && (gprs_date_time.hr <= time_stamp.hour))
+            {
+#ifdef DEBUG_SYNC_MODEM
+                //printf("\nC2");
+#endif
+                //UWriteString(" No Error in Date", UART0);
+            }
+            else
+            {
+                unsigned char data[8];
+#ifdef DEBUG_RTC_SYNC
+    /*
+                UWriteString("\nmain_ts:\t",UART_PC);
+                UWriteInt(time_main.year, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.month, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.date, UART_PC);
+                UWriteData(',',UART_PC);
+                UWriteInt(time_main.hour, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.minute, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.sec, UART_PC);*/
+                vUART_SendStr(UART_PC,"\nRTCsync:\t");
+                vUART_SendInt(UART_PC,gprs_date_time.yy );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gprs_date_time.mm );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gprs_date_time.dd);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendInt(UART_PC,gprs_date_time.hr);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gprs_date_time.min);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gprs_date_time.sec);
+#endif
+                data[6] = (((gprs_date_time.yy / 10) * 16) | (gprs_date_time.yy % 10));
+                //RTC_Write(0x06, data);        //Year
+                data[5] = (((gprs_date_time.mm / 10) * 16) | (gprs_date_time.mm % 10));
+                //RTC_Write(0x05, data & 0x1F);     //Month
+                data[4] = (((gprs_date_time.dd / 10) * 16) | (gprs_date_time.dd % 10));
+                //RTC_Write(0x04, data & 0x3F);     //Date
+                //RTC_Write(0x03, 1 & 0x07);        //Day: 1-7, 1=Sunday
+#ifdef RTC_DS3231
+                //RTC_Write(0x03, (1 & 0x07));
+                data[3] = (1 & 0x07);
+#endif
+#ifdef RTC_MCP79410
+                //RTC_Write(0x03, ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT)));       //Day: 1-7, 1=Sunday
+                data[3] = ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT));
+#endif
+                if(gprs_date_time.hr >= 12)
+                {
+                    if(gprs_date_time.hr > 12)
+                    {
+                        gprs_date_time.hr %= 12;
+                    }
+
+                    gprs_date_time.hr = ((gprs_date_time.hr/10)<<4) | (gprs_date_time.hr%10);      //hr
+                    gprs_date_time.hr |= (1<<5);
+                }
+                else
+                {
+                    if(gprs_date_time.hr == 0)
+                    {
+                        gprs_date_time.hr = 12;
+                    }
+                    gprs_date_time.hr = ((gprs_date_time.hr/10)<<4) | (gprs_date_time.hr%10);      //hr
+                }
+                gprs_date_time.hr |= (1<<6);     //Anand 02.07.2014
+                data[2] = (gprs_date_time.hr & 0x7F);
+                //RTC_Write(0x02, (gprs_date_time.hr & 0x7F));      //hr
+                data[1] = (((gprs_date_time.min / 10) * 16) | (gprs_date_time.min % 10));
+                //RTC_Write(0x01, (data & 0x7F)); //min
+                //DS1307Write(0x00, 0);
+                data[0] = (((gprs_date_time.sec / 10) * 16) | (gprs_date_time.sec % 10));
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+#ifdef RTC_DS3231
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+                data[0] = (data[0] & 0x7F);
+#endif
+#ifdef RTC_MCP79410
+                data[0] = ((data[0] & 0x7F) | (1 << RTC_OSC_EN_BIT));
+#endif
+                Write_RTC(data, 7);
+
+                gprs_date_time.update_time_aval = FALSE;
+            }
+        }
+    }
+}
+
+#endif  //ETHERNET_EN
+
 // void time_sync(void)
 // {
 //     get_ocpp_date_time();
@@ -839,6 +1055,7 @@ void get_present_time(time_stamp_t *time_stamp)
     time_stamp->date = time_main.date;
     time_stamp->month = time_main.month;
     time_stamp->year = time_main.year;
+    time_sync();
 }
 void update_rtc(char *arr, int indx)
 {

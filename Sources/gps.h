@@ -111,6 +111,17 @@ typedef struct
 
 typedef struct
 {
+    char yy;
+    char mm;
+    char dd;
+    char hr;
+    char min;
+    char sec;
+    char update_time_aval;
+}__attribute__((packed))gps_date_time_t;
+
+typedef struct
+{
 	gps_info_t gps_info;
 	unsigned char gps_ready;
 	char errcode;
@@ -129,6 +140,10 @@ gps_status_t gps_handler(void);
 gps_decode_result_t gps_pkt_parsing(gps_info_t *temp_gps, char *tmpstr);
 
 bool get_location(void);
+
+void utcTOlocal(gps_date_time_t *timeT);
+
+void updateGpsDateTimeToBuff(gps_date_time_t *date_time);
 
 gps_status_t get_gps_status();
 void set_gps_status(gps_status_t);

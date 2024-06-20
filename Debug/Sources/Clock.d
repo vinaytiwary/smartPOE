@@ -45,6 +45,7 @@ Sources/Clock.obj: ../Sources/DS3231.h
 Sources/Clock.obj: ../Sources/Clock.h
 Sources/Clock.obj: ../Sources/_common.h
 Sources/Clock.obj: ../Sources/gprs.h
+Sources/Clock.obj: ../Sources/gps.h
 
 ../Sources/Clock.cpp:
 
@@ -135,4 +136,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdlib.h:
 ../Sources/_common.h:
 
 ../Sources/gprs.h:
+
+../Sources/gps.h:
 

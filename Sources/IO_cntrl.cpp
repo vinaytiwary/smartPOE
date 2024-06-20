@@ -7,7 +7,7 @@
 
 #include "stdint.h"
 #include "stdbool.h"
-
+#include <string.h>
 #include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/pin_map.h"
@@ -23,9 +23,20 @@
 #include "IO_cntrl.h"
 #include "UartCore.h"
 #include "_debug.h"
+#include "main.h"
+#include "ADC_Core.h"
+#include "E2P.h"
+#include "_common.h"
 
-volatile EXTI_cnt_t EXTI_cnt;
 voltage_mode_t voltage_mode;
+volatile EXTI_cnt_t EXTI_cnt;
+//router_mode_t router_mode;
+extern ram_data_t ram_data;
+BCD_MODE_t BCD_MODE;
+
+relay_state_t relay_state;
+
+relay_ctrl_state_t relay_ctrl_state;
 
 //********************** GPIOD_IRQ_Handler *************************//
 //extern "C" void GPIODIntHandler(void)
@@ -188,21 +199,33 @@ void vLEDGPIOInit(void)
 
 void vPERIPH_GPIOInit(void)
 {
+    memset(&BCD_MODE, 0, sizeof(BCD_MODE_t));
     vLEDGPIOInit();
     // vInit_InputTestpins();   //commenting this as I'm using these pins for ADC testing.
     
 #if HW_BOARD == TIOT_V2_00_BOARD
     init_ODU_Supplypins();
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
+	vFreqDetectInit();
+    vEarthCheckInit();
+	
+	GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
 
-    GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
+    GPIOPinTypeGPIOOutput(RELAY_RTR_PORT, (RELAY_RTR | RELAY_RTR_SEL));
+    GPIOPinTypeGPIOOutput(RELAY_ODU_PORT, RELAY_ODU );
+    //GPIOPinWrite(RELAY_RTR_PORT, (RELAY_RTR),(RELAY_RTR));
+   // GPIOPinWrite(RELAY_RTR_PORT, (RELAY_RTR_SEL),0);
+    //GPIOPinTypeGPIOOutput(RELAY_RTR_PORT, RELAY_RTR );
+    GPIOPinTypeGPIOOutput(BATT_CTRL_PORT, BATT_CTRL_PIN);
+    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN);
+    //ControlODU_Relay(ON);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD  
 }
 
 #if HW_BOARD == TIOT_V2_00_BOARD
 void readBCD_SelectorSW(void)
 {
-    uint8_t BCD_code = 0;
-    static uint8_t prev_BCDcode = 0;    //incase the roatry switch is >3 position.
+    //uint8_t BCD_code = 0;
+    //static uint8_t prev_BCDcode = 0;    //incase the roatry switch is >3 position.
     uint8_t BCD_pin0 = 0, BCD_pin1 = 0, BCD_pin2 = 0, BCD_pin3 = 0;
 
     BCD_pin0 = GPIOPinRead(BCD_SELECTOR_SW_BASE, BCD_SELECTOR_S1)/BCD_SELECTOR_S1;
@@ -218,33 +241,35 @@ void readBCD_SelectorSW(void)
     vUART_SendInt(UART_PC, BCD_pin3);
 #endif  //DEBUG_BCD_SEL_SW
 
-    BCD_code = ((BCD_pin0 << 0)|(BCD_pin1 << 1)|(BCD_pin2 << 2)|(BCD_pin3 << 3));
+    BCD_MODE.BCD_code = ((BCD_pin0 << 0)|(BCD_pin1 << 1)|(BCD_pin2 << 2)|(BCD_pin3 << 3));
 #ifdef  DEBUG_BCD_SEL_SW
     vUART_SendStr(UART_PC, "\n1BCD:");
-    vUART_SendInt(UART_PC, BCD_code);
+    vUART_SendInt(UART_PC, BCD_MODE.BCD_code);
 #endif  //DEBUG_BCD_SEL_SW
 
-    if((BCD_code >= 0) && (BCD_code <= 4))
+    if((BCD_MODE.BCD_code >= 0) && (BCD_MODE.BCD_code <= 4))
     {
         // // BCD_code = (BCD_code == 2)? ((BCD_code + 1) * 10): (BCD_code == 3)? (((BCD_code + 1) * 14)) : ((BCD_code + 1) * 12);
         // BCD_code = (BCD_code == 2)? 30 : (BCD_code == 4)? 56 : ((BCD_code + 1) * 12);
         // prev_BCDcode = BCD_code;
-        BCD_code += 1;
-        prev_BCDcode = BCD_code;
+        BCD_MODE.BCD_code += 1;
+        BCD_MODE.prev_BCDcode = BCD_MODE.BCD_code;
     }
     else
     {
-        BCD_code = prev_BCDcode;
+        BCD_MODE.BCD_code = BCD_MODE.prev_BCDcode;
 #ifdef  DEBUG_BCD_SEL_SW
         vUART_SendStr(UART_PC, "\nINV_BCD:");
-        vUART_SendInt(UART_PC, BCD_code);
+        vUART_SendInt(UART_PC, BCD_MODE.BCD_code);
 #endif  //DEBUG_BCD_SEL_SW        
     }
 #ifdef  DEBUG_BCD_SEL_SW
     vUART_SendStr(UART_PC, "\n2BCD:");
-    vUART_SendInt(UART_PC, BCD_code);
+    vUART_SendInt(UART_PC, BCD_MODE.BCD_code);
 #endif  //DEBUG_BCD_SEL_SW  
-    SetODU_Mode((voltage_mode_t)BCD_code);
+    SetODU_Mode((voltage_mode_t)BCD_MODE.BCD_code);
+
+    ram_data.supply_mode_R2 = (BCD_MODE.BCD_code == MODE_36V)? 30 : (BCD_MODE.BCD_code == MODE_56V)? 56 : ((BCD_MODE.BCD_code) * 12);
 }
 #endif  //#if HW_BOARD == TIOT_V2_00_BOARD
 
@@ -369,7 +394,7 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
             GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
 
-            GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+            // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
         break;
 
@@ -383,7 +408,7 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
             GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
 
-            GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+            // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
         break;
 
@@ -397,7 +422,7 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
             GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
 
-            GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+            // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
         break;
 
@@ -411,12 +436,12 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
             GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
 
-            GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+            // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
         break;
 
         case MODE_12V:
-        case HOME:
+        //case HOME:
         default:
         {
 #ifdef  DEBUG_GPIO
@@ -427,10 +452,340 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
             GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
 
-            GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+            // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
         break;
     }
 }
 
 #endif  // HW_BOARD == TIOT_V2_00_BOARD
+void controlRelays(void)
+{
+    static bool mid_hysteresis_ODUrelay_state = false, mid_hysteresis_RTRrelay_state = false;
+    switch(getRelay_CtrlState())
+    {
+        case EARTH_FAULT:
+        {
+            set_router_state(RELAY_OFF);
+            set_router_selection_state(RELAY_OFF);
+            //set_ODU_state(RELAY_OFF);
+            ControlODU_Relay(OFF);
+#ifdef DEBUG_RELAY_STATE_LCD
+            GLCD_GoTo(0,7);                      //ONLY FOR TEST
+            GLCD_Clear_Line(7);                  //ONLY FOR TEST
+            GLCD_WriteString((char*)"EARTH FAULT");                  //ONLY FOR TEST
+#endif
+#ifdef DEBUG_RELAY
+            vUART_SendStr(UART_PC, "\nEF:");
+            vUART_SendInt(UART_PC, get_router_state());
+            vUART_SendChr(UART_PC, ',');
+            vUART_SendInt(UART_PC, get_router_selection_state());
+            vUART_SendChr(UART_PC, ',');
+            vUART_SendInt(UART_PC, OFF);
+#endif
+            ram_data.ram_ADC.DC_current_router2 = 0;
+            ram_data.ram_ADC.DC_Voltage_router2 = 0;
+            ram_data.ram_ADC.DC_current_router1 = 0;
+        }
+        break;
+
+        case MAINS_MODE:
+        {
+            set_router_selection_state(RELAY_OFF);
+            set_router_state(RELAY_ON);
+#ifdef DEBUG_RELAY_STATE_LCD
+            GLCD_GoTo(0,7);                  //ONLY FOR TEST
+            GLCD_Clear_Line(7);                  //ONLY FOR TEST
+            GLCD_WriteString((char*)"MAINS MODE");                  //ONLY FOR TEST
+#endif
+#ifdef DEBUG_RELAY
+            vUART_SendStr(UART_PC, "\nMM:");
+            vUART_SendInt(UART_PC, get_router_state());
+            vUART_SendChr(UART_PC, ',');
+            vUART_SendInt(UART_PC, get_router_selection_state());
+#endif
+            if(isSupplyStable())
+            {
+                //GPIOPinWrite(RELAY_ODU_PORT,RELAY_ODU, RELAY_ODU);
+                //set_ODU_state(RELAY_ON);
+                ControlODU_Relay(ON);
+#ifdef DEBUG_RELAY
+                vUART_SendStr(UART_PC, "\nMM:ODU_ON");
+#endif
+            }
+            else
+            {
+                //set_ODU_state(RELAY_OFF);
+                ControlODU_Relay(OFF);
+                ram_data.ram_ADC.DC_current_router2 = 0;
+                ram_data.ram_ADC.DC_Voltage_router2 = 0;
+#ifdef DEBUG_RELAY
+                vUART_SendStr(UART_PC, "\nMMunst:");
+                vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Voltage_router2);
+#endif
+            }
+        }
+        break;
+
+        case BATT_MODE:
+        {
+            //set_router_selection_state(RELAY_ON);
+            //set_router_state(RELAY_ON);
+            ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
+            // ControlRouter_Relay(ON);    //PP: ONLY FOR TEST
+#ifdef DEBUG_RELAY_STATE_LCD
+            GLCD_GoTo(0,7);                  //ONLY FOR TEST
+            GLCD_Clear_Line(7);                  //ONLY FOR TEST
+            GLCD_WriteString((char*)"BATT MODE");                  //ONLY FOR TEST
+#endif
+#ifdef DEBUG_RELAY
+            vUART_SendStr(UART_PC, "\nBM");
+#endif
+#if 1
+            if(ram_data.ram_ADC.DC_Battery_voltage < BATT_HYSTERESIS_LOW)
+            {
+#ifdef DEBUG_RELAY
+                vUART_SendStr(UART_PC, "\nBL:");
+#endif
+                //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
+                //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+                ControlRouter_Relay(OFF);
+                ControlODU_Relay(OFF);
+                //set_router_state(RELAY_OFF);
+                //set_ODU_state(RELAY_OFF);
+                
+                ram_data.ram_ADC.DC_current_router2 = 0;
+                ram_data.ram_ADC.DC_Voltage_router2 = 0;
+                ram_data.ram_ADC.DC_current_router1 = 0;
+
+#ifdef DEBUG_RELAY
+                vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Battery_voltage);
+                vUART_SendChr(UART_PC, ',');
+                vUART_SendInt(UART_PC, BATT_HYSTERESIS_LOW);
+#endif
+                mid_hysteresis_ODUrelay_state = false;
+                mid_hysteresis_RTRrelay_state = false;
+            }
+            if(ram_data.ram_ADC.DC_Battery_voltage > BATT_HYSTERESIS_HIGH)
+            {
+#ifdef DEBUG_RELAY
+                vUART_SendStr(UART_PC, "\n1BH:");
+#endif
+                //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
+                //set_relay_state(RELAY_ON);
+                ControlRouter_Relay(ON);
+                if(isSupplyStable())
+                {
+                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
+                    ControlODU_Relay(ON);
+                    //set_ODU_state(RELAY_ON);
+
+                    mid_hysteresis_ODUrelay_state = true;
+#ifdef DEBUG_RELAY
+                    vUART_SendStr(UART_PC, "\nBMH:RTR_ON,RS_INV,ODU_ON");
+#endif
+                }
+                else
+                {
+#ifdef DEBUG_RELAY
+                    vUART_SendStr(UART_PC, "\nBMunst:");
+                    vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Voltage_router2);
+#endif
+                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+                    ControlODU_Relay(OFF);
+                    //set_ODU_state(RELAY_OFF);
+
+                    ram_data.ram_ADC.DC_current_router2 = 0;
+                    ram_data.ram_ADC.DC_Voltage_router2 = 0;
+                    ram_data.ram_ADC.DC_current_router1 = 0;
+
+                    mid_hysteresis_ODUrelay_state = false;
+                }
+#ifdef DEBUG_RELAY
+                vUART_SendStr(UART_PC, "\n2BH:");
+                vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Battery_voltage);
+                vUART_SendChr(UART_PC, ',');
+                vUART_SendInt(UART_PC, BATT_HYSTERESIS_HIGH);
+                vUART_SendStr(UART_PC, "\nBML:RTR_OFF,RS_INV,ODU_OFF");
+#endif
+                mid_hysteresis_RTRrelay_state = true;
+            }
+
+            if((ram_data.ram_ADC.DC_Battery_voltage >= BATT_HYSTERESIS_LOW) || (ram_data.ram_ADC.DC_Battery_voltage <= BATT_HYSTERESIS_HIGH))
+            {
+                if(!mid_hysteresis_ODUrelay_state)
+                {
+                    ram_data.ram_ADC.DC_current_router2 = 0;
+                    ram_data.ram_ADC.DC_Voltage_router2 = 0;
+                }
+
+                ram_data.ram_ADC.DC_current_router1 = mid_hysteresis_RTRrelay_state? ram_data.ram_ADC.DC_current_router1 : 0;
+            }
+#endif  //if 0
+        }
+        break;
+
+        default:
+        {
+
+        }
+        break;
+    }
+}
+
+bool isSupplyStable(void)
+{
+    bool ret = false;
+    uint32_t R2_mode = 0;
+    if(BCD_MODE.BCD_code == MODE_12V)
+    {
+        R2_mode = ((((uint32_t)ram_data.supply_mode_R2 * 1000) + 1500));
+#ifdef DEBUG_RELAY
+        vUART_SendStr(UART_PC, "\nM_12:");
+        vUART_SendInt(UART_PC, R2_mode);
+#endif
+        if((ram_data.ram_ADC.DC_Voltage_router2) <= R2_mode)
+        {
+            ret = true;
+        }
+        else
+        {
+            ret = false;
+        }
+    }
+    else
+    {
+        R2_mode = ((((uint32_t)ram_data.supply_mode_R2 * 1000) + 2500));
+#ifdef DEBUG_RELAY
+        vUART_SendStr(UART_PC, "\nM>12:");
+        vUART_SendInt(UART_PC, R2_mode);
+#endif
+        if((ram_data.ram_ADC.DC_Voltage_router2) <= R2_mode)
+        {
+            ret = true;
+        }
+        else
+        {
+            ret = false;
+        }
+    }
+    return ret;
+}
+
+void vFreqDetectInit(void)
+{
+    GPIOIntRegister(FREQ_MEAS_PIN_BASE, FREQDetIntHandler);
+    GPIOPinTypeGPIOInput(FREQ_MEAS_PIN_BASE,FREQ_MEAS_PIN);
+    GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_RISING_EDGE);
+//    GPIOIntTypeSet(ZERO_CROSS_DET_PIN_BASE, ZERO_CROSS_DET_PIN , GPIO_BOTH_EDGES);
+    GPIOIntEnable(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN);
+}
+void vEarthCheckInit(void)
+{
+    GPIOPinTypeGPIOInput(EARTH_DETECT_PORT_BASE, (EARTH_DETECT_PIN));
+}
+void FREQDetIntHandler(void)
+{
+    EXTI_cnt.freq_cnt++;
+    GPIOIntClear(FREQ_MEAS_PIN_BASE, GPIOIntStatus(FREQ_MEAS_PIN_BASE, true));
+
+   if(get_router_state()==RELAY_ON)
+   {
+       set_router_state(RELAY_DEFAULT);
+       ControlRouter_Relay(ON);
+   }
+   else if(get_router_state()==RELAY_OFF)
+   {
+       set_router_state(RELAY_DEFAULT);
+       ControlRouter_Relay(OFF);
+   }
+
+   if(get_router_selection_state()==RELAY_ON)
+   {
+       set_router_selection_state(RELAY_DEFAULT);
+       ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
+   }
+   else if(get_router_selection_state()==RELAY_OFF)
+   {
+       set_router_selection_state(RELAY_DEFAULT);
+       ControlRouterSelection_Relay(RTR_MAIN_SUPPLY);
+   }
+
+}
+
+uint8_t vEarthDetect(void)
+{
+    uint32_t value = 0;
+    value = GPIOPinRead(EARTH_DETECT_PORT_BASE,EARTH_DETECT_PIN);
+
+        //value /= WELDCHECK1_PIN;
+#ifdef DEBUG_EARTHDETECT
+//    vUART_SendStr(UART_PC,"\nEarth Detect:");
+//    vUART_SendInt(UART_PC,value);
+#endif
+
+    return value;
+}
+
+void ControlODU_Relay(uint8_t val)
+{
+    if(val)
+    {
+        GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, RELAY_ODU);
+    }
+    else
+    {
+        GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+    }
+}
+void ControlRouter_Relay(uint8_t val)
+{
+    if(val)
+    {
+        GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, RELAY_RTR);
+    }
+    else
+    {
+        GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
+    }
+}
+
+void ControlRouterSelection_Relay(uint8_t val)
+{
+    if(val)
+    {
+        GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL, RELAY_RTR_SEL);
+    }
+    else
+    {
+        GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL, 0);
+    }
+}
+/*
+void set_ODU_state(relay_ctrl_state_t state)
+{
+    relay_state.ODU = state;
+}
+relay_ctrl_state_t get_ODU_state(void)
+{
+    return  relay_state.ODU;
+}
+*/
+void set_router_state(relay_ctrl_state_t state)
+{
+    relay_state.router = state;
+}
+relay_ctrl_state_t get_router_state(void)
+{
+    return relay_state.router;
+}
+
+void set_router_selection_state(relay_ctrl_state_t state)
+{
+    relay_state.router_selection = state;
+}
+relay_ctrl_state_t get_router_selection_state(void)
+{
+    return relay_state.router_selection;
+}
+

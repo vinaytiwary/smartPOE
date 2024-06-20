@@ -17,6 +17,9 @@ Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/inc
 Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/sys/_stdint.h
 Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h
 Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/string.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/string.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_string.h
 Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/debug.h
 Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h
 Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
@@ -33,6 +36,16 @@ Sources/IO_cntrl.obj: ../Sources/HW_pins.h
 Sources/IO_cntrl.obj: ../Sources/IO_cntrl.h
 Sources/IO_cntrl.obj: ../Sources/UartCore.h
 Sources/IO_cntrl.obj: ../Sources/_debug.h
+Sources/IO_cntrl.obj: ../Sources/main.h
+Sources/IO_cntrl.obj: ../Sources/ADC_Core.h
+Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h
+Sources/IO_cntrl.obj: ../Sources/Clock.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h
+Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h
+Sources/IO_cntrl.obj: ../Sources/E2P.h
+Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
+Sources/IO_cntrl.obj: ../Sources/_common.h
 
 ../Sources/IO_cntrl.cpp:
 
@@ -68,6 +81,12 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h:
 
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/string.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/string.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_string.h:
+
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/debug.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/gpio.h:
@@ -99,4 +118,24 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h:
 ../Sources/UartCore.h:
 
 ../Sources/_debug.h:
+
+../Sources/main.h:
+
+../Sources/ADC_Core.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/adc.h:
+
+../Sources/Clock.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/time.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/abi_prefix.h:
+
+C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
+
+../Sources/E2P.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
+
+../Sources/_common.h:
 

@@ -70,5 +70,12 @@
 #define DEBUG_READ_FREQ
 
 #define DEBUG_BCD_SEL_SW
+#define DEBUG_RESTART
+#define DEBUG_RELAY
+#define DEBUG_EARTHDETECT
+#define DEBUG_FREQ_MEAS
+#define DEBUG_MAINS_FAULT
+// #define DEBUG_RELAY_STATE_LCD
+#define DEBUG_RELAY_STATE
 
 #endif /* SOURCES__DEBUG_H_ */

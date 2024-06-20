@@ -36,6 +36,8 @@ gps_data_t gps_data;
 
 gps_handler_state_t gps_handler_state;
 
+gps_date_time_t gps_date_time;
+
 uint32_t gps_interval_start = 0;
 uint32_t cnt_gps_1sec = 0;
 
@@ -725,6 +727,10 @@ gps_status_t gps_handler(void)
 
                         if(decode_result >= GOT_LATLONG)
                         {
+                            if(decode_result >= GOT_DATETIME)
+                            {
+                                updateGpsDateTimeToBuff(&gps_date_time);
+                            }
                             get_location();
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
@@ -1668,6 +1674,138 @@ gps_decode_result_t gps_pkt_parsing(gps_info_t *temp_gps, char *tmpstr)
 	}
 
 	return retVal;
+}
+
+void updateGpsDateTimeToBuff(gps_date_time_t *date_time)
+{
+    gps_date_time_t temp_time;
+#ifdef GNS_PKT_EN
+	temp_time.yy = (((gps.gps_info.date[2] -'0') * 10) + ((gps.gps_info.date[3] - '0')));
+	temp_time.mm = (((gps.gps_info.date[4] -'0') * 10) + ((gps.gps_info.date[5] - '0')));
+	temp_time.dd = (((gps.gps_info.date[6] - '0')* 10) + ((gps.gps_info.date[7] - '0')));
+#else
+	temp_time.dd = (((gps.gps_info.date[0] -'0') * 10) + ((gps.gps_info.date[1] - '0')));
+	temp_time.mm = (((gps.gps_info.date[2] -'0') * 10) + ((gps.gps_info.date[3] - '0')));
+	temp_time.yy = (((gps.gps_info.date[4] - '0')* 10) + ((gps.gps_info.date[5] - '0')));
+#endif
+
+#ifdef DEBUG_GET_LOC
+		//printf("\ntemp_date1:%02d-%02d-%02d",temp_time.dd,temp_time.mm,temp_time.yy);		
+#endif
+
+	temp_time.hr = (((gps.gps_info.utc_time[0] - '0') * 10) + ((gps.gps_info.utc_time[1] - '0')));
+	temp_time.min = (((gps.gps_info.utc_time[2] - '0') * 10) + ((gps.gps_info.utc_time[3] - '0')));
+	temp_time.sec = (((gps.gps_info.utc_time[4] - '0') * 10) + ((gps.gps_info.utc_time[5] - '0')));
+
+#ifdef DEBUG_GET_LOC
+		//printf("\ntemp_time1:%02d:%02d:%02d",temp_time.hr,temp_time.min,temp_time.sec);		
+#endif
+
+    if (((temp_time.dd <= 0) || (temp_time.dd > 31)) ||
+	((temp_time.mm <= 0) || (temp_time.mm > 12)) ||
+	((temp_time.yy < (DEFAULT_YEAR)) || (temp_time.yy > (DEFAULT_YEAR) + YEAR_OFFSET))||			// Assuming that RTC will never go below 2016.
+	(/*(temp_time.hr < 0) ||*/ (temp_time.hr > 23)) ||
+	(/*(temp_time.min < 0) || */(temp_time.min > 59)) ||
+	(/*(temp_time.sec < 0) || */(temp_time.sec > 59)))
+    {
+        gps_date_time.update_time_aval = false;
+    }
+    else
+    {
+        utcTOlocal(&temp_time);
+        if (((temp_time.yy >= (DEFAULT_YEAR)) && (temp_time.yy <= (DEFAULT_YEAR) + YEAR_OFFSET)) &&
+		((temp_time.mm >= 1) && (temp_time.mm <= 12)) &&
+		((temp_time.dd >= 1) && (temp_time.dd <= 31)) &&
+		(/*(temp_time.hr >= 0) &&*/ (temp_time.hr <= 23)) &&
+		(/*(temp_time.min >= 0) &&*/ (temp_time.min <= 59)) &&
+		(/*(temp_time.sec >= 0) &&*/ (temp_time.sec <= 59)))
+        {
+            date_time->yy = temp_time.yy;
+            date_time->mm = temp_time.mm;
+            date_time->dd = temp_time.dd;
+            date_time->hr = temp_time.hr;
+            date_time->min = temp_time.min;
+            date_time->sec = temp_time.sec;
+
+            gps_date_time.update_time_aval = true;
+        }
+        else
+        {
+          gps_date_time.update_time_aval = false;
+        }
+    }
+}
+
+void utcTOlocal(gps_date_time_t *timeT) 
+{
+    int DayNum;
+    
+	timeT->hr += 5;
+	timeT->min += 30;
+	
+
+    if(timeT->min > 59)
+	{
+		int m;
+		m = (timeT->min / 60);
+		timeT->hr = (timeT->hr + m);
+		timeT->min = (timeT->min % 60);
+	}
+	if(timeT->hr > 23)
+	{
+		int h;
+		h = (timeT->hr / 24);
+		timeT->dd = (timeT->dd + h);
+		timeT->hr = (timeT->hr % 24);
+	}
+	if((timeT->mm == 1) || (timeT->mm == 3) || (timeT->mm == 5) || (timeT->mm == 7) || (timeT->mm == 8) || (timeT->mm == 10) || (timeT->mm == 12))
+	{
+		DayNum = 31;
+	}
+	if((timeT->mm == 4) || (timeT->mm == 6) || (timeT->mm == 9) || (timeT->mm == 11))
+	{
+		DayNum = 30;
+	}
+	if(timeT->mm == 2)
+	{
+	    if ((timeT->yy % 4) == 0)
+	    {
+	        if((timeT->yy % 100) == 0)
+	        {
+	            if((timeT->yy % 400) == 0)
+	            {
+	                DayNum = 29;
+	            }
+	            else
+        		{
+        			DayNum = 28;
+        		}
+	        }
+	        else
+    		{
+    			DayNum = 29;
+    		}
+	    }
+        else
+        {
+            DayNum = 28;
+        }
+    
+    }
+    if(timeT->dd > DayNum)
+	{
+		int d;
+		d = (timeT->dd / DayNum);
+		timeT->mm = (timeT->mm + d);
+		timeT->dd = (timeT->dd % DayNum);
+	}
+	if(timeT->mm > 12)
+	{
+		int M;
+		M = (timeT->mm / 12);
+		timeT->yy = (timeT->yy + M);
+		timeT->mm = (timeT->mm % 12);
+	}
 }
 
 gps_status_t get_gps_status()

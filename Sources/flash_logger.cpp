@@ -70,7 +70,7 @@ void flashWriteMR_BR(void)
 	WBPR(0);
 #endif
 	
-#ifdef _DEBUG_FLASH_UART
+#ifdef DEBUG_MR_BR
 	// UWriteString((char*)"AaYa3", UART_PC);		//Debug
 	// UWriteData(FL_data.MR_BR_ser, UART_PC);
 	// UWriteData(FL_data.curr_data_write_addr_telecom_log&0xff, UART_PC);
@@ -340,6 +340,14 @@ int updateFlashCurrAddr(void)                                                   
 
 
 #endif //OFFLINE_MODE_EN
+#ifdef DEBUG_MR_BR
+    vUART_SendStr(DEBUG_UART_BASE,"\nMBsn:");
+    vUART_SendInt(DEBUG_UART_BASE,FL_data.MR_BR_ser);
+    vUART_SendStr(DEBUG_UART_BASE,"\nFLc2:");
+    vUART_SendInt(DEBUG_UART_BASE,FL_data.curr_data_write_addr_telecom_log);
+    vUART_SendStr(DEBUG_UART_BASE,"\nFLu2:");
+    vUART_SendInt(DEBUG_UART_BASE,FL_data.curr_upload_addr_telecom_log);
+#endif
     return sts;
 }
 
@@ -423,23 +431,21 @@ void flashWriteTR(void)
 #ifdef FLASH_WP_ENABLE
 	WBPR(0);
 #endif
-#ifdef DEBUG_FLASH_DISPENSE_DATA
-char temp_[66];
+#ifdef DEBUG_FLASH_WRITE
+	vUART_SendStr(UART_PC,"\nWRITE:");
+	vUART_SendBytes(UART_PC,(const uint8_t *)&FL_log_data, sizeof(FL_log_data_t));
+	vUART_SendStr(UART_PC,",");
+	vUART_SendInt(UART_PC,FL_data.curr_data_write_addr_telecom_log);
+#endif
+
+#ifdef DEBUG_FLASH_READ_TEMP
+char temp_[64]={0};
 	WREN();
 	readContToBuff(FL_data.curr_data_write_addr_telecom_log, FL_TLOG_LEN, temp_);		//KP 28-03-2015
 	Wait_Busy();	//??				// HJ 12-08-2016 Uncomment
 	WRDI();
-UWriteString((char*)"Log_data:", UART_PC);
-UWriteBytes((unsigned char*)&temp_, sizeof(FL_log_data_t), UART_PC);
-UWriteString((char*)"log:", UART_PC);
-ltoa(FL_log_data.transaction_id_dispense_log, temp_, 10);
-UWriteString(temp_, UART_PC);
-UWriteString("\nFuel:", UART_PC);
-itoa((FL_log_data.remaining_bowser_fuel / 1000), temp_, 10);
-UWriteString(temp_, UART_PC);
-UWriteString("\nFreq_addr:", UART_PC);
-ltoa(FL_data.curr_data_write_addr_telecom_log, temp_, 10);
-UWriteString(temp_, UART_PC);
+    vUART_SendStr(UART_PC,"\nREAD:");
+    vUART_SendBytes(UART_PC,(const uint8_t *)&temp_, sizeof(FL_log_data_t));
 #endif
 	FL_data.curr_data_write_addr_telecom_log += (FL_TLOG_LEN);
 
@@ -630,8 +636,10 @@ void flashWriteFreqUpdData(freq_updated_data_t *log_data, unsigned long addr)
 	WBPR(0);
 #endif
 #ifdef DEBUG_FLASH_FREQ_DATA
-UWriteString((char*)"freq_as:", UART_PC);
-UWriteBytes((unsigned char*)log_data, sizeof(freq_updated_data_t), UART_PC);
+	vUART_SendStr(UART_PC,"\nfreq_as:");
+	vUART_SendBytes(UART_PC,(const uint8_t *)log_data, sizeof(freq_updated_data_t));
+	vUART_SendStr(UART_PC,",");
+	vUART_SendInt(UART_PC,addr);
 #endif
 }
 
@@ -801,6 +809,19 @@ char readFreqUpdData_flash(void)
 #ifdef DEBUG_READ_FREQ
 		vUART_SendStr(DEBUG_UART_BASE,"\nnthg:");
 		//vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.chksum);
+#endif
+
+#ifdef DEBUG_FLASH_FREQ_DATA
+                vUART_SendStr(DEBUG_UART_BASE,"\nFrcnts:");
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.cnt);
+                vUART_SendChr(DEBUG_UART_BASE,',');
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data_.cnt);
+                vUART_SendStr(DEBUG_UART_BASE, "\nFrunsnt:");
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data.unsent_telecom_logs_IOT);
+                vUART_SendChr(DEBUG_UART_BASE,',');
+                vUART_SendInt(DEBUG_UART_BASE,freq_updated_data_.unsent_telecom_logs_IOT);
+                vUART_SendChr(DEBUG_UART_BASE,',');
+                vUART_SendInt(DEBUG_UART_BASE,addr);
 #endif
 
     return read_ok;

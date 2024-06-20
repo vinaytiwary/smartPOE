@@ -114,7 +114,9 @@ int main(void)
 
 	// update_rtc(&dummyDateBuff[0], 0);
 	IntMasterEnable();
-
+#ifdef DEBUG_RESTART
+	vUART_SendStr(DEBUG_UART_BASE, "\nPRG STRT");
+#endif
 
 #if 0
 	while(1)
@@ -183,6 +185,10 @@ int main(void)
 		if(scheduler.flg1sec == HIGH)
         {
             scheduler.flg1sec = LOW;
+#ifdef DEBUG_FREQ_MEAS
+            vUART_SendStr(DEBUG_UART_BASE,"\nfreq:");
+            vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
+#endif
 
 			vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
 			// vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
@@ -194,6 +200,20 @@ int main(void)
 #ifdef ADC_EN
 			GetAdcData();
 #endif  //ADC_EN
+			if(ram_data.ram_EXTI_cnt.freq_cnt)
+			{
+                if(vEarthDetect())
+                {
+                    ram_data.ram_EXTI_cnt.earth_cnt = true;
+#ifdef DEBUG_EARTHDETECT
+                    vUART_SendStr(UART_PC,"\nisEARTH!");
+#endif
+                }
+                else
+                {
+                    ram_data.ram_EXTI_cnt.earth_cnt = false;
+                }
+			}
 			update_ram_data();
 #if 0
 			Data_Screen_lcd();
@@ -288,17 +308,21 @@ void update_ram_data(void)
     // vUART_SendInt(DEBUG_UART_BASE, ET);
 #endif
 
-    if(e2p_router_config.router1 != HOME)
-    {
-        ram_data.supply_mode_R1 = (e2p_router_config.router1 == MODE_36V)? (e2p_router_config.router1 * 10) : (e2p_router_config.router1 * 12); //PP 14-03-24: this is to be uncommented if ckt successfully creates 30V
-        // ram_data.supply_mode_R1 = e2p_router_config.router1 * 12;
-    }
-    if(e2p_router_config.router2 != HOME)
-    {
-        ram_data.supply_mode_R2 = (e2p_router_config.router2 == MODE_36V)? (e2p_router_config.router2 * 10) : (e2p_router_config.router2 * 12); //PP 14-03-24: this is to be uncommented if ckt successfully creates 30V
-        // ram_data.supply_mode_R2 = e2p_router_config.router2 * 12;
-    }
+//    //if(e2p_router_config.router1 != HOME)
+//    {
+//        // ram_data.supply_mode_R1 = (e2p_router_config.router1 == MODE_36V)? (e2p_router_config.router1 * 10) : (e2p_router_config.router1 * 12); //PP 14-03-24: this is to be uncommented if ckt successfully creates 30V
+//        // ram_data.supply_mode_R1 = e2p_router_config.router1 * 12;
+//    }
+//    //if(e2p_router_config.router2 != HOME)
+//    {
+//        // ram_data.supply_mode_R2 = (e2p_router_config.router2 == MODE_36V)? (e2p_router_config.router2 * 10) : (e2p_router_config.router2 * 12); //PP 14-03-24: this is to be uncommented if ckt successfully creates 30V
+//        // ram_data.supply_mode_R2 = e2p_router_config.router2 * 12;
+//        ram_data.supply_mode_R2 = readBCD_SelectorSW();
+//    }
 
+        readBCD_SelectorSW();
+        update_alarm_status();
+        controlRelays();
 #ifdef DEBUG_ADC
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\n2ACP,RC,ODUC,ACN,ODUV,BV,SV:");
     vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_ADC.PN_AC_Voltage);
@@ -631,6 +655,125 @@ void init_config(void)
 
     Alarms.Power_ON = true;
     setRAM_Alarm(POWER_ON_BIT,Alarms.Power_ON);
+
+}
+
+relay_ctrl_sts_t getRelay_CtrlState(void)
+{
+    relay_ctrl_sts_t relay_ctrl_sts = MAINS_MODE;
+    if((Alarms.ACEarth_fault) && (Alarms.MAINS_fault))
+    {
+        relay_ctrl_sts = BATT_MODE;
+        /*
+        if(Alarms.Batt_low)
+        {
+            relay_ctrl_sts = BATT_LOW;
+            // return BATT_LOW;
+        }
+        else
+        {
+            relay_ctrl_sts = MAINS_OFF;
+            // return MAINS_OFF;
+        }
+        */
+    }
+    else if((Alarms.ACEarth_fault) && (!Alarms.MAINS_fault))
+    {
+        relay_ctrl_sts = EARTH_FAULT;
+        // return EARTH_FAULT;
+    }
+    else
+    {
+        relay_ctrl_sts = MAINS_MODE;
+        // return STS_OK;
+    }
+    return relay_ctrl_sts;
+}
+
+void update_alarm_status(void)
+{
+
+    double R1C = 0.000, R2C = 0.000;
+
+    // memset(&Alarms, 0, sizeof(Alarms_t));    //PP on 23-02-24, this will now be done in init_config(), in main() before while(1).
+
+    Alarms.MAINS_OVF_fault = ((ram_data.ram_ADC.PN_AC_Voltage/1000 < ACV_RANGE_LOW) || (ram_data.ram_ADC.PN_AC_Voltage/1000 > ACV_RANGE_HIGH)) ? true : false;
+    setRAM_Alarm(MAINS_OVF, Alarms.MAINS_OVF_fault);
+
+    Alarms.ACPhase_fault = ((ram_data.ram_EXTI_cnt.freq_cnt < FREQ_RANGE_LOW) || (ram_data.ram_EXTI_cnt.freq_cnt > FREQ_RANGE_HIGH)) ? true : false;
+    setRAM_Alarm(PHASE_FAULT, Alarms.ACPhase_fault);
+
+    Alarms.ACEarth_fault = (!ram_data.ram_EXTI_cnt.earth_cnt) ? true : false;
+    setRAM_Alarm(EARTHING_FAULT, Alarms.ACEarth_fault);
+#ifdef  DEBUG_MAINS_FAULT
+    if(Alarms.ACEarth_fault)
+    {
+
+        vUART_SendStr(UART_PC, "\n earth FAULT");
+    }
+    else
+    {
+        vUART_SendStr(UART_PC, "\n earth ok");
+    }
+#endif
+
+    Alarms.Chg_fault = ((ram_data.ram_ADC.DC_Charger_voltage/1000 < CHG_RANGE_LOW) || (ram_data.ram_ADC.DC_Charger_voltage/1000 > CHG_RANGE_HIGH)) ? true : false;
+    setRAM_Alarm(SMPS_FAULT, Alarms.Chg_fault);
+
+
+    if((!ram_data.ram_EXTI_cnt.freq_cnt) || (ram_data.ram_EXTI_cnt.freq_cnt < 40) /*|| (Alarms.Chg_fault)*/)
+    {
+        ram_data.ram_ADC.PN_AC_Voltage = 0;
+        Alarms.Supply_mode = true;
+        setRAM_Alarm(SUPPLY_MODE, Alarms.Supply_mode);
+        Alarms.MAINS_fault = true;
+#ifdef  DEBUG_MAINS_FAULT
+        vUART_SendStr(UART_PC, "\nMAINS FAULT");
+#endif
+        setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
+    }
+    else
+    {
+        Alarms.Supply_mode = false;
+        setRAM_Alarm(SUPPLY_MODE, Alarms.Supply_mode);
+        Alarms.MAINS_fault = false;
+#ifdef  DEBUG_MAINS_FAULT
+        vUART_SendStr(UART_PC, "\nMAINS OK");
+#endif
+        setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
+    }
+
+    if(Alarms.Supply_mode)
+    {
+#ifdef DEBUG_ALARMS
+        // UWriteString((char*)"\nCHG_NC",DBG_UART);
+#endif
+        Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage/1000 < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage/1000 > BATT_RANGE_HIGH)) ? true : false;
+        setRAM_Alarm(BATT_FAULT, Alarms.Batt_low);
+    }
+    else
+    {
+#ifdef DEBUG_ALARMS
+        // UWriteString((char*)"\nCHG_CONN",DBG_UART);
+#endif
+        Alarms.Batt_low = false;
+        setRAM_Alarm(BATT_FAULT, Alarms.Batt_low);
+    }
+
+    R1C = ((double)ram_data.ram_ADC.DC_current_router1/1000);
+    Alarms.Router1_NC = (R1C < R1C_RANGE_LOW) ? true : false;
+    setRAM_Alarm(RTR_NC, Alarms.Router1_NC);
+
+    R2C = ((double)ram_data.ram_ADC.DC_current_router2/1000);
+    Alarms.Router2_NC = (R2C < R2C_RANGE_LOW) ? true : false;
+    setRAM_Alarm(ODU_NC, Alarms.Router2_NC);
+
+    //Alarms.Router1_V_fault = ((ram_data.ram_ADC.DC_Voltage_router1/1000 < (ram_data.supply_mode_R1 - 2)) || (ram_data.ram_ADC.DC_Voltage_router1/1000 > (ram_data.supply_mode_R1 + 2))) ? true : false;
+    //setRAM_Alarm(RTR_V_FAULT, Alarms.Router1_V_fault);
+
+    Alarms.Router2_V_fault = ((ram_data.ram_ADC.DC_Voltage_router2/1000 < (ram_data.supply_mode_R2 - 2)) || (ram_data.ram_ADC.DC_Voltage_router2/1000 > (ram_data.supply_mode_R2 + 2))) ? true : false;
+    setRAM_Alarm(ODU_V_FAULT, Alarms.Router2_V_fault);
+
 
 }
 

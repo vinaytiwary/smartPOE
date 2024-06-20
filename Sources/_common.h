@@ -13,6 +13,9 @@
 #define TRUE    1
 #define FALSE   0
 
+#define ON      1
+#define OFF     0
+
 #define RETRY_COUNT          (100)
 
 char getChecksum(unsigned char* buff, char len);

@@ -56,6 +56,8 @@ Sources/gprs.obj: ../Sources/Telecom_server_query.h
 Sources/gprs.obj: ../Sources/WDT.h
 Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_watchdog.h
 Sources/gprs.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/watchdog.h
+Sources/gprs.obj: ../Sources/flashCore.h
+Sources/gprs.obj: ../Sources/flash_logger.h
 
 ../Sources/gprs.cpp:
 
@@ -168,4 +170,8 @@ C:/ti/TivaWare_C_Series-2.2.0.295/inc/TM4C1233E6PZ.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_watchdog.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/watchdog.h:
+
+../Sources/flashCore.h:
+
+../Sources/flash_logger.h:
 

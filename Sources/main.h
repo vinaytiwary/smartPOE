@@ -91,5 +91,5 @@ uint32_t getRAM_Alarm(void);
 void setRAM_Status(uint8_t val, bool sts);
 
 uint32_t getRAM_Status(void);
-
+relay_ctrl_sts_t getRelay_CtrlState(void);
 #endif /* SOURCES_MAIN_H_ */

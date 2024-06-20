@@ -275,25 +275,66 @@ void addDummyFL_TelecomLogs(unsigned int no_of_logs)
     FL_log_data_t dummy_FL_Log;
     memset(&dummy_FL_Log, 0, sizeof(FL_log_data_t));
 
-    dummy_FL_Log.ram_data.ram_ADC.PN_AC_Voltage = 260000;
-    dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage = 12000;
-    dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = 12000;
-    dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = 500;
-    dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = 500;
-    // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
-    dummy_FL_Log.ram_data.ram_ADC.NE_AC_Voltage = 270000;
-    dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = 30000;
-    dummy_FL_Log.ram_data.ram_alarms = 0;
-    dummy_FL_Log.ram_data.Status = 0;
-    dummy_FL_Log.ram_data.Latitude = 26263863;
-    dummy_FL_Log.ram_data.Longitude = 73008957;
-    dummy_FL_Log.ram_data.supply_mode_R1 = 24;
-    dummy_FL_Log.ram_data.supply_mode_R2 = 30;
+    // dummy_FL_Log.ram_data.ram_ADC.PN_AC_Voltage = 260000;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage = 12000;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = 12000;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = 500;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = 500;
+    // // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+    // dummy_FL_Log.ram_data.ram_ADC.NE_AC_Voltage = 270000;
+    // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = 30000;
+    // dummy_FL_Log.ram_data.ram_alarms = 0;
+    // dummy_FL_Log.ram_data.Status = 0;
+    // dummy_FL_Log.ram_data.Latitude = 26263863;
+    // dummy_FL_Log.ram_data.Longitude = 73008957;
+    // dummy_FL_Log.ram_data.supply_mode_R1 = 24;
+    // dummy_FL_Log.ram_data.supply_mode_R2 = 30;
+
+    // vMAIN_DelayMS(1000);    //disable WDT while testing this
+
+    // for(i=0;i<no_of_logs;i++)
+    // {
+    //     get_present_time(&dummy_FL_Log.ram_data.ram_time);
+    //     flashWriteTR();
+    //     vMAIN_DelayMS(1);
+    // }
+	
+//    dummy_FL_Log.ram_data.ram_ADC.PN_AC_Voltage = rand()%(265000-255000+1) + 255000;//260000
+//    dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage =rand()%(13000-12000+1) + 12000;// 12000;
+//    dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = rand()%(13000-12000+1) + 12000;//12000;
+//    dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = rand()%(600-500+1) + 500;//500;
+//    dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = rand()%(550-500+1) + 500;//500;
+//    // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+//    dummy_FL_Log.ram_data.ram_ADC.NE_AC_Voltage = rand()%(265000-255000+1) + 255000;//270000;
+//    dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = rand()%(30000-29000+1) + 29000;//30000;
+//    dummy_FL_Log.ram_data.ram_alarms = 0;
+//    dummy_FL_Log.ram_data.Status = 0;
+//    dummy_FL_Log.ram_data.Latitude = rand()%(27263863-26263863+1) + 26263863;//26263863;
+//    dummy_FL_Log.ram_data.Longitude =rand()%(74008957-73008957+1) + 73008957;// 73008957;
+//    dummy_FL_Log.ram_data.supply_mode_R1 = 24;
+//    dummy_FL_Log.ram_data.supply_mode_R2 = 30;
 
     vMAIN_DelayMS(1000);    //disable WDT while testing this
 
     for(i=0;i<no_of_logs;i++)
     {
+
+        memset(&dummy_FL_Log, 0, sizeof(FL_log_data_t));
+        dummy_FL_Log.ram_data.ram_ADC.PN_AC_Voltage = rand()%(265000-255000+1) + 255000;//260000
+        dummy_FL_Log.ram_data.ram_ADC.DC_Battery_voltage =rand()%(13000-12000+1) + 12000;// 12000;
+        dummy_FL_Log.ram_data.ram_ADC.DC_Charger_voltage = rand()%(13000-12000+1) + 12000;//12000;
+        dummy_FL_Log.ram_data.ram_ADC.DC_current_router1 = rand()%(600-500+1) + 500;//500;
+        dummy_FL_Log.ram_data.ram_ADC.DC_current_router2 = rand()%(550-500+1) + 500;//500;
+        // dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router1 = 24000;
+        dummy_FL_Log.ram_data.ram_ADC.NE_AC_Voltage = rand()%(265000-255000+1) + 255000;//270000;
+        dummy_FL_Log.ram_data.ram_ADC.DC_Voltage_router2 = rand()%(30000-29000+1) + 29000;//30000;
+        dummy_FL_Log.ram_data.ram_alarms = 0;
+        dummy_FL_Log.ram_data.Status = 0;
+        dummy_FL_Log.ram_data.Latitude = rand()%(27263863-26263863+1) + 26263863;//26263863;
+        dummy_FL_Log.ram_data.Longitude =rand()%(74008957-73008957+1) + 73008957;// 73008957;
+        dummy_FL_Log.ram_data.supply_mode_R1 = 24;
+        dummy_FL_Log.ram_data.supply_mode_R2 = 30;
+
         get_present_time(&dummy_FL_Log.ram_data.ram_time);
         flashWriteTR();
         vMAIN_DelayMS(1);

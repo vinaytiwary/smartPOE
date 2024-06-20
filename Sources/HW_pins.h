@@ -112,6 +112,18 @@
 #define FLASH_WP_PIN                 GPIO_PIN_5
 #define FLASH_RST_PIN                GPIO_PIN_6
 
+/******************RELAYS PINS**********************************/
+#define RELAY_RTR_PORT                  GPIO_PORTG_BASE
+#define RELAY_ODU_PORT                  GPIO_PORTE_BASE
+
+#define RELAY_ODU                GPIO_PIN_7
+#define RELAY_RTR                GPIO_PIN_0
+#define RELAY_RTR_SEL                GPIO_PIN_3
+
+
+
+#define BATT_CTRL_PORT          GPIO_PORTD_BASE
+#define BATT_CTRL_PIN           GPIO_PIN_3
 //************ DS3231 (RTC IC) **************//
 #define DS3231_I2C_PERIPH         SYSCTL_PERIPH_I2C1
 #define DS3231_I2C_BASE           I2C1_BASE
@@ -154,6 +166,21 @@
 #define BCD_SELECTOR_S3             GPIO_PIN_4
 #define BCD_SELECTOR_S4             GPIO_PIN_5
 
+// Define the control and data ports and pins
+#define KS0108_DATA_PORT GPIO_PORTH_BASE
+#define KS0108_CTRL_PORT GPIO_PORTK_BASE
+#define KS0108_RS GPIO_PIN_1    // Register select pin
+#define KS0108_RW 0             // No RW pin, using write-only interface
+#define KS0108_EN GPIO_PIN_0    // Enable pin
+#define KS0108_CS1 GPIO_PIN_2   // Chip Select 1
+#define KS0108_CS2 GPIO_PIN_3   // Chip Select 2
+
+/**************************GPIO************************/
+#define FREQ_MEAS_PIN_BASE            GPIO_PORTJ_BASE
+#define FREQ_MEAS_PIN                 GPIO_PIN_0
+
+#define EARTH_DETECT_PORT_BASE        GPIO_PORTJ_BASE
+#define EARTH_DETECT_PIN              GPIO_PIN_1
 /*******************ODU Supply Enable PINS *****************/
 
 #if HW_BOARD == TIOT_V2_00_BOARD

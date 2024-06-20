@@ -50,6 +50,12 @@ typedef enum
     CLEAR_LOGS         = 0x15,
     ADD_DUMMY_TELECOM_FL_LOGS = 0x16,
 #endif //FLASH_EN
+    SET_RTR_RELAY    = 0x17,
+    SET_ODU_RELAY    =0x18,
+    SET_RTR_SEL_RELAY =0x19,
+//    SET_RTR_RELAY,
+//    SET_ODU_RELAY,
+//    SET_RTR_SEL_RELAY,
 }cmd_t;
 
 

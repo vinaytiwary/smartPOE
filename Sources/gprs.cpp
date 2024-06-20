@@ -27,6 +27,11 @@
 #include "inc/hw_watchdog.h"
 #include "driverlib/watchdog.h"
 
+#ifdef FLASH_EN
+#include "flashCore.h"
+#include "flash_logger.h"
+#endif  //FLASH_EN
+
 gprs_t gprs;
 
 volatile gprs_rx_data_buff_t gprs_rx_buff,gprs_resp_rx_buff;
@@ -435,8 +440,15 @@ void TCP_Handler(void)
                         gprs.gprs_handler_state = GPRS_SESSION_IDLE;
                     }
 
+#ifdef FLASH_EN                    
+                    if(check_unsent_log())  //PP added on 11-06-24
+                    {
+                        decrement_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
+                    }
+#endif  //FLASH_EN
+
                     // commenting this condition as the serverReqType should be reset regardless of what request was just handled, as we're in the success case.
-                    // if((getServerReqType() == ODU_VOLTAGE_UPDATE)||(getServerReqType() == SERVER_URL_UPDATE))
+                    if((getServerReqType() == ODU_VOLTAGE_UPDATE)||(getServerReqType() == SERVER_URL_UPDATE))
                     {
                         setServerReqType(NO_REQ);
                     }
@@ -1006,7 +1018,7 @@ con_status_t gprs_connect(void)
 #ifdef DEBUG_GPRS_CONN
                         vUART_SendStr(UART_PC,"CPSI:k\n");
 #endif
-                        sts = CON_OK;
+//                        sts = CON_OK;
                         gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT;
                     }
                     else
@@ -1092,8 +1104,9 @@ con_status_t gprs_connect(void)
                     vUART_SendChr(UART_PC,',');
                     vUART_SendStr(UART_PC,"gprs_connect");
 #endif
-                    gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
-                    sts = CON_OK;
+//                    gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
+                    gprs.gprs_connect = GPRS_CONNCT_CMD_CTZU;
+//                    sts = CON_OK;
                     gprs_retry_count = 0;
                     timeout = 0;
                 }
@@ -1128,7 +1141,82 @@ con_status_t gprs_connect(void)
             }
         }
         break;
+        case GPRS_CONNCT_CMD_CTZU:
+        {
+            vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+CTZU=1\r");
+#ifdef DEBUG_GPRS_CONN
+            vUART_SendStr(UART_PC,"cmd:CTZU");
+            vUART_SendChr(UART_PC,',');
+#endif
+            gprs.gprs_connect = GPRS_CONNCT_RSP_CTZU;
+        }
+        break;
 
+        case GPRS_CONNCT_RSP_CTZU:
+        {
+            switch (check_string_nobuf("OK"))
+            {
+                case (GPRS_MATCH_FAIL):
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"CTZU:f\n");
+#endif
+                    gprs.gprs_connect = GPRS_CONNCT_CMD_CTZU;
+                    if (gprs_retry_count++ >= GPRS_RETRY_CNT)
+                    {
+                        gprs_retry_count = 0;
+                        // gprs.module_status = NOT_AVBL;
+                        // gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
+                        sts = CON_FAIL;
+                        gprs.gprs_connect = GPRS_CONNCT_RESET;
+                        timeout = 0;
+                    }
+                }
+                break;
+
+                case (GPRS_MATCH_OK):
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"CTZU:k");
+                    vUART_SendChr(UART_PC,',');
+                    vUART_SendStr(UART_PC,"gprs_connect");
+#endif
+                    gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
+                    sts = CON_OK;
+                    gprs_retry_count = 0;
+                    timeout = 0;
+                }
+                break;
+
+                case (GPRS_NO_NEW_MSG):
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"CTZU:w\n");
+#endif
+
+                    if(timeout++ >= CGDCONT_TIMEOUT)
+                    {
+                        timeout = 0;
+                        gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT;
+                        if (gprs_retry_count++ >= GPRS_RETRY_CNT)
+                        {
+                            gprs_retry_count = 0;
+                            // gprs.module_status = NOT_AVBL;
+                            //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
+                            sts = CON_FAIL;
+
+                            gprs.gprs_connect = GPRS_CONNCT_RESET;
+                            gprs_retry_count = 0;
+                        }
+                    }
+                }
+                break;
+
+                default:
+                break;
+            }
+        }
+        break;
         case GPRS_CONNCT_RESET:
         {
             timeout = 0;
