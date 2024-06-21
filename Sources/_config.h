@@ -57,7 +57,7 @@
 
 // #define CHECKSTR_EXP
 
- #define ETHERNET_EN
+// #define ETHERNET_EN
 
 // #define ENABLE_WDT_RESET
 
