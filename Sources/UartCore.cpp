@@ -8,6 +8,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include <string.h>
+#include <Sources/ADC_Core.h>
 #include "stdlib.h"
 
 #include "driverlib/gpio.h"
@@ -36,6 +37,7 @@ Rx_Buff_t pc_uart_rx, display_uart_rx;
 Tx_Buff_t pc_uart_tx;//, display_uart_tx;
 
 display_tx_t display_tx;
+volatile uint8_t g_bIntFlag = false;
 
 extern volatile gprs_rx_data_buff_t gprs_rx_buff;
 extern volatile gprs_tx_data_buff_t gprs_tx_buff;
@@ -132,6 +134,19 @@ void vPERIPH_UARTInit(void)
 //         UARTCharPutNonBlocking(DEBUG_UART_BASE, u32Data);
 //     }
 // }
+//extern "C" void TimerIntHandler(void)
+//{
+//    //
+//    // Clear the timer interrupt flag.
+//    //
+//    TimerIntClear(TIMER0_BASE, TIMER_TIMB_TIMEOUT);
+//
+//    //
+//    // Set a flag to indicate that the interrupt occurred.
+//    //
+//    //g_bIntFlag = true;
+////    readACVoltage();
+//}
 
 extern "C" void DEBUGUARTIntHandler(void)
 {

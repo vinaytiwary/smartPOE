@@ -471,6 +471,7 @@ bool server_query(void)
                 
             }
         }
+#if 0
         // else
         // else if(ret_addr = Query_decode(found_brace,"\"odu_voltage\"",decoded_query, strlen((const char*)"\"odu_voltage\"}")))
         else if(ret_addr = Query_decode(found_brace,"\"odu_voltage\"",decoded_query, strlen((const char*)"\"odu_voltage\"")))
@@ -543,6 +544,7 @@ bool server_query(void)
 //                 setServerReqType(NO_REQ);
 //             }
         }
+#endif  //if 0
         // else if(ret_addr = Query_decode(found_brace, "\"server_url\"", decoded_query, strlen((const char*)"\"server_url\"")))
         else if(ret_addr = Query_decode(found_brace, "\"server_url\"", decoded_query, 22))
         {

@@ -1,34 +1,34 @@
 ******************************************************************************
                   TI ARM Linker PC v20.2.6                     
 ******************************************************************************
->> Linked Fri Jun 21 12:41:55 2024
+>> Linked Sat Jun 22 17:11:52 2024
 
 OUTPUT FILE NAME:   <Telecom_IoT_v2_00.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000cc69
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000d89d
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  FLASH                 00000000   00020000  0000d63a  000129c6  R  X
-  SRAM                  20000000   00008000  0000294a  000056b6  RW X
+  FLASH                 00000000   00020000  0000e316  00011cea  R  X
+  SRAM                  20000000   00008000  0000297e  00005682  RW X
 
 
 SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    0000d640   0000d640    r-x
+00000000    00000000    0000e318   0000e318    r-x
   00000000    00000000    0000026c   0000026c    r-- .intvecs
-  0000026c    0000026c    0000ce96   0000ce96    r-x .text
-  0000d104    0000d104    000004a0   000004a0    r-- .const
-  0000d5a8    0000d5a8    00000098   00000098    r-- .cinit
-20000000    20000000    00002952   00000000    rw-
+  0000026c    0000026c    0000db72   0000db72    r-x .text
+  0000dde0    0000dde0    000004a0   000004a0    r-- .const
+  0000e280    0000e280    00000098   00000098    r-- .cinit
+20000000    20000000    00002984   00000000    rw-
   20000000    20000000    0000026c   00000000    rw- .vtable
   20000270    20000270    00001800   00000000    rw- .stack
-  20001a70    20001a70    00000e0c   00000000    rw- .bss
-  20002880    20002880    000000d2   00000000    rw- .data
+  20001a70    20001a70    00000e36   00000000    rw- .bss
+  200028a8    200028a8    000000dc   00000000    rw- .data
 
 
 SECTION ALLOCATION MAP
@@ -39,155 +39,171 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    0000026c     
                   00000000    0000026c     tm4c1233e6pz_startup_ccs.obj (.intvecs)
 
-.text      0    0000026c    0000ce96     
-                  0000026c    00002a04     gprs.obj (.text)
-                  00002c70    000012dc     Clock.obj (.text)
-                  00003f4c    00001200     gps.obj (.text)
-                  0000514c    00000ee8     Telecom_server_query.obj (.text)
-                  00006034    00000e58     flash_logger.obj (.text)
-                  00006e8c    00000afc     PC_Cmds.obj (.text)
-                  00007988    00000ae0     IO_cntrl.obj (.text)
-                  00008468    00000a66     flashCore.obj (.text)
-                  00008ece    00000002     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.c.obj (.text:_nop)
-                  00008ed0    000009e0     E2P.obj (.text)
-                  000098b0    00000924     main.obj (.text)
-                  0000a1d4    00000820     ADC_Core.obj (.text)
-                  0000a9f4    000005e0     UartCore.obj (.text)
-                  0000afd4    000004cc     _common.obj (.text)
-                  0000b4a0    000002b8     rtsv7M4_T_le_v4SPD16_eabi.lib : mktime64.c.obj (.text:__mktime64)
-                  0000b758    00000210     DS3231.obj (.text)
-                  0000b968    000001a0     SysTick_Timer.obj (.text)
-                  0000bb08    0000016c     driverlib.lib : gpio.obj (.text:GPIOPadConfigSet)
-                  0000bc74    00000136     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_div_t2.asm.obj (.text)
-                  0000bdaa    00000002                                   : div0.asm.obj (.text)
-                  0000bdac    00000120     Web_Comm.obj (.text)
-                  0000becc    00000118     driverlib.lib : sysctl.obj (.text:SysCtlClockGet)
-                  0000bfe4    000000fc     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_mul_t2.asm.obj (.text)
-                  0000c0e0    000000f4     driverlib.lib : sysctl.obj (.text:SysCtlClockSet)
-                  0000c1d4    000000c4                   : eeprom.obj (.text:EEPROMProgram)
-                  0000c298    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
-                  0000c334    00000096                                   : ull_div_t2.asm.obj (.text)
-                  0000c3ca    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdcmple)
-                  0000c450    0000007a     driverlib.lib : adc.obj (.text:ADCSequenceStepConfigure)
-                  0000c4ca    0000007a     rtsv7M4_T_le_v4SPD16_eabi.lib : memset_t2.asm.obj (.text)
-                  0000c544    0000006e                                   : ltoa.c.obj (.text:ltoa)
-                  0000c5b2    0000006e                                   : ll_div_t2.asm.obj (.text)
-                  0000c620    00000068     driverlib.lib : interrupt.obj (.text:IntEnable)
-                  0000c688    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  0000c6f0    00000060                                   : hosttime.c.obj (.text:HOSTtime64)
-                  0000c750    00000058     driverlib.lib : gpio.obj (.text:GPIOIntTypeSet)
-                  0000c7a8    00000050                   : sysctl.obj (.text:SysCtlPeripheralReset)
-                  0000c7f8    0000004e                   : adc.obj (.text:ADCSequenceConfigure)
-                  0000c846    00000002     --HOLE-- [fill = 0]
-                  0000c848    0000004c                   : gpio.obj (.text:GPIOPinConfigure)
-                  0000c894    0000004c                   : i2c.obj (.text:I2CMasterInitExpClk)
-                  0000c8e0    0000004c     rtsv7M4_T_le_v4SPD16_eabi.lib : atoi.c.obj (.text:atoi)
-                  0000c92c    00000046     driverlib.lib : uart.obj (.text:UARTConfigSetExpClk)
-                  0000c972    00000002     --HOLE-- [fill = 0]
-                  0000c974    00000044                   : gpio.obj (.text:_GPIOIntNumberGet)
-                  0000c9b8    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
-                  0000c9fc    00000044                                   : fd_tou_t2.asm.obj (.text)
-                  0000ca40    00000040     driverlib.lib : eeprom.obj (.text:EEPROMInit)
-                  0000ca80    0000003c                   : eeprom.obj (.text:_EEPROMSectorMaskSet)
-                  0000cabc    00000038                   : eeprom.obj (.text:EEPROMRead)
-                  0000caf4    00000038                   : sysctl.obj (.text:SysCtlPeripheralReady)
-                  0000cb2c    00000038     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.text:__TI_writemsg)
-                  0000cb64    00000034     driverlib.lib : interrupt.obj (.text:IntRegister)
-                  0000cb98    00000034                   : sysctl.obj (.text:SysCtlPeripheralDisable)
-                  0000cbcc    00000034                   : sysctl.obj (.text:SysCtlPeripheralEnable)
-                  0000cc00    00000034                   : eeprom.obj (.text:_EEPROMSectorMaskClear)
-                  0000cc34    00000034     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.text:__TI_readmsg)
-                  0000cc68    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
-                  0000cc9c    00000034                                   : rand.c.obj (.text:rand)
-                  0000ccd0    00000034                                   : strstr.c.obj (.text:strstr)
-                  0000cd04    0000002e     driverlib.lib : adc.obj (.text:ADCIntStatus)
-                  0000cd32    0000002c                   : gpio.obj (.text:GPIODirModeSet)
-                  0000cd5e    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : strncmp.c.obj (.text:strncmp)
-                  0000cd8a    00000024                                   : memcmp.c.obj (.text:memcmp)
-                  0000cdae    00000002     --HOLE-- [fill = 0]
-                  0000cdb0    00000024                                   : rand.c.obj (.text:srand)
-                  0000cdd4    00000020     driverlib.lib : uart.obj (.text:UARTDisable)
-                  0000cdf4    00000020     rtsv7M4_T_le_v4SPD16_eabi.lib : u_tofd_t2.asm.obj (.text)
-                  0000ce14    0000001e     driverlib.lib : adc.obj (.text:ADCSequenceDataGet)
-                  0000ce32    0000001a                   : gpio.obj (.text:GPIOPinTypeGPIOOutput)
-                  0000ce4c    00000018                   : adc.obj (.text:ADCProcessorTrigger)
-                  0000ce64    00000018                   : gpio.obj (.text:GPIOIntRegister)
-                  0000ce7c    00000018     rtsv7M4_T_le_v4SPD16_eabi.lib : ll_mul_t2.asm.obj (.text)
-                  0000ce94    00000018                                   : strcmp.c.obj (.text:strcmp)
-                  0000ceac    00000016     driverlib.lib : gpio.obj (.text:GPIOPinTypeADC)
-                  0000cec2    00000016                   : gpio.obj (.text:GPIOPinTypeGPIOInput)
-                  0000ced8    00000016                   : gpio.obj (.text:GPIOPinTypeI2C)
-                  0000ceee    00000016                   : gpio.obj (.text:GPIOPinTypeI2CSCL)
-                  0000cf04    00000016                   : gpio.obj (.text:GPIOPinTypeUART)
-                  0000cf1a    00000002     --HOLE-- [fill = 0]
-                  0000cf1c    00000014                   : systick.obj (.text:SysTickEnable)
-                  0000cf30    00000014                   : systick.obj (.text:SysTickIntEnable)
-                  0000cf44    00000014                   : uart.obj (.text:UARTEnable)
-                  0000cf58    00000014     rtsv7M4_T_le_v4SPD16_eabi.lib : strcpy.c.obj (.text:strcpy)
-                  0000cf6c    00000014                                   : strlen.c.obj (.text:strlen)
-                  0000cf80    00000012     Telecom_server_query.obj (.text:_Z3absl)
-                  0000cf92    00000010     driverlib.lib : interrupt.obj (.text:IntMasterEnable)
-                  0000cfa2    00000002     --HOLE-- [fill = 0]
-                  0000cfa4    00000010                   : sysctl.obj (.text:SysCtlReset)
-                  0000cfb4    00000010                   : systick.obj (.text:SysTickPeriodSet)
-                  0000cfc4    00000010                   : eeprom.obj (.text:_EEPROMWaitForDone)
-                  0000cfd4    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : time64.c.obj (.text:__time64)
-                  0000cfe4    00000010                                   : isdigit.c.obj (.text:isdigit)
-                  0000cff4    0000000e     driverlib.lib : adc.obj (.text:ADCSequenceEnable)
-                  0000d002    0000000e                   : gpio.obj (.text:GPIOIntStatus)
-                  0000d010    0000000e                   : i2c.obj (.text:I2CRxFIFOFlush)
-                  0000d01e    0000000e                   : i2c.obj (.text:I2CTxFIFOFlush)
-                  0000d02c    0000000e                   : uart.obj (.text:UARTCharGetNonBlocking)
-                  0000d03a    0000000e                   : uart.obj (.text:UARTCharPutNonBlocking)
-                  0000d048    0000000e                   : uart.obj (.text:UARTCharsAvail)
-                  0000d056    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  0000d064    0000000c     driverlib.lib : cpu.obj (.text:CPUcpsie)
-                  0000d070    0000000c                   : gpio.obj (.text:GPIOIntEnable)
-                  0000d07c    0000000c     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
-                  0000d088    0000000c     tm4c1233e6pz_startup_ccs.obj (.text)
-                  0000d094    0000000a     driverlib.lib : adc.obj (.text:ADCIntClear)
-                  0000d09e    0000000a                   : i2c.obj (.text:I2CMasterEnable)
-                  0000d0a8    0000000a                   : uart.obj (.text:UARTIntStatus)
-                  0000d0b2    00000008                   : i2c.obj (.text:I2CMasterBusy)
-                  0000d0ba    00000008                   : i2c.obj (.text:I2CMasterSlaveAddrSet)
-                  0000d0c2    00000008                   : uart.obj (.text:UARTBusy)
-                  0000d0ca    00000008                   : uart.obj (.text:UARTIntEnable)
-                  0000d0d2    00000006                   : gpio.obj (.text:GPIOIntClear)
-                  0000d0d8    00000006                   : gpio.obj (.text:GPIOPinRead)
-                  0000d0de    00000006                   : gpio.obj (.text:GPIOPinWrite)
-                  0000d0e4    00000006                   : sysctl.obj (.text:SysCtlDelay)
-                  0000d0ea    00000004                   : i2c.obj (.text:I2CMasterControl)
-                  0000d0ee    00000004                   : i2c.obj (.text:I2CMasterDataGet)
-                  0000d0f2    00000004                   : i2c.obj (.text:I2CMasterDataPut)
-                  0000d0f6    00000004                   : uart.obj (.text:UARTIntClear)
-                  0000d0fa    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
-                  0000d0fe    00000004                                   : exit.c.obj (.text:abort:abort)
+.text      0    0000026c    0000db72     
+                  0000026c    000033dc     gprs.obj (.text)
+                  00003648    000012dc     Clock.obj (.text)
+                  00004924    00001200     gps.obj (.text)
+                  00005b24    00000e58     flash_logger.obj (.text)
+                  0000697c    00000de8     Telecom_server_query.obj (.text)
+                  00007764    00000b00     IO_cntrl.obj (.text)
+                  00008264    00000ab4     main.obj (.text)
+                  00008d18    00000a66     flashCore.obj (.text)
+                  0000977e    00000002     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.c.obj (.text:_nop)
+                  00009780    000009e8     PC_Cmds.obj (.text)
+                  0000a168    000009e0     E2P.obj (.text)
+                  0000ab48    00000854     ADC_Core.obj (.text)
+                  0000b39c    000005e0     UartCore.obj (.text)
+                  0000b97c    00000514     _common.obj (.text)
+                  0000be90    000002b8     rtsv7M4_T_le_v4SPD16_eabi.lib : mktime64.c.obj (.text:__mktime64)
+                  0000c148    00000210     DS3231.obj (.text)
+                  0000c358    000001c8     SysTick_Timer.obj (.text)
+                  0000c520    0000016c     driverlib.lib : gpio.obj (.text:GPIOPadConfigSet)
+                  0000c68c    00000136     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_div_t2.asm.obj (.text)
+                  0000c7c2    00000002                                   : div0.asm.obj (.text)
+                  0000c7c4    00000120     Web_Comm.obj (.text)
+                  0000c8e4    0000011c     WDT.obj (.text)
+                  0000ca00    00000118     driverlib.lib : sysctl.obj (.text:SysCtlClockGet)
+                  0000cb18    000000fc     rtsv7M4_T_le_v4SPD16_eabi.lib : fd_mul_t2.asm.obj (.text)
+                  0000cc14    000000f4     driverlib.lib : sysctl.obj (.text:SysCtlClockSet)
+                  0000cd08    000000c4                   : eeprom.obj (.text:EEPROMProgram)
+                  0000cdcc    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.asm.obj (.text)
+                  0000ce68    00000096                                   : ull_div_t2.asm.obj (.text)
+                  0000cefe    00000086                                   : fd_cmp_t2.asm.obj (.text:__aeabi_cdcmple)
+                  0000cf84    0000007a     driverlib.lib : adc.obj (.text:ADCSequenceStepConfigure)
+                  0000cffe    0000007a     rtsv7M4_T_le_v4SPD16_eabi.lib : memset_t2.asm.obj (.text)
+                  0000d078    0000006e                                   : ltoa.c.obj (.text:ltoa)
+                  0000d0e6    0000006e                                   : ll_div_t2.asm.obj (.text)
+                  0000d154    00000068     driverlib.lib : interrupt.obj (.text:IntEnable)
+                  0000d1bc    00000068     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+                  0000d224    00000060                                   : hosttime.c.obj (.text:HOSTtime64)
+                  0000d284    00000060     driverlib.lib : timer.obj (.text:TimerConfigure)
+                  0000d2e4    00000058                   : gpio.obj (.text:GPIOIntTypeSet)
+                  0000d33c    00000058     tiot_timer.obj (.text)
+                  0000d394    00000050     driverlib.lib : sysctl.obj (.text:SysCtlPeripheralReset)
+                  0000d3e4    0000004e                   : adc.obj (.text:ADCSequenceConfigure)
+                  0000d432    00000002     --HOLE-- [fill = 0]
+                  0000d434    0000004c                   : gpio.obj (.text:GPIOPinConfigure)
+                  0000d480    0000004c                   : i2c.obj (.text:I2CMasterInitExpClk)
+                  0000d4cc    0000004c     rtsv7M4_T_le_v4SPD16_eabi.lib : atoi.c.obj (.text:atoi)
+                  0000d518    00000048                                   : fd_toi_t2.asm.obj (.text)
+                  0000d560    00000046     driverlib.lib : uart.obj (.text:UARTConfigSetExpClk)
+                  0000d5a6    00000002     --HOLE-- [fill = 0]
+                  0000d5a8    00000044                   : gpio.obj (.text:_GPIOIntNumberGet)
+                  0000d5ec    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  0000d630    00000044                                   : fd_tou_t2.asm.obj (.text)
+                  0000d674    00000040     driverlib.lib : eeprom.obj (.text:EEPROMInit)
+                  0000d6b4    0000003c                   : eeprom.obj (.text:_EEPROMSectorMaskSet)
+                  0000d6f0    00000038                   : eeprom.obj (.text:EEPROMRead)
+                  0000d728    00000038                   : sysctl.obj (.text:SysCtlPeripheralReady)
+                  0000d760    00000038     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.text:__TI_writemsg)
+                  0000d798    00000034     driverlib.lib : interrupt.obj (.text:IntRegister)
+                  0000d7cc    00000034                   : sysctl.obj (.text:SysCtlPeripheralDisable)
+                  0000d800    00000034                   : sysctl.obj (.text:SysCtlPeripheralEnable)
+                  0000d834    00000034                   : eeprom.obj (.text:_EEPROMSectorMaskClear)
+                  0000d868    00000034     rtsv7M4_T_le_v4SPD16_eabi.lib : trgmsg.c.obj (.text:__TI_readmsg)
+                  0000d89c    00000034                                   : boot_cortex_m.c.obj (.text:_c_int00_noargs:_c_int00_noargs)
+                  0000d8d0    00000034                                   : rand.c.obj (.text:rand)
+                  0000d904    00000034                                   : strstr.c.obj (.text:strstr)
+                  0000d938    0000002e     driverlib.lib : adc.obj (.text:ADCIntStatus)
+                  0000d966    0000002e     rtsv7M4_T_le_v4SPD16_eabi.lib : i_tofd_t2.asm.obj (.text)
+                  0000d994    0000002c     driverlib.lib : gpio.obj (.text:GPIODirModeSet)
+                  0000d9c0    0000002c     rtsv7M4_T_le_v4SPD16_eabi.lib : strncmp.c.obj (.text:strncmp)
+                  0000d9ec    00000024                                   : memcmp.c.obj (.text:memcmp)
+                  0000da10    00000024                                   : rand.c.obj (.text:srand)
+                  0000da34    00000020     driverlib.lib : uart.obj (.text:UARTDisable)
+                  0000da54    00000020     rtsv7M4_T_le_v4SPD16_eabi.lib : u_tofd_t2.asm.obj (.text)
+                  0000da74    0000001e     driverlib.lib : adc.obj (.text:ADCSequenceDataGet)
+                  0000da92    0000001a                   : gpio.obj (.text:GPIOPinTypeGPIOOutput)
+                  0000daac    00000018                   : adc.obj (.text:ADCProcessorTrigger)
+                  0000dac4    00000018                   : gpio.obj (.text:GPIOIntRegister)
+                  0000dadc    00000018     rtsv7M4_T_le_v4SPD16_eabi.lib : ll_mul_t2.asm.obj (.text)
+                  0000daf4    00000018                                   : strcmp.c.obj (.text:strcmp)
+                  0000db0c    00000016     driverlib.lib : gpio.obj (.text:GPIOPinTypeADC)
+                  0000db22    00000016                   : gpio.obj (.text:GPIOPinTypeGPIOInput)
+                  0000db38    00000016                   : gpio.obj (.text:GPIOPinTypeI2C)
+                  0000db4e    00000016                   : gpio.obj (.text:GPIOPinTypeI2CSCL)
+                  0000db64    00000016                   : gpio.obj (.text:GPIOPinTypeUART)
+                  0000db7a    00000002     --HOLE-- [fill = 0]
+                  0000db7c    00000014                   : systick.obj (.text:SysTickEnable)
+                  0000db90    00000014                   : systick.obj (.text:SysTickIntEnable)
+                  0000dba4    00000014                   : uart.obj (.text:UARTEnable)
+                  0000dbb8    00000014     rtsv7M4_T_le_v4SPD16_eabi.lib : strcpy.c.obj (.text:strcpy)
+                  0000dbcc    00000014                                   : strlen.c.obj (.text:strlen)
+                  0000dbe0    00000012     driverlib.lib : timer.obj (.text:TimerLoadSet)
+                  0000dbf2    00000012     Telecom_server_query.obj (.text:_Z3absl)
+                  0000dc04    00000010     driverlib.lib : interrupt.obj (.text:IntMasterEnable)
+                  0000dc14    00000010                   : systick.obj (.text:SysTickPeriodSet)
+                  0000dc24    00000010                   : eeprom.obj (.text:_EEPROMWaitForDone)
+                  0000dc34    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : time64.c.obj (.text:__time64)
+                  0000dc44    00000010                                   : isdigit.c.obj (.text:isdigit)
+                  0000dc54    0000000e     driverlib.lib : adc.obj (.text:ADCSequenceEnable)
+                  0000dc62    0000000e                   : gpio.obj (.text:GPIOIntStatus)
+                  0000dc70    0000000e                   : i2c.obj (.text:I2CRxFIFOFlush)
+                  0000dc7e    0000000e                   : i2c.obj (.text:I2CTxFIFOFlush)
+                  0000dc8c    0000000e                   : timer.obj (.text:TimerEnable)
+                  0000dc9a    0000000e                   : uart.obj (.text:UARTCharGetNonBlocking)
+                  0000dca8    0000000e                   : uart.obj (.text:UARTCharPutNonBlocking)
+                  0000dcb6    0000000e                   : uart.obj (.text:UARTCharsAvail)
+                  0000dcc4    0000000e                   : watchdog.obj (.text:WatchdogLockState)
+                  0000dcd2    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  0000dce0    0000000c     driverlib.lib : cpu.obj (.text:CPUcpsie)
+                  0000dcec    0000000c                   : gpio.obj (.text:GPIOIntEnable)
+                  0000dcf8    0000000c                   : sysctl.obj (.text:SysCtlResetCauseGet)
+                  0000dd04    0000000c                   : watchdog.obj (.text:WatchdogIntTypeSet)
+                  0000dd10    0000000c                   : watchdog.obj (.text:WatchdogUnlock)
+                  0000dd1c    0000000c     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
+                  0000dd28    0000000c     tm4c1233e6pz_startup_ccs.obj (.text)
+                  0000dd34    0000000a     driverlib.lib : adc.obj (.text:ADCIntClear)
+                  0000dd3e    0000000a                   : i2c.obj (.text:I2CMasterEnable)
+                  0000dd48    0000000a                   : uart.obj (.text:UARTIntStatus)
+                  0000dd52    0000000a                   : watchdog.obj (.text:WatchdogEnable)
+                  0000dd5c    0000000a                   : watchdog.obj (.text:WatchdogIntEnable)
+                  0000dd66    0000000a                   : watchdog.obj (.text:WatchdogResetEnable)
+                  0000dd70    00000008                   : i2c.obj (.text:I2CMasterBusy)
+                  0000dd78    00000008                   : i2c.obj (.text:I2CMasterSlaveAddrSet)
+                  0000dd80    00000008                   : timer.obj (.text:TimerIntEnable)
+                  0000dd88    00000008                   : uart.obj (.text:UARTBusy)
+                  0000dd90    00000008                   : uart.obj (.text:UARTIntEnable)
+                  0000dd98    00000008                   : watchdog.obj (.text:WatchdogLock)
+                  0000dda0    00000006                   : gpio.obj (.text:GPIOIntClear)
+                  0000dda6    00000006                   : gpio.obj (.text:GPIOPinRead)
+                  0000ddac    00000006                   : gpio.obj (.text:GPIOPinWrite)
+                  0000ddb2    00000006                   : sysctl.obj (.text:SysCtlDelay)
+                  0000ddb8    00000006                   : watchdog.obj (.text:WatchdogIntClear)
+                  0000ddbe    00000004                   : i2c.obj (.text:I2CMasterControl)
+                  0000ddc2    00000004                   : i2c.obj (.text:I2CMasterDataGet)
+                  0000ddc6    00000004                   : i2c.obj (.text:I2CMasterDataPut)
+                  0000ddca    00000004                   : timer.obj (.text:TimerIntClear)
+                  0000ddce    00000004                   : uart.obj (.text:UARTIntClear)
+                  0000ddd2    00000004                   : watchdog.obj (.text:WatchdogReloadSet)
+                  0000ddd6    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : pre_init.c.obj (.text:_system_pre_init)
+                  0000ddda    00000004                                   : exit.c.obj (.text:abort:abort)
 
-.const     0    0000d104    000004a0     
-                  0000d104    00000101     rtsv7M4_T_le_v4SPD16_eabi.lib : ctype.c.obj (.const:.string:_ctypes_)
-                  0000d205    00000003     --HOLE-- [fill = 0]
-                  0000d208    000000d8     driverlib.lib : gpio.obj (.const:g_ppui32GPIOIntMapSnowflake)
-                  0000d2e0    000000c0                   : gpio.obj (.const:g_ppui32GPIOIntMapBlizzard)
-                  0000d3a0    00000090                   : gpio.obj (.const:g_pui32GPIOBaseAddrs)
-                  0000d430    0000006c                   : sysctl.obj (.const:g_pui32Xtals)
-                  0000d49c    00000060     rtsv7M4_T_le_v4SPD16_eabi.lib : mktime64.c.obj (.const:$O1$$)
-                  0000d4fc    00000041     _common.obj (.const:.string:$P$T0$1)
-                  0000d53d    00000003     --HOLE-- [fill = 0]
-                  0000d540    00000024     Clock.obj (.const:$P$T0$1)
-                  0000d564    00000019     gprs.obj (.const:.string:$P$T0$11)
-                  0000d57d    00000003     --HOLE-- [fill = 0]
-                  0000d580    00000014     driverlib.lib : interrupt.obj (.const:g_pui32EnRegs)
-                  0000d594    00000008     Clock.obj (.const:$P$T1$2)
-                  0000d59c    00000008     gprs.obj (.const:.string:$P$T1$18)
+.const     0    0000dde0    000004a0     
+                  0000dde0    00000101     rtsv7M4_T_le_v4SPD16_eabi.lib : ctype.c.obj (.const:.string:_ctypes_)
+                  0000dee1    00000003     --HOLE-- [fill = 0]
+                  0000dee4    000000d8     driverlib.lib : gpio.obj (.const:g_ppui32GPIOIntMapSnowflake)
+                  0000dfbc    000000c0                   : gpio.obj (.const:g_ppui32GPIOIntMapBlizzard)
+                  0000e07c    00000090                   : gpio.obj (.const:g_pui32GPIOBaseAddrs)
+                  0000e10c    0000006c                   : sysctl.obj (.const:g_pui32Xtals)
+                  0000e178    00000060     rtsv7M4_T_le_v4SPD16_eabi.lib : mktime64.c.obj (.const:$O1$$)
+                  0000e1d8    00000041     _common.obj (.const:.string:$P$T0$1)
+                  0000e219    00000003     --HOLE-- [fill = 0]
+                  0000e21c    00000024     Clock.obj (.const:$P$T0$1)
+                  0000e240    00000019     gprs.obj (.const:.string:$P$T0$11)
+                  0000e259    00000003     --HOLE-- [fill = 0]
+                  0000e25c    00000014     driverlib.lib : interrupt.obj (.const:g_pui32EnRegs)
+                  0000e270    00000008     Clock.obj (.const:$P$T1$2)
+                  0000e278    00000008     gprs.obj (.const:.string:$P$T1$18)
 
-.cinit     0    0000d5a8    00000098     
-                  0000d5a8    0000005e     (.cinit..data.load) [load image, compression = lzss]
-                  0000d606    00000002     --HOLE-- [fill = 0]
-                  0000d608    0000000c     (__TI_handler_table)
-                  0000d614    00000004     --HOLE-- [fill = 0]
-                  0000d618    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  0000d620    00000008     (.cinit..vtable.load) [load image, compression = zero_init]
-                  0000d628    00000018     (__TI_cinit_table)
+.cinit     0    0000e280    00000098     
+                  0000e280    0000005e     (.cinit..data.load) [load image, compression = lzss]
+                  0000e2de    00000002     --HOLE-- [fill = 0]
+                  0000e2e0    0000000c     (__TI_handler_table)
+                  0000e2ec    00000004     --HOLE-- [fill = 0]
+                  0000e2f0    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  0000e2f8    00000008     (.cinit..vtable.load) [load image, compression = zero_init]
+                  0000e300    00000018     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
@@ -195,7 +211,7 @@ section   page    origin      length       input sections
 .vtable    0    20000000    0000026c     UNINITIALIZED
                   20000000    0000026c     driverlib.lib : interrupt.obj (.vtable)
 
-.bss       0    20001a70    00000e0c     UNINITIALIZED
+.bss       0    20001a70    00000e36     UNINITIALIZED
                   20001a70    000001fc     (.common:gprs_rx_buff)
                   20001c6c    000001fc     (.common:gprs_tx_buff)
                   20001e68    00000188     (.common:dummy_json_string)
@@ -212,45 +228,47 @@ section   page    origin      length       input sections
                   200026e7    00000040     (.common:FLR_log_data)
                   20002727    00000040     (.common:FL_log_data)
                   20002767    00000036     (.common:ram_data)
-                  2000279d    0000001f     (.common:time_main)
-                  200027bc    0000001c     (.common:measurements)
-                  200027d8    00000014     (.common:gprs)
-                  200027ec    00000010     (.common:e2p_device_info)
-                  200027fc    00000010     (.common:e2p_location_info)
-                  2000280c    00000010     (.common:freq_updated_data)
-                  2000281c    0000000e     (.common:scheduler)
-                  2000282a    0000000c     (.common:Alarms)
-                  20002836    00000008     (.common:e2p_config_time)
-                  2000283e    00000008     (.common:e2p_router_config)
-                  20002846    00000008     (.common:gps_data)
-                  2000284e    00000008     (.common:parmbuf)
-                  20002856    00000007     (.common:gprs_date_time)
-                  2000285d    00000007     (.common:gps_date_time)
-                  20002864    00000006     (.common:time_stamp)
-                  2000286a    00000004     (.common:Telecom_server_query)
-                  2000286e    00000002     (.common:EXTI_cnt)
-                  20002870    00000004     (.common:u32DelayCounter)
-                  20002874    00000003     (.common:relay_state)
-                  20002877    00000002     (.common:gprs_rx_isr_handler)
-                  20002879    00000001     (.common:System_mode)
-                  2000287a    00000001     (.common:gps_handler_state)
-                  2000287b    00000001     (.common:voltage_mode)
+                  2000279d    00000029     (.common:adc_arr)
+                  200027c6    0000001f     (.common:time_main)
+                  200027e5    0000001c     (.common:measurements)
+                  20002801    00000003     (.common:relay_state)
+                  20002804    00000014     (.common:gprs)
+                  20002818    00000010     (.common:e2p_device_info)
+                  20002828    00000010     (.common:e2p_location_info)
+                  20002838    00000010     (.common:freq_updated_data)
+                  20002848    0000000e     (.common:scheduler)
+                  20002856    0000000c     (.common:Alarms)
+                  20002862    00000008     (.common:e2p_config_time)
+                  2000286a    00000008     (.common:e2p_router_config)
+                  20002872    00000008     (.common:gps_data)
+                  2000287a    00000008     (.common:parmbuf)
+                  20002882    00000007     (.common:gprs_date_time)
+                  20002889    00000007     (.common:gps_date_time)
+                  20002890    00000006     (.common:time_stamp)
+                  20002896    00000004     (.common:Telecom_server_query)
+                  2000289a    00000002     (.common:EXTI_cnt)
+                  2000289c    00000004     (.common:u32DelayCounter)
+                  200028a0    00000002     (.common:gprs_rx_isr_handler)
+                  200028a2    00000001     (.common:System_mode)
+                  200028a3    00000001     (.common:WDT)
+                  200028a4    00000001     (.common:gps_handler_state)
+                  200028a5    00000001     (.common:voltage_mode)
 
-.data      0    20002880    000000d2     UNINITIALIZED
-                  20002880    00000041     gprs.obj (.data)
-                  200028c1    0000001b     Telecom_server_query.obj (.data:server_response_str)
-                  200028dc    00000014     Web_Comm.obj (.data)
-                  200028f0    00000010     ADC_Core.obj (.data)
-                  20002900    00000010     flash_logger.obj (.data:FL_data)
-                  20002910    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : tmzone.c.obj (.data:_tz)
-                  20002920    0000000c     gps.obj (.data)
-                  2000292c    00000008     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.c.obj (.data:$O1$$)
-                  20002934    00000008     UartCore.obj (.data)
-                  2000293c    00000008     main.obj (.data)
-                  20002944    00000004     SysTick_Timer.obj (.data)
-                  20002948    00000004     _common.obj (.data)
-                  2000294c    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : rand.c.obj (.data)
-                  20002950    00000002     IO_cntrl.obj (.data)
+.data      0    200028a8    000000dc     UNINITIALIZED
+                  200028a8    00000041     gprs.obj (.data)
+                  200028e9    0000001b     Telecom_server_query.obj (.data:server_response_str)
+                  20002904    00000014     Web_Comm.obj (.data)
+                  20002918    00000012     ADC_Core.obj (.data)
+                  2000292a    00000002     IO_cntrl.obj (.data)
+                  2000292c    00000010     flash_logger.obj (.data:FL_data)
+                  2000293c    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : tmzone.c.obj (.data:_tz)
+                  2000294c    0000000c     UartCore.obj (.data)
+                  20002958    0000000c     gps.obj (.data)
+                  20002964    00000008     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.c.obj (.data:$O1$$)
+                  2000296c    00000008     SysTick_Timer.obj (.data)
+                  20002974    00000008     main.obj (.data)
+                  2000297c    00000004     _common.obj (.data)
+                  20002980    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : rand.c.obj (.data)
 
 .stack     0    20000270    00001800     UNINITIALIZED
                   20000270    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.stack)
@@ -269,37 +287,41 @@ MODULE SUMMARY
        Total:                         12      620       0      
                                                                
     .\Sources\
-       gprs.obj                       10756   33        1110   
+       gprs.obj                       13276   33        1110   
        Clock.obj                      4828    44        37     
        gps.obj                        4608    0         95     
-       Telecom_server_query.obj       3834    0         423    
+       Telecom_server_query.obj       3578    0         423    
        flash_logger.obj               3672    0         214    
        E2P.obj                        2528    0         390    
-       PC_Cmds.obj                    2812    0         1      
-       IO_cntrl.obj                   2784    0         10     
+       IO_cntrl.obj                   2816    0         10     
+       main.obj                       2740    0         20     
        flashCore.obj                  2662    0         0      
-       ADC_Core.obj                   2080    0         424    
-       main.obj                       2340    0         20     
-       UartCore.obj                   1504    0         712    
-       _common.obj                    1228    65        4      
+       ADC_Core.obj                   2132    0         467    
+       PC_Cmds.obj                    2536    0         1      
+       UartCore.obj                   1504    0         716    
+       _common.obj                    1300    65        4      
        DS3231.obj                     528     0         0      
-       SysTick_Timer.obj              416     0         22     
+       SysTick_Timer.obj              456     0         26     
        Web_Comm.obj                   288     0         20     
+       WDT.obj                        284     0         1      
+       tiot_timer.obj                 88      0         0      
     +--+------------------------------+-------+---------+---------+
-       Total:                         46868   142       3482   
+       Total:                         49824   142       3534   
                                                                
     C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/ccs/Debug/driverlib.lib
        gpio.obj                       844     552       0      
-       sysctl.obj                     786     108       0      
+       sysctl.obj                     782     108       0      
        interrupt.obj                  172     20        620    
        eeprom.obj                     444     0         0      
        adc.obj                        324     0         0      
        uart.obj                       194     0         0      
        i2c.obj                        142     0         0      
+       timer.obj                      140     0         0      
+       watchdog.obj                   86      0         0      
        systick.obj                    56      0         0      
        cpu.obj                        12      0         0      
     +--+------------------------------+-------+---------+---------+
-       Total:                         2974    680       620    
+       Total:                         3196    680       620    
                                                                
     C:\ti\ccs1110\ccs\tools\compiler\ti-cgt-arm_20.2.6.LTS\lib\rtsv7M4_T_le_v4SPD16_eabi.lib
        mktime64.c.obj                 696     96        0      
@@ -317,10 +339,12 @@ MODULE SUMMARY
        hosttime.c.obj                 96      0         0      
        rand.c.obj                     88      0         4      
        atoi.c.obj                     76      0         0      
+       fd_toi_t2.asm.obj              72      0         0      
        autoinit.c.obj                 68      0         0      
        fd_tou_t2.asm.obj              68      0         0      
        boot_cortex_m.c.obj            52      0         0      
        strstr.c.obj                   52      0         0      
+       i_tofd_t2.asm.obj              46      0         0      
        strncmp.c.obj                  44      0         0      
        memcmp.c.obj                   36      0         0      
        u_tofd_t2.asm.obj              32      0         0      
@@ -339,25 +363,25 @@ MODULE SUMMARY
        pre_init.c.obj                 4       0         0      
        div0.asm.obj                   2       0         0      
     +--+------------------------------+-------+---------+---------+
-       Total:                         3022    353       324    
+       Total:                         3140    353       324    
                                                                
        Stack:                         0       0         6144   
        Linker Generated:              0       146       0      
     +--+------------------------------+-------+---------+---------+
-       Grand Total:                   52876   1941      10570  
+       Grand Total:                   56172   1941      10622  
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 0000d628 records: 3, size/record: 8, table size: 24
-	.data: load addr=0000d5a8, load size=0000005e bytes, run addr=20002880, run size=000000d2 bytes, compression=lzss
-	.bss: load addr=0000d618, load size=00000008 bytes, run addr=20001a70, run size=00000e0c bytes, compression=zero_init
-	.vtable: load addr=0000d620, load size=00000008 bytes, run addr=20000000, run size=0000026c bytes, compression=zero_init
+__TI_cinit_table @ 0000e300 records: 3, size/record: 8, table size: 24
+	.data: load addr=0000e280, load size=0000005e bytes, run addr=200028a8, run size=000000dc bytes, compression=lzss
+	.bss: load addr=0000e2f0, load size=00000008 bytes, run addr=20001a70, run size=00000e36 bytes, compression=zero_init
+	.vtable: load addr=0000e2f8, load size=00000008 bytes, run addr=20000000, run size=0000026c bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 0000d608 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 0000e2e0 records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_zero_init
 	index: 1, handler: __TI_decompress_lzss
 	index: 2, handler: __TI_decompress_none
@@ -367,429 +391,460 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                                              
 -------   ----                                              
-0000d095  ADCIntClear                                       
-0000cd05  ADCIntStatus                                      
-0000ce4d  ADCProcessorTrigger                               
-0000c7f9  ADCSequenceConfigure                              
-0000ce15  ADCSequenceDataGet                                
-0000cff5  ADCSequenceEnable                                 
-0000c451  ADCSequenceStepConfigure                          
-2000282a  Alarms                                            
+20002970  ACVoltReadMillis                                  
+0000dd35  ADCIntClear                                       
+0000d939  ADCIntStatus                                      
+0000daad  ADCProcessorTrigger                               
+0000d3e5  ADCSequenceConfigure                              
+0000da75  ADCSequenceDataGet                                
+0000dc55  ADCSequenceEnable                                 
+0000cf85  ADCSequenceStepConfigure                          
+20002856  Alarms                                            
 20002492  BCD_MODE                                          
-0000d0ff  C$$EXIT                                           
-0000cb5b  C$$IO$$                                           
-0000d065  CPUcpsie                                          
-0000aaab  DEBUGUARTIntHandler                               
-0000ca41  EEPROMInit                                        
-0000c1d5  EEPROMProgram                                     
-0000cabd  EEPROMRead                                        
-2000286e  EXTI_cnt                                          
+0000dddb  C$$EXIT                                           
+0000d78f  C$$IO$$                                           
+0000dce1  CPUcpsie                                          
+0000b453  DEBUGUARTIntHandler                               
+0000d675  EEPROMInit                                        
+0000cd09  EEPROMProgram                                     
+0000d6f1  EEPROMRead                                        
+2000289a  EXTI_cnt                                          
 200026e7  FLR_log_data                                      
 20002727  FL_log_data                                       
-00007989  GPIODIntHandler                                   
-0000cd33  GPIODirModeSet                                    
-0000d0d3  GPIOIntClear                                      
-0000d071  GPIOIntEnable                                     
-0000ce65  GPIOIntRegister                                   
-0000d003  GPIOIntStatus                                     
-0000c751  GPIOIntTypeSet                                    
-0000bb09  GPIOPadConfigSet                                  
-0000c849  GPIOPinConfigure                                  
-0000d0d9  GPIOPinRead                                       
-0000cead  GPIOPinTypeADC                                    
-0000cec3  GPIOPinTypeGPIOInput                              
-0000ce33  GPIOPinTypeGPIOOutput                             
-0000ced9  GPIOPinTypeI2C                                    
-0000ceef  GPIOPinTypeI2CSCL                                 
-0000cf05  GPIOPinTypeUART                                   
-0000d0df  GPIOPinWrite                                      
-0000c6f1  HOSTtime64                                        
-0000d0b3  I2CMasterBusy                                     
-0000d0eb  I2CMasterControl                                  
-0000d0ef  I2CMasterDataGet                                  
-0000d0f3  I2CMasterDataPut                                  
-0000d09f  I2CMasterEnable                                   
-0000c895  I2CMasterInitExpClk                               
-0000d0bb  I2CMasterSlaveAddrSet                             
-0000d011  I2CRxFIFOFlush                                    
-0000d01f  I2CTxFIFOFlush                                    
-0000c621  IntEnable                                         
-0000cf93  IntMasterEnable                                   
-0000cb65  IntRegister                                       
-0000ac35  LTEUARTIntHandler                                 
-200028f8  NE_ADC_RAW_MAX                                    
-200028f0  PN_ADC_RAW_MAX                                    
-0000d089  ResetISR                                          
-0000becd  SysCtlClockGet                                    
-0000c0e1  SysCtlClockSet                                    
-0000d0e5  SysCtlDelay                                       
-0000cb99  SysCtlPeripheralDisable                           
-0000cbcd  SysCtlPeripheralEnable                            
-0000caf5  SysCtlPeripheralReady                             
-0000c7a9  SysCtlPeripheralReset                             
-0000cfa5  SysCtlReset                                       
-0000cf1d  SysTickEnable                                     
-0000cf31  SysTickIntEnable                                  
-0000b985  SysTickIntHandler                                 
-0000cfb5  SysTickPeriodSet                                  
-20002879  System_mode                                       
-2000286a  Telecom_server_query                              
-0000d0c3  UARTBusy                                          
-0000d02d  UARTCharGetNonBlocking                            
-0000d03b  UARTCharPutNonBlocking                            
-0000d049  UARTCharsAvail                                    
-0000c92d  UARTConfigSetExpClk                               
-0000cdd5  UARTDisable                                       
-0000cf45  UARTEnable                                        
-0000d0f7  UARTIntClear                                      
-0000d0cb  UARTIntEnable                                     
-0000d0a9  UARTIntStatus                                     
-00008eb1  _Z10Chip_Erasev                                   
-0000a975  _Z10GetAdcDatav                                   
-0000b7b7  _Z10I2CReceivev                                   
-00007d49  _Z10ToggleLEDsv                                   
-00002f25  _Z10asUnixTimeiiiiii                              
-000065d5  _Z10clear_logsv                                   
-00005fbf  _Z10getREQmodev                                   
-0000b037  _Z10my_sprintfPciz                                
-00005fab  _Z10setREQmode13gprs_status_t                     
-0000398d  _Z10update_rtcPci                                 
-00004f85  _Z10utcTOlocalP15gps_date_time_t                  
-0000298d  _Z10valid_codePc                                  
-00007ddd  _Z11SetODU_Mode14voltage_mode_t                   
-00008cdf  _Z11SetSI_Inputv                                  
-00008d01  _Z11SetSO_Inputv                                  
+00007765  GPIODIntHandler                                   
+0000d995  GPIODirModeSet                                    
+0000dda1  GPIOIntClear                                      
+0000dced  GPIOIntEnable                                     
+0000dac5  GPIOIntRegister                                   
+0000dc63  GPIOIntStatus                                     
+0000d2e5  GPIOIntTypeSet                                    
+0000c521  GPIOPadConfigSet                                  
+0000d435  GPIOPinConfigure                                  
+0000dda7  GPIOPinRead                                       
+0000db0d  GPIOPinTypeADC                                    
+0000db23  GPIOPinTypeGPIOInput                              
+0000da93  GPIOPinTypeGPIOOutput                             
+0000db39  GPIOPinTypeI2C                                    
+0000db4f  GPIOPinTypeI2CSCL                                 
+0000db65  GPIOPinTypeUART                                   
+0000ddad  GPIOPinWrite                                      
+0000d225  HOSTtime64                                        
+0000dd71  I2CMasterBusy                                     
+0000ddbf  I2CMasterControl                                  
+0000ddc3  I2CMasterDataGet                                  
+0000ddc7  I2CMasterDataPut                                  
+0000dd3f  I2CMasterEnable                                   
+0000d481  I2CMasterInitExpClk                               
+0000dd79  I2CMasterSlaveAddrSet                             
+0000dc71  I2CRxFIFOFlush                                    
+0000dc7f  I2CTxFIFOFlush                                    
+0000d155  IntEnable                                         
+0000dc05  IntMasterEnable                                   
+0000d799  IntRegister                                       
+0000b5dd  LTEUARTIntHandler                                 
+20002920  NE_ADC_RAW_MAX                                    
+20002918  PN_ADC_RAW_MAX                                    
+0000dd29  ResetISR                                          
+0000ca01  SysCtlClockGet                                    
+0000cc15  SysCtlClockSet                                    
+0000ddb3  SysCtlDelay                                       
+0000d7cd  SysCtlPeripheralDisable                           
+0000d801  SysCtlPeripheralEnable                            
+0000d729  SysCtlPeripheralReady                             
+0000d395  SysCtlPeripheralReset                             
+0000dcf9  SysCtlResetCauseGet                               
+0000db7d  SysTickEnable                                     
+0000db91  SysTickIntEnable                                  
+0000c375  SysTickIntHandler                                 
+0000dc15  SysTickPeriodSet                                  
+200028a2  System_mode                                       
+20002896  Telecom_server_query                              
+0000d285  TimerConfigure                                    
+0000dc8d  TimerEnable                                       
+0000ddcb  TimerIntClear                                     
+0000dd81  TimerIntEnable                                    
+0000d377  TimerIntHandler                                   
+0000dbe1  TimerLoadSet                                      
+0000dd89  UARTBusy                                          
+0000dc9b  UARTCharGetNonBlocking                            
+0000dca9  UARTCharPutNonBlocking                            
+0000dcb7  UARTCharsAvail                                    
+0000d561  UARTConfigSetExpClk                               
+0000da35  UARTDisable                                       
+0000dba5  UARTEnable                                        
+0000ddcf  UARTIntClear                                      
+0000dd91  UARTIntEnable                                     
+0000dd49  UARTIntStatus                                     
+200028a3  WDT                                               
+0000dd53  WatchdogEnable                                    
+0000ddb9  WatchdogIntClear                                  
+0000dd5d  WatchdogIntEnable                                 
+0000c8e5  WatchdogIntHandler                                
+0000dd05  WatchdogIntTypeSet                                
+0000dd99  WatchdogLock                                      
+0000dcc5  WatchdogLockState                                 
+0000ddd3  WatchdogReloadSet                                 
+0000dd67  WatchdogResetEnable                               
+0000dd11  WatchdogUnlock                                    
+00009761  _Z10Chip_Erasev                                   
+0000b2ff  _Z10GetAdcDatav                                   
+0000c1a7  _Z10I2CReceivev                                   
+00007b21  _Z10ToggleLEDsv                                   
+000038fd  _Z10asUnixTimeiiiiii                              
+000060c5  _Z10clear_logsv                                   
+000076ef  _Z10getREQmodev                                   
+0000b9df  _Z10my_sprintfPciz                                
+000076db  _Z10setREQmode13gprs_status_t                     
+00004365  _Z10update_rtcPci                                 
+0000595d  _Z10utcTOlocalP15gps_date_time_t                  
+0000d33d  _Z10vTimerInitv                                   
+00003355  _Z10valid_codePc                                  
+00007bb5  _Z11SetODU_Mode14voltage_mode_t                   
+0000958f  _Z11SetSI_Inputv                                  
+000095b1  _Z11SetSO_Inputv                                  
 00000279  _Z11TCP_Handlerv                                  
-0000ad55  _Z11Usendbufferj                                  
-0000661b  _Z11clear_flashv                                  
-0000b403  _Z11count_commaPct                                
-000088dd  _Z11flashCopyMRPcS_                               
-0000afe1  _Z11getChecksumPhc                                
-00003261  _Z11getDateTimev                                  
-00006679  _Z11get_log_cnti                                  
-00002a61  _Z11get_rx_dataPc                                 
-000041c9  _Z11gps_handlerv                                  
-00009ccd  _Z11init_configv                                  
-00002c13  _Z11setNWstatus13gprs_status_t                    
-00001259  _Z11tcp_connectv                                  
-0000b759  _Z11vRTCI2CInitv                                  
-0000a1d5  _Z12ADC_PortIniti                                 
-0000514d  _Z12Query_decodePcPKcS_i                          
-00008bff  _Z12Sector_Erasem                                 
-00008cd1  _Z12SetSI_Outputv                                 
-00008cf3  _Z12SetSO_Outputv                                 
-00002f75  _Z12calcTimeDiff12time_stamp_tS_                  
-00002aad  _Z12check_stringPKcPcPi                           
-000065f9  _Z12clear_log_idv                                 
-0000873b  _Z12flashSwResetv                                 
-00006477  _Z12flashWriteTRv                                 
-00002c27  _Z12getNW_statusv                                 
-00009aa3  _Z12getRAM_Alarmv                                 
-00003f4d  _Z12get_locationv                                 
-00006735  _Z12get_log_dataimPc                              
-00000845  _Z12gprs_connectv                                 
-00003e6f  _Z12is_leap_yearh                                 
-00002785  _Z12read_ip_portPc                                
-000029e7  _Z12respos_recvdPc                                
-00005263  _Z12server_queryv                                 
-00009a6b  _Z12setRAM_Alarm16Alarm_sts_bits_tb               
-00007d1d  _Z12vEXTIpinInitv                                 
-000082f5  _Z12vEarthDetectv                                 
-00007cad  _Z12vGPIO_Togglejhh                               
-00007adf  _Z12vLEDGPIOInitv                                 
-0000aa43  _Z12vLTEUARTInitv                                 
-00003c29  _Z13add_date_timeP12time_stamp_tS0_j              
-00007f5d  _Z13controlRelaysv                                
-0000b279  _Z13delete_SubStrPcS_c                            
-00008753  _Z13enable_wp_pinv                                
-0000ae65  _Z13flushRxBufferi                                
-0000ae95  _Z13flushTxBufferi                                
-0000a725  _Z13getODUCurrentv                                
-0000a7e9  _Z13getODUVoltagev                                
-00009ae1  _Z13getRAM_Statusv                                
-0000947f  _Z13get_device_idv                                
-00002959  _Z13pong_receivedPc                               
-00009aa9  _Z13setRAM_Statushb                               
-000093dd  _Z13set_device_idPc                               
-0000baa3  _Z13vMAIN_DelayMSj                                
-0000ac99  _Z13vUART_SendChrjh                               
-0000ad29  _Z13vUART_SendIntji                               
-0000acb7  _Z13vUART_SendStrjPKh                             
-00008469  _Z14Reset_Hold_Lowv                               
-00003b15  _Z14StrToTimeStampPh                              
-000030bf  _Z14getDaysOfMonthcj                              
-0000a8ad  _Z14getSMPSVoltagev                               
-00005121  _Z14get_gps_statusv                               
-0000819b  _Z14isSupplyStablev                               
-00008821  _Z14readContToBuffmjPc                            
-00005131  _Z14set_gps_status12gps_status_t                  
-000025a1  _Z14tcp_disconnectv                               
-0000a9f5  _Z14vDEBUGUARTInitv                               
-00009b5d  _Z14write_defaultsj                               
-00008477  _Z15Reset_Hold_Highv                              
-00002dcb  _Z15check_date_timePcS_                           
-0000855b  _Z15flashClrTR_Logsv                              
-00006035  _Z15flashWriteMR_BRv                              
-00002a21  _Z15generateMaskKeyPh                             
-00002c43  _Z15getServerStatusv                              
-00006b33  _Z15get_unsent_logsv                              
-00002bd5  _Z15get_upload_datav                              
-00002bf1  _Z15get_webconn_stsv                              
-0000487d  _Z15gps_pkt_parsingP10gps_info_tPc                
-000084ff  _Z15init_flash_pinsv                              
-0000bdad  _Z15manage_gps_gprsv                              
-00002895  _Z15match_cpsi_dataPc                             
-00002c2f  _Z15setServerStatus13gprs_status_t                
-00002bbd  _Z15set_upload_data13upload_data_t                
-00002bdd  _Z15set_webconn_stsh                              
-00009a21  _Z15update_ram_datav                              
-00008265  _Z15vEarthCheckInitv                              
-00008235  _Z15vFreqDetectInitv                              
-000079dd  _Z15vGPIOPortEnablev                              
-00008ed1  _Z15vPERIPH_E2PInitv                              
-0000ace5  _Z15vUART_SendBytesjPKhj                          
-0000164d  _Z15websckt_connectv                              
-00008319  _Z16ControlODU_Relayh                             
-00006afd  _Z16check_unsent_logv                             
-00006e8d  _Z16decodeMsgPC_Uartv                             
-0000897d  _Z16flashEraseBackupv                             
-00008895  _Z16flashEraseMasterv                             
-00008919  _Z16flashEraseSectormm                            
-0000643d  _Z16flashGetSerMR_BRv                             
-00005ffd  _Z16getClientMSGTypev                             
-00005fdb  _Z16getServerReqTypev                             
-0000391d  _Z16get_present_timeP12time_stamp_t               
-000083b9  _Z16get_router_statev                             
-000078f9  _Z16get_system_statev                             
-00005fe9  _Z16setClientMSGType21client_message_type_t       
-00005fc7  _Z16setServerReqType21server_request_type_t       
-000083a5  _Z16set_router_state18relay_ctrl_state_t          
-000078e5  _Z16set_system_state10sys_mode_t                  
-00002c7d  _Z16update_date_timev                             
-00007a91  _Z16vGPIO_UnlockGPIOjh                            
-00007af5  _Z16vPERIPH_GPIOInitv                             
-0000aa9f  _Z16vPERIPH_UARTInitv                             
-0000659d  _Z16validate_FL_addrcm                            
-00005df1  _Z16websocket_packetPh                            
-00008277  _Z17FREQDetIntHandlerv                            
-00005eef  _Z17HandleQueryStatesv                            
-00003179  _Z17check_expire_time12time_stamp_tS_             
-00009735  _Z17cloud_config_datav                            
-00009265  _Z17e2p_read_cfg_timev                            
-00009175  _Z17e2p_read_locationv                            
-000084a1  _Z17flash_port_assignv                            
-0000b33d  _Z17generateRandomKeyiPc                          
-0000a845  _Z17getBatteryVoltagev                            
-00005499  _Z17prepare_JSON_pcktv                            
-00006d6f  _Z17save_TELECOM_datav                            
-000078c7  _Z17tx_pending_dataPCv                            
-00009ae7  _Z17vPERIPH_ClockInitv                            
-00002b9d  _Z18check_string_nobufPKc                         
-00002ea3  _Z18convertToEpochTimePK12time_stamp_t            
-00008fd9  _Z18e2p_read_cloud_cfgv                           
-0000920b  _Z18e2p_write_cfg_timev                           
-00009121  _Z18e2p_write_locationv                           
-000089d1  _Z18flashPacketProgramPctm                        
-00009d99  _Z18getRelay_CtrlStatev                           
-00009703  _Z18get_fixed_locationv                           
-00005f4f  _Z18prepare_server_pktv                           
-00007b3d  _Z18readBCD_SelectorSWv                           
-000094f1  _Z18set_fixed_locationPc                          
-00007cd3  _Z18vInput_PollingReadv                           
-000022a1  _Z18websckt_disconnectv                           
-0000835d  _Z19ControlRouter_Relayh                          
-0000a93b  _Z19calculate_NE_AC_ADCv                          
-0000a901  _Z19calculate_PN_AC_ADCv                          
-00003ec5  _Z19check_dateTime_dataP12time_stamp_t            
-00009097  _Z19e2p_read_device_cfgv                          
-00008fa9  _Z19e2p_write_cloud_cfgv                          
-000085a5  _Z19flashClrFreqUpdLogsv                          
-00002c0b  _Z19get_gprs_connct_stsv                          
-00005fa5  _Z19get_pending_requestv                          
-00000ed1  _Z19gprs_connect_statusv                          
-00007d71  _Z19init_ODU_Supplypinsv                          
-00002bf7  _Z19set_gprs_connct_stsh                          
-00005f91  _Z19set_pending_requestb                          
-000060cd  _Z19updateFlashCurrAddrv                          
-00009e81  _Z19update_alarm_statusv                          
-00007c89  _Z19vInit_InputTestpinsv                          
-0000b969  _Z19vPERIPH_SystickInitv                          
-00008d2f  _Z20Read_Status_Registerv                         
-00009067  _Z20e2p_write_device_cfgv                         
-0000689b  _Z20flashReadFreqUpdDataP19freq_updated_data_tmi  
-00000771  _Z20resetTCP_SubHandlersv                         
-000067c3  _Z21flashWriteFreqUpdDataP19freq_updated_data_tm  
-0000a789  _Z21getRouter1_DC_currentv                        
-000068c9  _Z21readFreqUpdData_flashv                        
-000085f1  _Z22addDummyFL_TelecomLogsj                       
-0000640f  _Z22flashGetCurrUploadAddrc                       
-00008f1f  _Z23e2p_read_voltage_configv                      
-00005a11  _Z23prepare_unsentJSON_pcktv                      
-00008c39  _Z23remove_block_protectionv                      
-00006bf1  _Z23save_OfflineTelecomDatav                      
-00004ddf  _Z23updateGpsDateTimeToBuffP15gps_date_time_t     
-0000adcd  _Z23vUART_CheckFrameTimeouti                      
-00006ab1  _Z24decrement_unsent_log_cnti                     
-00008edf  _Z24e2p_write_voltage_configv                     
-00006add  _Z24increment_unsent_log_cnti                     
-00006eb3  _Z24preparePC_ResponsePacket5cmd_tPchii           
-0000b3af  _Z25count_doubleSquareBracketPcj                  
-000063e9  _Z25flashGetCurrDataWriteAddrc                    
-0000aefd  _Z25prepare_graphical_tx_buffjPch                 
-00008405  _Z26get_router_selection_statev                   
-00006c69  _Z26prepare_OfflineTelecomDatav                   
-000083d3  _Z26set_router_selection_state18relay_ctrl_state_t
-00009af1  _Z26vMAIN_InitClockPeripheralsv                   
-0000679f  _Z27flashClearFreqUpdatedConfigv                  
-0000677d  _Z27flashEraseFreqUpdDataSectorv                  
-00006805  _Z27flashWriteFreqUpdatedConfigv                  
-00008381  _Z28ControlRouterSelection_Relayh                 
-0000cf81  _Z3absl                                           
-00008c5b  _Z4WBPRc                                          
-0000879d  _Z4WRCRc                                          
-00008787  _Z4WRDIv                                          
-00008775  _Z4WRENv                                          
-000087cf  _Z6CE_Lowv                                        
-00008d0f  _Z6SI_Lowv                                        
-00008485  _Z6WP_Lowv                                        
-000087c1  _Z7CE_Highv                                       
-000087f1  _Z7SCK_Lowv                                       
-00008d1f  _Z7SI_Highv                                       
-00008493  _Z7WP_Highv                                       
-00009063  _Z7get_urlv                                       
-000036b9  _Z7isDT_okv                                       
-0000a419  _Z7readADCh                                       
-0000b229  _Z7reversePci                                     
-00009319  _Z7set_urlPc                                      
-00008e37  _Z8Get_Bytev                                      
-0000b801  _Z8Read_RTCPhh                                    
-000087e1  _Z8SCK_Highv                                      
-000066e1  _Z8get_addrim                                     
-0000b1bb  _Z8intToStriPci                                   
-00006fc1  _Z8response5cmd_ti                                
-00001ef5  _Z8tcp_sendPci                                    
-00008d53  _Z9Send_Byteh                                     
-00008a49  _Z9Wait_Busyv                                     
-0000b8c9  _Z9Write_RTCPhh                                   
-00008521  _Z9flashInitv                                     
-0000bac1  _Z9my_millisv                                     
-0000b44b  _Z9my_strstrPKcS0_i                               
-00001af9  _Z9ping_sendv                                     
-00003769  _Z9time_syncv                                     
-0000a47d  _Z9updateADC14ADC_Channels_th                     
-0000a3bd  _Z9vADC0Initv                                     
+0000b6fd  _Z11Usendbufferj                                  
+0000610b  _Z11clear_flashv                                  
+0000bdab  _Z11count_commaPct                                
+0000918d  _Z11flashCopyMRPcS_                               
+0000b989  _Z11getChecksumPhc                                
+00003c39  _Z11getDateTimev                                  
+00006169  _Z11get_log_cnti                                  
+00003429  _Z11get_rx_dataPc                                 
+00004ba1  _Z11gps_handlerv                                  
+000087b9  _Z11init_configv                                  
+000035ed  _Z11setNWstatus13gprs_status_t                    
+0000165d  _Z11tcp_connectv                                  
+0000c149  _Z11vRTCI2CInitv                                  
+0000ab49  _Z12ADC_PortIniti                                 
+0000697d  _Z12Query_decodePcPKcS_i                          
+000094af  _Z12Sector_Erasem                                 
+00009581  _Z12SetSI_Outputv                                 
+000095a3  _Z12SetSO_Outputv                                 
+0000394d  _Z12calcTimeDiff12time_stamp_tS_                  
+00003475  _Z12check_stringPKcPcPi                           
+000060e9  _Z12clear_log_idv                                 
+00008feb  _Z12flashSwResetv                                 
+00005f67  _Z12flashWriteTRv                                 
+00003601  _Z12getNW_statusv                                 
+00008483  _Z12getRAM_Alarmv                                 
+00008c89  _Z12getRSTreasonv                                 
+00004925  _Z12get_locationv                                 
+00006225  _Z12get_log_dataimPc                              
+00000865  _Z12gprs_connectv                                 
+00004847  _Z12is_leap_yearh                                 
+0000313d  _Z12read_ip_portPc                                
+000033af  _Z12respos_recvdPc                                
+00006a93  _Z12server_queryv                                 
+0000844b  _Z12setRAM_Alarm16Alarm_sts_bits_tb               
+00007af5  _Z12vEXTIpinInitv                                 
+000080f9  _Z12vEarthDetectv                                 
+00007a85  _Z12vGPIO_Togglejhh                               
+000078bb  _Z12vLEDGPIOInitv                                 
+0000b3eb  _Z12vLTEUARTInitv                                 
+00004601  _Z13add_date_timeP12time_stamp_tS0_j              
+00007d35  _Z13controlRelaysv                                
+0000bc21  _Z13delete_SubStrPcS_c                            
+00009003  _Z13enable_wp_pinv                                
+0000b80d  _Z13flushRxBufferi                                
+0000b83d  _Z13flushTxBufferi                                
+0000b091  _Z13getODUCurrentv                                
+0000b155  _Z13getODUVoltagev                                
+000084c1  _Z13getRAM_Statusv                                
+0000a717  _Z13get_device_idv                                
+00003311  _Z13pong_receivedPc                               
+0000b2df  _Z13readACVoltagev                                
+00008489  _Z13setRAM_Statushb                               
+0000a675  _Z13set_device_idPc                               
+0000c4ad  _Z13vMAIN_DelayMSj                                
+0000b641  _Z13vUART_SendChrjh                               
+0000b6d1  _Z13vUART_SendIntji                               
+0000b65f  _Z13vUART_SendStrjPKh                             
+00008d19  _Z14Reset_Hold_Lowv                               
+000044ed  _Z14StrToTimeStampPh                              
+00003a97  _Z14getDaysOfMonthcj                              
+0000b219  _Z14getSMPSVoltagev                               
+00005af9  _Z14get_gps_statusv                               
+00007f73  _Z14isSupplyStablev                               
+000090d1  _Z14readContToBuffmjPc                            
+00005b09  _Z14set_gps_status12gps_status_t                  
+00002f5d  _Z14tcp_disconnectv                               
+0000b39d  _Z14vDEBUGUARTInitv                               
+00008629  _Z14write_defaultsj                               
+00008d27  _Z15Reset_Hold_Highv                              
+000037a3  _Z15check_date_timePcS_                           
+00008e0b  _Z15flashClrTR_Logsv                              
+00005b25  _Z15flashWriteMR_BRv                              
+000033e9  _Z15generateMaskKeyPh                             
+0000361d  _Z15getServerStatusv                              
+0000c9d9  _Z15getWDTreset_flgv                              
+00006623  _Z15get_unsent_logsv                              
+0000359d  _Z15get_upload_datav                              
+000035b9  _Z15get_webconn_stsv                              
+00005255  _Z15gps_pkt_parsingP10gps_info_tPc                
+00008daf  _Z15init_flash_pinsv                              
+0000c7c5  _Z15manage_gps_gprsv                              
+0000324d  _Z15match_cpsi_dataPc                             
+00003609  _Z15setServerStatus13gprs_status_t                
+0000c9c5  _Z15setWDTreset_flgb                              
+00003589  _Z15set_upload_data13upload_data_t                
+000035a5  _Z15set_webconn_stsh                              
+00008401  _Z15update_ram_datav                              
+0000803d  _Z15vEarthCheckInitv                              
+0000800d  _Z15vFreqDetectInitv                              
+000077b9  _Z15vGPIOPortEnablev                              
+0000a169  _Z15vPERIPH_E2PInitv                              
+0000b68d  _Z15vUART_SendBytesjPKhj                          
+00001c01  _Z15websckt_connectv                              
+00008129  _Z16ControlODU_Relayh                             
+000065ed  _Z16check_unsent_logv                             
+00009781  _Z16decodeMsgPC_Uartv                             
+0000922d  _Z16flashEraseBackupv                             
+00009145  _Z16flashEraseMasterv                             
+000091c9  _Z16flashEraseSectormm                            
+00005f2d  _Z16flashGetSerMR_BRv                             
+0000772d  _Z16getClientMSGTypev                             
+0000770b  _Z16getServerReqTypev                             
+000042f5  _Z16get_present_timeP12time_stamp_t               
+000081e1  _Z16get_router_statev                             
+0000a0dd  _Z16get_system_statev                             
+0000c981  _Z16reset_controllerv                             
+00007719  _Z16setClientMSGType21client_message_type_t       
+000076f7  _Z16setServerReqType21server_request_type_t       
+000081af  _Z16set_router_state18relay_ctrl_state_t          
+0000a0c9  _Z16set_system_state10sys_mode_t                  
+00003655  _Z16update_date_timev                             
+0000786d  _Z16vGPIO_UnlockGPIOjh                            
+000078d1  _Z16vPERIPH_GPIOInitv                             
+0000b447  _Z16vPERIPH_UARTInitv                             
+0000608d  _Z16validate_FL_addrcm                            
+00007521  _Z16websocket_packetPh                            
+0000805d  _Z17FREQDetIntHandlerv                            
+0000761f  _Z17HandleQueryStatesv                            
+00003b51  _Z17check_expire_time12time_stamp_tS_             
+0000a9cd  _Z17cloud_config_datav                            
+0000a4fd  _Z17e2p_read_cfg_timev                            
+0000a40d  _Z17e2p_read_locationv                            
+00008d51  _Z17flash_port_assignv                            
+0000bce5  _Z17generateRandomKeyiPc                          
+0000b1b1  _Z17getBatteryVoltagev                            
+00006bd1  _Z17prepare_JSON_pcktv                            
+0000685f  _Z17save_TELECOM_datav                            
+0000a0a7  _Z17tx_pending_dataPCv                            
+000084c7  _Z17vPERIPH_ClockInitv                            
+00003569  _Z18check_string_nobufPKc                         
+0000387b  _Z18convertToEpochTimePK12time_stamp_t            
+0000a271  _Z18e2p_read_cloud_cfgv                           
+0000a4a3  _Z18e2p_write_cfg_timev                           
+0000a3b9  _Z18e2p_write_locationv                           
+00009281  _Z18flashPacketProgramPctm                        
+000088ed  _Z18getRelay_CtrlStatev                           
+0000a99b  _Z18get_fixed_locationv                           
+0000767f  _Z18prepare_server_pktv                           
+00007915  _Z18readBCD_SelectorSWv                           
+0000a789  _Z18set_fixed_locationPc                          
+00007aab  _Z18vInput_PollingReadv                           
+00002c59  _Z18websckt_disconnectv                           
+00008153  _Z19ControlRouter_Relayh                          
+0000b2a5  _Z19calculate_NE_AC_ADCv                          
+0000b26d  _Z19calculate_PN_AC_ADCv                          
+0000489d  _Z19check_dateTime_dataP12time_stamp_t            
+0000a32f  _Z19e2p_read_device_cfgv                          
+0000a241  _Z19e2p_write_cloud_cfgv                          
+00008e55  _Z19flashClrFreqUpdLogsv                          
+000035e7  _Z19get_gprs_connct_stsv                          
+000076d5  _Z19get_pending_requestv                          
+000011c9  _Z19gprs_connect_statusv                          
+00007b49  _Z19init_ODU_Supplypinsv                          
+000035d1  _Z19set_gprs_connct_stsh                          
+000076c1  _Z19set_pending_requestb                          
+00005bbd  _Z19updateFlashCurrAddrv                          
+000089bd  _Z19update_alarm_statusv                          
+00007a61  _Z19vInit_InputTestpinsv                          
+0000c359  _Z19vPERIPH_SystickInitv                          
+000095df  _Z20Read_Status_Registerv                         
+0000a2ff  _Z20e2p_write_device_cfgv                         
+0000638b  _Z20flashReadFreqUpdDataP19freq_updated_data_tmi  
+00000795  _Z20resetTCP_SubHandlersv                         
+000062b3  _Z21flashWriteFreqUpdDataP19freq_updated_data_tm  
+0000b0f5  _Z21getRouter1_DC_currentv                        
+000063b9  _Z21readFreqUpdData_flashv                        
+00008ea1  _Z22addDummyFL_TelecomLogsj                       
+00005eff  _Z22flashGetCurrUploadAddrc                       
+0000a1b7  _Z23e2p_read_voltage_configv                      
+00007141  _Z23prepare_unsentJSON_pcktv                      
+000094e9  _Z23remove_block_protectionv                      
+000066e1  _Z23save_OfflineTelecomDatav                      
+000057b7  _Z23updateGpsDateTimeToBuffP15gps_date_time_t     
+0000b775  _Z23vUART_CheckFrameTimeouti                      
+000065a1  _Z24decrement_unsent_log_cnti                     
+0000a177  _Z24e2p_write_voltage_configv                     
+000065cd  _Z24increment_unsent_log_cnti                     
+000097a7  _Z24preparePC_ResponsePacket5cmd_tPchii           
+0000bd57  _Z25count_doubleSquareBracketPcj                  
+00005ed9  _Z25flashGetCurrDataWriteAddrc                    
+0000b8a5  _Z25prepare_graphical_tx_buffjPch                 
+00008223  _Z26get_router_selection_statev                   
+00006759  _Z26prepare_OfflineTelecomDatav                   
+0000820f  _Z26set_router_selection_state18relay_ctrl_state_t
+000084f5  _Z26vMAIN_InitClockPeripheralsv                   
+0000628f  _Z27flashClearFreqUpdatedConfigv                  
+0000626d  _Z27flashEraseFreqUpdDataSectorv                  
+000062f5  _Z27flashWriteFreqUpdatedConfigv                  
+00008177  _Z28ControlRouterSelection_Relayh                 
+0000dbf3  _Z3absl                                           
+0000950b  _Z4WBPRc                                          
+0000904d  _Z4WRCRc                                          
+00009037  _Z4WRDIv                                          
+00009025  _Z4WRENv                                          
+0000907f  _Z6CE_Lowv                                        
+000095bf  _Z6SI_Lowv                                        
+00008d35  _Z6WP_Lowv                                        
+00009071  _Z7CE_Highv                                       
+000090a1  _Z7SCK_Lowv                                       
+000095cf  _Z7SI_Highv                                       
+00008d43  _Z7WP_Highv                                       
+0000c9b3  _Z7feedWDTv                                       
+0000be41  _Z7findMaxPii                                     
+0000a2fb  _Z7get_urlv                                       
+0000c917  _Z7initWDTv                                       
+00004091  _Z7isDT_okv                                       
+0000ad87  _Z7readADCh                                       
+0000bbd1  _Z7reversePci                                     
+0000a5b1  _Z7set_urlPc                                      
+000096e7  _Z8Get_Bytev                                      
+0000c1f1  _Z8Read_RTCPhh                                    
+00009091  _Z8SCK_Highv                                      
+000061d1  _Z8get_addrim                                     
+0000bb63  _Z8intToStriPci                                   
+000098b5  _Z8response5cmd_ti                                
+00002779  _Z8tcp_sendPci                                    
+00009603  _Z9Send_Byteh                                     
+000092f9  _Z9Wait_Busyv                                     
+0000c2b9  _Z9Write_RTCPhh                                   
+00008dd1  _Z9flashInitv                                     
+0000c4cb  _Z9my_millisv                                     
+0000bdf3  _Z9my_strstrPKcS0_i                               
+00002259  _Z9ping_sendv                                     
+00004141  _Z9time_syncv                                     
+0000ade9  _Z9updateADC14ADC_Channels_th                     
+0000ad31  _Z9vADC0Initv                                     
 2000229c  __CIOBUF_                                         
 20001a70  __STACK_END                                       
 00001800  __STACK_SIZE                                      
 20000470  __STACK_TOP                                       
-0000d628  __TI_CINIT_Base                                   
-0000d640  __TI_CINIT_Limit                                  
-0000d608  __TI_Handler_Table_Base                           
-0000d614  __TI_Handler_Table_Limit                          
-0000c9b9  __TI_auto_init_nobinit_nopinit                    
-0000c689  __TI_decompress_lzss                              
-0000d057  __TI_decompress_none                              
+0000e300  __TI_CINIT_Base                                   
+0000e318  __TI_CINIT_Limit                                  
+0000e2e0  __TI_Handler_Table_Base                           
+0000e2ec  __TI_Handler_Table_Limit                          
+0000d5ed  __TI_auto_init_nobinit_nopinit                    
+0000d1bd  __TI_decompress_lzss                              
+0000dcd3  __TI_decompress_none                              
 ffffffff  __TI_pprof_out_hndl                               
 ffffffff  __TI_prof_data_size                               
 ffffffff  __TI_prof_data_start                              
-0000cc35  __TI_readmsg                                      
+0000d869  __TI_readmsg                                      
 00000000  __TI_static_base__                                
-0000cb2d  __TI_writemsg                                     
-0000d07d  __TI_zero_init                                    
-0000c3cb  __aeabi_cdcmpeq                                   
-0000c3cb  __aeabi_cdcmple                                   
-0000c9fd  __aeabi_d2uiz                                     
-0000bc75  __aeabi_ddiv                                      
-0000bfe5  __aeabi_dmul                                      
-0000bdab  __aeabi_idiv0                                     
-0000bdab  __aeabi_ldiv0                                     
-0000c5b3  __aeabi_ldivmod                                   
-0000ce7d  __aeabi_lmul                                      
-0000c4cb  __aeabi_memclr                                    
-0000c4cb  __aeabi_memclr4                                   
-0000c4cb  __aeabi_memclr8                                   
-0000c299  __aeabi_memcpy                                    
-0000c299  __aeabi_memcpy4                                   
-0000c299  __aeabi_memcpy8                                   
-0000c4cd  __aeabi_memset                                    
-0000c4cd  __aeabi_memset4                                   
-0000c4cd  __aeabi_memset8                                   
-0000cdf5  __aeabi_ui2d                                      
-0000c335  __aeabi_uldivmod                                  
+0000d761  __TI_writemsg                                     
+0000dd1d  __TI_zero_init                                    
+0000ceff  __aeabi_cdcmpeq                                   
+0000ceff  __aeabi_cdcmple                                   
+0000d519  __aeabi_d2iz                                      
+0000d631  __aeabi_d2uiz                                     
+0000c68d  __aeabi_ddiv                                      
+0000cb19  __aeabi_dmul                                      
+0000d967  __aeabi_i2d                                       
+0000c7c3  __aeabi_idiv0                                     
+0000c7c3  __aeabi_ldiv0                                     
+0000d0e7  __aeabi_ldivmod                                   
+0000dadd  __aeabi_lmul                                      
+0000cfff  __aeabi_memclr                                    
+0000cfff  __aeabi_memclr4                                   
+0000cfff  __aeabi_memclr8                                   
+0000cdcd  __aeabi_memcpy                                    
+0000cdcd  __aeabi_memcpy4                                   
+0000cdcd  __aeabi_memcpy8                                   
+0000d001  __aeabi_memset                                    
+0000d001  __aeabi_memset4                                   
+0000d001  __aeabi_memset8                                   
+0000da55  __aeabi_ui2d                                      
+0000ce69  __aeabi_uldivmod                                  
 ffffffff  __binit__                                         
 ffffffff  __c_args__                                        
-0000b4a1  __mktime64                                        
+0000be91  __mktime64                                        
 UNDEFED   __mpu_init                                        
 20000270  __stack                                           
 20000000  __start___llvm_prf_cnts                           
 20000000  __stop___llvm_prf_cnts                            
-0000cfd5  __time64                                          
-0000cc69  _c_int00_noargs                                   
-0000d104  _ctypes_                                          
-2000292c  _lock                                             
-00008ecf  _nop                                              
+0000dc35  __time64                                          
+0000d89d  _c_int00_noargs                                   
+0000dde0  _ctypes_                                          
+20002964  _lock                                             
+0000977f  _nop                                              
 UNDEFED   _system_post_cinit                                
-0000d0fb  _system_pre_init                                  
-20002910  _tz                                               
-20002930  _unlock                                           
-0000d0ff  abort                                             
+0000ddd7  _system_pre_init                                  
+2000293c  _tz                                               
+20002968  _unlock                                           
+0000dddb  abort                                             
 20001ff0  adc                                               
-0000c8e1  atoi                                              
+2000279d  adc_arr                                           
+0000d4cd  atoi                                              
 ffffffff  binit                                             
 200023bc  cloud_config                                      
-20002924  cnt_gps_1sec                                      
-200028e4  conn_state                                        
+2000295c  cnt_gps_1sec                                      
+2000290c  conn_state                                        
 2000216c  display_tx                                        
 20002494  display_uart_rx                                   
 20001e68  dummy_json_string                                 
 200025d4  e2p_cloud_config                                  
-20002836  e2p_config_time                                   
-200027ec  e2p_device_info                                   
-200027fc  e2p_location_info                                 
-2000283e  e2p_router_config                                 
-2000280c  freq_updated_data                                 
+20002862  e2p_config_time                                   
+20002818  e2p_device_info                                   
+20002828  e2p_location_info                                 
+2000286a  e2p_router_config                                 
+20002838  freq_updated_data                                 
+2000294c  g_bIntFlag                                        
 20000000  g_pfnRAMVectors                                   
 00000000  g_pfnVectors                                      
-200027d8  gprs                                              
-20002856  gprs_date_time                                    
-200028e0  gprs_read_timeout                                 
+20002804  gprs                                              
+20002882  gprs_date_time                                    
+20002908  gprs_read_timeout                                 
 20001a70  gprs_rx_buff                                      
-20002877  gprs_rx_isr_handler                               
+200028a0  gprs_rx_isr_handler                               
 20001c6c  gprs_tx_buff                                      
 200026a4  gps                                               
-20002846  gps_data                                          
-2000285d  gps_date_time                                     
-2000287a  gps_handler_state                                 
-20002920  gps_interval_start                                
-200028dc  gps_read_timeout                                  
-0000cfe5  isdigit                                           
-0000c545  ltoa                                              
-000098b1  main                                              
-200027bc  measurements                                      
-0000cd8b  memcmp                                            
-0000c299  memcpy                                            
-0000c4d3  memset                                            
-20002944  millis_cnt                                        
-2000284e  parmbuf                                           
+20002872  gps_data                                          
+20002889  gps_date_time                                     
+200028a4  gps_handler_state                                 
+20002958  gps_interval_start                                
+20002904  gps_read_timeout                                  
+0000dc45  isdigit                                           
+0000d079  ltoa                                              
+00008265  main                                              
+200027e5  measurements                                      
+0000d9ed  memcmp                                            
+0000cdcd  memcpy                                            
+0000d007  memset                                            
+2000296c  millis_cnt                                        
+2000287a  parmbuf                                           
 20002534  pc_uart_rx                                        
 20002654  pc_uart_tx                                        
 20002767  ram_data                                          
-0000cc9d  rand                                              
-20002874  relay_state                                       
-20002940  save_offline_time                                 
-2000281c  scheduler                                         
-200028c1  server_response_str                               
-0000cdb1  srand                                             
-0000ce95  strcmp                                            
-0000cf59  strcpy                                            
-0000cf6d  strlen                                            
-0000cd5f  strncmp                                           
-0000ccd1  strstr                                            
-2000279d  time_main                                         
-20002864  time_stamp                                        
-20002870  u32DelayCounter                                   
-2000293c  upload_time                                       
-2000287b  voltage_mode                                      
+0000d8d1  rand                                              
+20002801  relay_state                                       
+20002978  save_offline_time                                 
+20002848  scheduler                                         
+200028e9  server_response_str                               
+0000da11  srand                                             
+0000daf5  strcmp                                            
+0000dbb9  strcpy                                            
+0000dbcd  strlen                                            
+0000d9c1  strncmp                                           
+0000d905  strstr                                            
+200027c6  time_main                                         
+20002890  time_stamp                                        
+2000289c  u32DelayCounter                                   
+20002974  upload_time                                       
+200028a5  voltage_mode                                      
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -799,359 +854,386 @@ address   name
 00000000  __TI_static_base__                                
 00000000  g_pfnVectors                                      
 00000279  _Z11TCP_Handlerv                                  
-00000771  _Z20resetTCP_SubHandlersv                         
-00000845  _Z12gprs_connectv                                 
-00000ed1  _Z19gprs_connect_statusv                          
-00001259  _Z11tcp_connectv                                  
-0000164d  _Z15websckt_connectv                              
+00000795  _Z20resetTCP_SubHandlersv                         
+00000865  _Z12gprs_connectv                                 
+000011c9  _Z19gprs_connect_statusv                          
+0000165d  _Z11tcp_connectv                                  
 00001800  __STACK_SIZE                                      
-00001af9  _Z9ping_sendv                                     
-00001ef5  _Z8tcp_sendPci                                    
-000022a1  _Z18websckt_disconnectv                           
-000025a1  _Z14tcp_disconnectv                               
-00002785  _Z12read_ip_portPc                                
-00002895  _Z15match_cpsi_dataPc                             
-00002959  _Z13pong_receivedPc                               
-0000298d  _Z10valid_codePc                                  
-000029e7  _Z12respos_recvdPc                                
-00002a21  _Z15generateMaskKeyPh                             
-00002a61  _Z11get_rx_dataPc                                 
-00002aad  _Z12check_stringPKcPcPi                           
-00002b9d  _Z18check_string_nobufPKc                         
-00002bbd  _Z15set_upload_data13upload_data_t                
-00002bd5  _Z15get_upload_datav                              
-00002bdd  _Z15set_webconn_stsh                              
-00002bf1  _Z15get_webconn_stsv                              
-00002bf7  _Z19set_gprs_connct_stsh                          
-00002c0b  _Z19get_gprs_connct_stsv                          
-00002c13  _Z11setNWstatus13gprs_status_t                    
-00002c27  _Z12getNW_statusv                                 
-00002c2f  _Z15setServerStatus13gprs_status_t                
-00002c43  _Z15getServerStatusv                              
-00002c7d  _Z16update_date_timev                             
-00002dcb  _Z15check_date_timePcS_                           
-00002ea3  _Z18convertToEpochTimePK12time_stamp_t            
-00002f25  _Z10asUnixTimeiiiiii                              
-00002f75  _Z12calcTimeDiff12time_stamp_tS_                  
-000030bf  _Z14getDaysOfMonthcj                              
-00003179  _Z17check_expire_time12time_stamp_tS_             
-00003261  _Z11getDateTimev                                  
-000036b9  _Z7isDT_okv                                       
-00003769  _Z9time_syncv                                     
-0000391d  _Z16get_present_timeP12time_stamp_t               
-0000398d  _Z10update_rtcPci                                 
-00003b15  _Z14StrToTimeStampPh                              
-00003c29  _Z13add_date_timeP12time_stamp_tS0_j              
-00003e6f  _Z12is_leap_yearh                                 
-00003ec5  _Z19check_dateTime_dataP12time_stamp_t            
-00003f4d  _Z12get_locationv                                 
-000041c9  _Z11gps_handlerv                                  
-0000487d  _Z15gps_pkt_parsingP10gps_info_tPc                
-00004ddf  _Z23updateGpsDateTimeToBuffP15gps_date_time_t     
-00004f85  _Z10utcTOlocalP15gps_date_time_t                  
-00005121  _Z14get_gps_statusv                               
-00005131  _Z14set_gps_status12gps_status_t                  
-0000514d  _Z12Query_decodePcPKcS_i                          
-00005263  _Z12server_queryv                                 
-00005499  _Z17prepare_JSON_pcktv                            
-00005a11  _Z23prepare_unsentJSON_pcktv                      
-00005df1  _Z16websocket_packetPh                            
-00005eef  _Z17HandleQueryStatesv                            
-00005f4f  _Z18prepare_server_pktv                           
-00005f91  _Z19set_pending_requestb                          
-00005fa5  _Z19get_pending_requestv                          
-00005fab  _Z10setREQmode13gprs_status_t                     
-00005fbf  _Z10getREQmodev                                   
-00005fc7  _Z16setServerReqType21server_request_type_t       
-00005fdb  _Z16getServerReqTypev                             
-00005fe9  _Z16setClientMSGType21client_message_type_t       
-00005ffd  _Z16getClientMSGTypev                             
-00006035  _Z15flashWriteMR_BRv                              
-000060cd  _Z19updateFlashCurrAddrv                          
-000063e9  _Z25flashGetCurrDataWriteAddrc                    
-0000640f  _Z22flashGetCurrUploadAddrc                       
-0000643d  _Z16flashGetSerMR_BRv                             
-00006477  _Z12flashWriteTRv                                 
-0000659d  _Z16validate_FL_addrcm                            
-000065d5  _Z10clear_logsv                                   
-000065f9  _Z12clear_log_idv                                 
-0000661b  _Z11clear_flashv                                  
-00006679  _Z11get_log_cnti                                  
-000066e1  _Z8get_addrim                                     
-00006735  _Z12get_log_dataimPc                              
-0000677d  _Z27flashEraseFreqUpdDataSectorv                  
-0000679f  _Z27flashClearFreqUpdatedConfigv                  
-000067c3  _Z21flashWriteFreqUpdDataP19freq_updated_data_tm  
-00006805  _Z27flashWriteFreqUpdatedConfigv                  
-0000689b  _Z20flashReadFreqUpdDataP19freq_updated_data_tmi  
-000068c9  _Z21readFreqUpdData_flashv                        
-00006ab1  _Z24decrement_unsent_log_cnti                     
-00006add  _Z24increment_unsent_log_cnti                     
-00006afd  _Z16check_unsent_logv                             
-00006b33  _Z15get_unsent_logsv                              
-00006bf1  _Z23save_OfflineTelecomDatav                      
-00006c69  _Z26prepare_OfflineTelecomDatav                   
-00006d6f  _Z17save_TELECOM_datav                            
-00006e8d  _Z16decodeMsgPC_Uartv                             
-00006eb3  _Z24preparePC_ResponsePacket5cmd_tPchii           
-00006fc1  _Z8response5cmd_ti                                
-000078c7  _Z17tx_pending_dataPCv                            
-000078e5  _Z16set_system_state10sys_mode_t                  
-000078f9  _Z16get_system_statev                             
-00007989  GPIODIntHandler                                   
-000079dd  _Z15vGPIOPortEnablev                              
-00007a91  _Z16vGPIO_UnlockGPIOjh                            
-00007adf  _Z12vLEDGPIOInitv                                 
-00007af5  _Z16vPERIPH_GPIOInitv                             
-00007b3d  _Z18readBCD_SelectorSWv                           
-00007c89  _Z19vInit_InputTestpinsv                          
-00007cad  _Z12vGPIO_Togglejhh                               
-00007cd3  _Z18vInput_PollingReadv                           
-00007d1d  _Z12vEXTIpinInitv                                 
-00007d49  _Z10ToggleLEDsv                                   
-00007d71  _Z19init_ODU_Supplypinsv                          
-00007ddd  _Z11SetODU_Mode14voltage_mode_t                   
-00007f5d  _Z13controlRelaysv                                
-0000819b  _Z14isSupplyStablev                               
-00008235  _Z15vFreqDetectInitv                              
-00008265  _Z15vEarthCheckInitv                              
-00008277  _Z17FREQDetIntHandlerv                            
-000082f5  _Z12vEarthDetectv                                 
-00008319  _Z16ControlODU_Relayh                             
-0000835d  _Z19ControlRouter_Relayh                          
-00008381  _Z28ControlRouterSelection_Relayh                 
-000083a5  _Z16set_router_state18relay_ctrl_state_t          
-000083b9  _Z16get_router_statev                             
-000083d3  _Z26set_router_selection_state18relay_ctrl_state_t
-00008405  _Z26get_router_selection_statev                   
-00008469  _Z14Reset_Hold_Lowv                               
-00008477  _Z15Reset_Hold_Highv                              
-00008485  _Z6WP_Lowv                                        
-00008493  _Z7WP_Highv                                       
-000084a1  _Z17flash_port_assignv                            
-000084ff  _Z15init_flash_pinsv                              
-00008521  _Z9flashInitv                                     
-0000855b  _Z15flashClrTR_Logsv                              
-000085a5  _Z19flashClrFreqUpdLogsv                          
-000085f1  _Z22addDummyFL_TelecomLogsj                       
-0000873b  _Z12flashSwResetv                                 
-00008753  _Z13enable_wp_pinv                                
-00008775  _Z4WRENv                                          
-00008787  _Z4WRDIv                                          
-0000879d  _Z4WRCRc                                          
-000087c1  _Z7CE_Highv                                       
-000087cf  _Z6CE_Lowv                                        
-000087e1  _Z8SCK_Highv                                      
-000087f1  _Z7SCK_Lowv                                       
-00008821  _Z14readContToBuffmjPc                            
-00008895  _Z16flashEraseMasterv                             
-000088dd  _Z11flashCopyMRPcS_                               
-00008919  _Z16flashEraseSectormm                            
-0000897d  _Z16flashEraseBackupv                             
-000089d1  _Z18flashPacketProgramPctm                        
-00008a49  _Z9Wait_Busyv                                     
-00008bff  _Z12Sector_Erasem                                 
-00008c39  _Z23remove_block_protectionv                      
-00008c5b  _Z4WBPRc                                          
-00008cd1  _Z12SetSI_Outputv                                 
-00008cdf  _Z11SetSI_Inputv                                  
-00008cf3  _Z12SetSO_Outputv                                 
-00008d01  _Z11SetSO_Inputv                                  
-00008d0f  _Z6SI_Lowv                                        
-00008d1f  _Z7SI_Highv                                       
-00008d2f  _Z20Read_Status_Registerv                         
-00008d53  _Z9Send_Byteh                                     
-00008e37  _Z8Get_Bytev                                      
-00008eb1  _Z10Chip_Erasev                                   
-00008ecf  _nop                                              
-00008ed1  _Z15vPERIPH_E2PInitv                              
-00008edf  _Z24e2p_write_voltage_configv                     
-00008f1f  _Z23e2p_read_voltage_configv                      
-00008fa9  _Z19e2p_write_cloud_cfgv                          
-00008fd9  _Z18e2p_read_cloud_cfgv                           
-00009063  _Z7get_urlv                                       
-00009067  _Z20e2p_write_device_cfgv                         
-00009097  _Z19e2p_read_device_cfgv                          
-00009121  _Z18e2p_write_locationv                           
-00009175  _Z17e2p_read_locationv                            
-0000920b  _Z18e2p_write_cfg_timev                           
-00009265  _Z17e2p_read_cfg_timev                            
-00009319  _Z7set_urlPc                                      
-000093dd  _Z13set_device_idPc                               
-0000947f  _Z13get_device_idv                                
-000094f1  _Z18set_fixed_locationPc                          
-00009703  _Z18get_fixed_locationv                           
-00009735  _Z17cloud_config_datav                            
-000098b1  main                                              
-00009a21  _Z15update_ram_datav                              
-00009a6b  _Z12setRAM_Alarm16Alarm_sts_bits_tb               
-00009aa3  _Z12getRAM_Alarmv                                 
-00009aa9  _Z13setRAM_Statushb                               
-00009ae1  _Z13getRAM_Statusv                                
-00009ae7  _Z17vPERIPH_ClockInitv                            
-00009af1  _Z26vMAIN_InitClockPeripheralsv                   
-00009b5d  _Z14write_defaultsj                               
-00009ccd  _Z11init_configv                                  
-00009d99  _Z18getRelay_CtrlStatev                           
-00009e81  _Z19update_alarm_statusv                          
-0000a1d5  _Z12ADC_PortIniti                                 
-0000a3bd  _Z9vADC0Initv                                     
-0000a419  _Z7readADCh                                       
-0000a47d  _Z9updateADC14ADC_Channels_th                     
-0000a725  _Z13getODUCurrentv                                
-0000a789  _Z21getRouter1_DC_currentv                        
-0000a7e9  _Z13getODUVoltagev                                
-0000a845  _Z17getBatteryVoltagev                            
-0000a8ad  _Z14getSMPSVoltagev                               
-0000a901  _Z19calculate_PN_AC_ADCv                          
-0000a93b  _Z19calculate_NE_AC_ADCv                          
-0000a975  _Z10GetAdcDatav                                   
-0000a9f5  _Z14vDEBUGUARTInitv                               
-0000aa43  _Z12vLTEUARTInitv                                 
-0000aa9f  _Z16vPERIPH_UARTInitv                             
-0000aaab  DEBUGUARTIntHandler                               
-0000ac35  LTEUARTIntHandler                                 
-0000ac99  _Z13vUART_SendChrjh                               
-0000acb7  _Z13vUART_SendStrjPKh                             
-0000ace5  _Z15vUART_SendBytesjPKhj                          
-0000ad29  _Z13vUART_SendIntji                               
-0000ad55  _Z11Usendbufferj                                  
-0000adcd  _Z23vUART_CheckFrameTimeouti                      
-0000ae65  _Z13flushRxBufferi                                
-0000ae95  _Z13flushTxBufferi                                
-0000aefd  _Z25prepare_graphical_tx_buffjPch                 
-0000afe1  _Z11getChecksumPhc                                
-0000b037  _Z10my_sprintfPciz                                
-0000b1bb  _Z8intToStriPci                                   
-0000b229  _Z7reversePci                                     
-0000b279  _Z13delete_SubStrPcS_c                            
-0000b33d  _Z17generateRandomKeyiPc                          
-0000b3af  _Z25count_doubleSquareBracketPcj                  
-0000b403  _Z11count_commaPct                                
-0000b44b  _Z9my_strstrPKcS0_i                               
-0000b4a1  __mktime64                                        
-0000b759  _Z11vRTCI2CInitv                                  
-0000b7b7  _Z10I2CReceivev                                   
-0000b801  _Z8Read_RTCPhh                                    
-0000b8c9  _Z9Write_RTCPhh                                   
-0000b969  _Z19vPERIPH_SystickInitv                          
-0000b985  SysTickIntHandler                                 
-0000baa3  _Z13vMAIN_DelayMSj                                
-0000bac1  _Z9my_millisv                                     
-0000bb09  GPIOPadConfigSet                                  
-0000bc75  __aeabi_ddiv                                      
-0000bdab  __aeabi_idiv0                                     
-0000bdab  __aeabi_ldiv0                                     
-0000bdad  _Z15manage_gps_gprsv                              
-0000becd  SysCtlClockGet                                    
-0000bfe5  __aeabi_dmul                                      
-0000c0e1  SysCtlClockSet                                    
-0000c1d5  EEPROMProgram                                     
-0000c299  __aeabi_memcpy                                    
-0000c299  __aeabi_memcpy4                                   
-0000c299  __aeabi_memcpy8                                   
-0000c299  memcpy                                            
-0000c335  __aeabi_uldivmod                                  
-0000c3cb  __aeabi_cdcmpeq                                   
-0000c3cb  __aeabi_cdcmple                                   
-0000c451  ADCSequenceStepConfigure                          
-0000c4cb  __aeabi_memclr                                    
-0000c4cb  __aeabi_memclr4                                   
-0000c4cb  __aeabi_memclr8                                   
-0000c4cd  __aeabi_memset                                    
-0000c4cd  __aeabi_memset4                                   
-0000c4cd  __aeabi_memset8                                   
-0000c4d3  memset                                            
-0000c545  ltoa                                              
-0000c5b3  __aeabi_ldivmod                                   
-0000c621  IntEnable                                         
-0000c689  __TI_decompress_lzss                              
-0000c6f1  HOSTtime64                                        
-0000c751  GPIOIntTypeSet                                    
-0000c7a9  SysCtlPeripheralReset                             
-0000c7f9  ADCSequenceConfigure                              
-0000c849  GPIOPinConfigure                                  
-0000c895  I2CMasterInitExpClk                               
-0000c8e1  atoi                                              
-0000c92d  UARTConfigSetExpClk                               
-0000c9b9  __TI_auto_init_nobinit_nopinit                    
-0000c9fd  __aeabi_d2uiz                                     
-0000ca41  EEPROMInit                                        
-0000cabd  EEPROMRead                                        
-0000caf5  SysCtlPeripheralReady                             
-0000cb2d  __TI_writemsg                                     
-0000cb5b  C$$IO$$                                           
-0000cb65  IntRegister                                       
-0000cb99  SysCtlPeripheralDisable                           
-0000cbcd  SysCtlPeripheralEnable                            
-0000cc35  __TI_readmsg                                      
-0000cc69  _c_int00_noargs                                   
-0000cc9d  rand                                              
-0000ccd1  strstr                                            
-0000cd05  ADCIntStatus                                      
-0000cd33  GPIODirModeSet                                    
-0000cd5f  strncmp                                           
-0000cd8b  memcmp                                            
-0000cdb1  srand                                             
-0000cdd5  UARTDisable                                       
-0000cdf5  __aeabi_ui2d                                      
-0000ce15  ADCSequenceDataGet                                
-0000ce33  GPIOPinTypeGPIOOutput                             
-0000ce4d  ADCProcessorTrigger                               
-0000ce65  GPIOIntRegister                                   
-0000ce7d  __aeabi_lmul                                      
-0000ce95  strcmp                                            
-0000cead  GPIOPinTypeADC                                    
-0000cec3  GPIOPinTypeGPIOInput                              
-0000ced9  GPIOPinTypeI2C                                    
-0000ceef  GPIOPinTypeI2CSCL                                 
-0000cf05  GPIOPinTypeUART                                   
-0000cf1d  SysTickEnable                                     
-0000cf31  SysTickIntEnable                                  
-0000cf45  UARTEnable                                        
-0000cf59  strcpy                                            
-0000cf6d  strlen                                            
-0000cf81  _Z3absl                                           
-0000cf93  IntMasterEnable                                   
-0000cfa5  SysCtlReset                                       
-0000cfb5  SysTickPeriodSet                                  
-0000cfd5  __time64                                          
-0000cfe5  isdigit                                           
-0000cff5  ADCSequenceEnable                                 
-0000d003  GPIOIntStatus                                     
-0000d011  I2CRxFIFOFlush                                    
-0000d01f  I2CTxFIFOFlush                                    
-0000d02d  UARTCharGetNonBlocking                            
-0000d03b  UARTCharPutNonBlocking                            
-0000d049  UARTCharsAvail                                    
-0000d057  __TI_decompress_none                              
-0000d065  CPUcpsie                                          
-0000d071  GPIOIntEnable                                     
-0000d07d  __TI_zero_init                                    
-0000d089  ResetISR                                          
-0000d095  ADCIntClear                                       
-0000d09f  I2CMasterEnable                                   
-0000d0a9  UARTIntStatus                                     
-0000d0b3  I2CMasterBusy                                     
-0000d0bb  I2CMasterSlaveAddrSet                             
-0000d0c3  UARTBusy                                          
-0000d0cb  UARTIntEnable                                     
-0000d0d3  GPIOIntClear                                      
-0000d0d9  GPIOPinRead                                       
-0000d0df  GPIOPinWrite                                      
-0000d0e5  SysCtlDelay                                       
-0000d0eb  I2CMasterControl                                  
-0000d0ef  I2CMasterDataGet                                  
-0000d0f3  I2CMasterDataPut                                  
-0000d0f7  UARTIntClear                                      
-0000d0fb  _system_pre_init                                  
-0000d0ff  C$$EXIT                                           
-0000d0ff  abort                                             
-0000d104  _ctypes_                                          
-0000d608  __TI_Handler_Table_Base                           
-0000d614  __TI_Handler_Table_Limit                          
-0000d628  __TI_CINIT_Base                                   
-0000d640  __TI_CINIT_Limit                                  
+00001c01  _Z15websckt_connectv                              
+00002259  _Z9ping_sendv                                     
+00002779  _Z8tcp_sendPci                                    
+00002c59  _Z18websckt_disconnectv                           
+00002f5d  _Z14tcp_disconnectv                               
+0000313d  _Z12read_ip_portPc                                
+0000324d  _Z15match_cpsi_dataPc                             
+00003311  _Z13pong_receivedPc                               
+00003355  _Z10valid_codePc                                  
+000033af  _Z12respos_recvdPc                                
+000033e9  _Z15generateMaskKeyPh                             
+00003429  _Z11get_rx_dataPc                                 
+00003475  _Z12check_stringPKcPcPi                           
+00003569  _Z18check_string_nobufPKc                         
+00003589  _Z15set_upload_data13upload_data_t                
+0000359d  _Z15get_upload_datav                              
+000035a5  _Z15set_webconn_stsh                              
+000035b9  _Z15get_webconn_stsv                              
+000035d1  _Z19set_gprs_connct_stsh                          
+000035e7  _Z19get_gprs_connct_stsv                          
+000035ed  _Z11setNWstatus13gprs_status_t                    
+00003601  _Z12getNW_statusv                                 
+00003609  _Z15setServerStatus13gprs_status_t                
+0000361d  _Z15getServerStatusv                              
+00003655  _Z16update_date_timev                             
+000037a3  _Z15check_date_timePcS_                           
+0000387b  _Z18convertToEpochTimePK12time_stamp_t            
+000038fd  _Z10asUnixTimeiiiiii                              
+0000394d  _Z12calcTimeDiff12time_stamp_tS_                  
+00003a97  _Z14getDaysOfMonthcj                              
+00003b51  _Z17check_expire_time12time_stamp_tS_             
+00003c39  _Z11getDateTimev                                  
+00004091  _Z7isDT_okv                                       
+00004141  _Z9time_syncv                                     
+000042f5  _Z16get_present_timeP12time_stamp_t               
+00004365  _Z10update_rtcPci                                 
+000044ed  _Z14StrToTimeStampPh                              
+00004601  _Z13add_date_timeP12time_stamp_tS0_j              
+00004847  _Z12is_leap_yearh                                 
+0000489d  _Z19check_dateTime_dataP12time_stamp_t            
+00004925  _Z12get_locationv                                 
+00004ba1  _Z11gps_handlerv                                  
+00005255  _Z15gps_pkt_parsingP10gps_info_tPc                
+000057b7  _Z23updateGpsDateTimeToBuffP15gps_date_time_t     
+0000595d  _Z10utcTOlocalP15gps_date_time_t                  
+00005af9  _Z14get_gps_statusv                               
+00005b09  _Z14set_gps_status12gps_status_t                  
+00005b25  _Z15flashWriteMR_BRv                              
+00005bbd  _Z19updateFlashCurrAddrv                          
+00005ed9  _Z25flashGetCurrDataWriteAddrc                    
+00005eff  _Z22flashGetCurrUploadAddrc                       
+00005f2d  _Z16flashGetSerMR_BRv                             
+00005f67  _Z12flashWriteTRv                                 
+0000608d  _Z16validate_FL_addrcm                            
+000060c5  _Z10clear_logsv                                   
+000060e9  _Z12clear_log_idv                                 
+0000610b  _Z11clear_flashv                                  
+00006169  _Z11get_log_cnti                                  
+000061d1  _Z8get_addrim                                     
+00006225  _Z12get_log_dataimPc                              
+0000626d  _Z27flashEraseFreqUpdDataSectorv                  
+0000628f  _Z27flashClearFreqUpdatedConfigv                  
+000062b3  _Z21flashWriteFreqUpdDataP19freq_updated_data_tm  
+000062f5  _Z27flashWriteFreqUpdatedConfigv                  
+0000638b  _Z20flashReadFreqUpdDataP19freq_updated_data_tmi  
+000063b9  _Z21readFreqUpdData_flashv                        
+000065a1  _Z24decrement_unsent_log_cnti                     
+000065cd  _Z24increment_unsent_log_cnti                     
+000065ed  _Z16check_unsent_logv                             
+00006623  _Z15get_unsent_logsv                              
+000066e1  _Z23save_OfflineTelecomDatav                      
+00006759  _Z26prepare_OfflineTelecomDatav                   
+0000685f  _Z17save_TELECOM_datav                            
+0000697d  _Z12Query_decodePcPKcS_i                          
+00006a93  _Z12server_queryv                                 
+00006bd1  _Z17prepare_JSON_pcktv                            
+00007141  _Z23prepare_unsentJSON_pcktv                      
+00007521  _Z16websocket_packetPh                            
+0000761f  _Z17HandleQueryStatesv                            
+0000767f  _Z18prepare_server_pktv                           
+000076c1  _Z19set_pending_requestb                          
+000076d5  _Z19get_pending_requestv                          
+000076db  _Z10setREQmode13gprs_status_t                     
+000076ef  _Z10getREQmodev                                   
+000076f7  _Z16setServerReqType21server_request_type_t       
+0000770b  _Z16getServerReqTypev                             
+00007719  _Z16setClientMSGType21client_message_type_t       
+0000772d  _Z16getClientMSGTypev                             
+00007765  GPIODIntHandler                                   
+000077b9  _Z15vGPIOPortEnablev                              
+0000786d  _Z16vGPIO_UnlockGPIOjh                            
+000078bb  _Z12vLEDGPIOInitv                                 
+000078d1  _Z16vPERIPH_GPIOInitv                             
+00007915  _Z18readBCD_SelectorSWv                           
+00007a61  _Z19vInit_InputTestpinsv                          
+00007a85  _Z12vGPIO_Togglejhh                               
+00007aab  _Z18vInput_PollingReadv                           
+00007af5  _Z12vEXTIpinInitv                                 
+00007b21  _Z10ToggleLEDsv                                   
+00007b49  _Z19init_ODU_Supplypinsv                          
+00007bb5  _Z11SetODU_Mode14voltage_mode_t                   
+00007d35  _Z13controlRelaysv                                
+00007f73  _Z14isSupplyStablev                               
+0000800d  _Z15vFreqDetectInitv                              
+0000803d  _Z15vEarthCheckInitv                              
+0000805d  _Z17FREQDetIntHandlerv                            
+000080f9  _Z12vEarthDetectv                                 
+00008129  _Z16ControlODU_Relayh                             
+00008153  _Z19ControlRouter_Relayh                          
+00008177  _Z28ControlRouterSelection_Relayh                 
+000081af  _Z16set_router_state18relay_ctrl_state_t          
+000081e1  _Z16get_router_statev                             
+0000820f  _Z26set_router_selection_state18relay_ctrl_state_t
+00008223  _Z26get_router_selection_statev                   
+00008265  main                                              
+00008401  _Z15update_ram_datav                              
+0000844b  _Z12setRAM_Alarm16Alarm_sts_bits_tb               
+00008483  _Z12getRAM_Alarmv                                 
+00008489  _Z13setRAM_Statushb                               
+000084c1  _Z13getRAM_Statusv                                
+000084c7  _Z17vPERIPH_ClockInitv                            
+000084f5  _Z26vMAIN_InitClockPeripheralsv                   
+00008629  _Z14write_defaultsj                               
+000087b9  _Z11init_configv                                  
+000088ed  _Z18getRelay_CtrlStatev                           
+000089bd  _Z19update_alarm_statusv                          
+00008c89  _Z12getRSTreasonv                                 
+00008d19  _Z14Reset_Hold_Lowv                               
+00008d27  _Z15Reset_Hold_Highv                              
+00008d35  _Z6WP_Lowv                                        
+00008d43  _Z7WP_Highv                                       
+00008d51  _Z17flash_port_assignv                            
+00008daf  _Z15init_flash_pinsv                              
+00008dd1  _Z9flashInitv                                     
+00008e0b  _Z15flashClrTR_Logsv                              
+00008e55  _Z19flashClrFreqUpdLogsv                          
+00008ea1  _Z22addDummyFL_TelecomLogsj                       
+00008feb  _Z12flashSwResetv                                 
+00009003  _Z13enable_wp_pinv                                
+00009025  _Z4WRENv                                          
+00009037  _Z4WRDIv                                          
+0000904d  _Z4WRCRc                                          
+00009071  _Z7CE_Highv                                       
+0000907f  _Z6CE_Lowv                                        
+00009091  _Z8SCK_Highv                                      
+000090a1  _Z7SCK_Lowv                                       
+000090d1  _Z14readContToBuffmjPc                            
+00009145  _Z16flashEraseMasterv                             
+0000918d  _Z11flashCopyMRPcS_                               
+000091c9  _Z16flashEraseSectormm                            
+0000922d  _Z16flashEraseBackupv                             
+00009281  _Z18flashPacketProgramPctm                        
+000092f9  _Z9Wait_Busyv                                     
+000094af  _Z12Sector_Erasem                                 
+000094e9  _Z23remove_block_protectionv                      
+0000950b  _Z4WBPRc                                          
+00009581  _Z12SetSI_Outputv                                 
+0000958f  _Z11SetSI_Inputv                                  
+000095a3  _Z12SetSO_Outputv                                 
+000095b1  _Z11SetSO_Inputv                                  
+000095bf  _Z6SI_Lowv                                        
+000095cf  _Z7SI_Highv                                       
+000095df  _Z20Read_Status_Registerv                         
+00009603  _Z9Send_Byteh                                     
+000096e7  _Z8Get_Bytev                                      
+00009761  _Z10Chip_Erasev                                   
+0000977f  _nop                                              
+00009781  _Z16decodeMsgPC_Uartv                             
+000097a7  _Z24preparePC_ResponsePacket5cmd_tPchii           
+000098b5  _Z8response5cmd_ti                                
+0000a0a7  _Z17tx_pending_dataPCv                            
+0000a0c9  _Z16set_system_state10sys_mode_t                  
+0000a0dd  _Z16get_system_statev                             
+0000a169  _Z15vPERIPH_E2PInitv                              
+0000a177  _Z24e2p_write_voltage_configv                     
+0000a1b7  _Z23e2p_read_voltage_configv                      
+0000a241  _Z19e2p_write_cloud_cfgv                          
+0000a271  _Z18e2p_read_cloud_cfgv                           
+0000a2fb  _Z7get_urlv                                       
+0000a2ff  _Z20e2p_write_device_cfgv                         
+0000a32f  _Z19e2p_read_device_cfgv                          
+0000a3b9  _Z18e2p_write_locationv                           
+0000a40d  _Z17e2p_read_locationv                            
+0000a4a3  _Z18e2p_write_cfg_timev                           
+0000a4fd  _Z17e2p_read_cfg_timev                            
+0000a5b1  _Z7set_urlPc                                      
+0000a675  _Z13set_device_idPc                               
+0000a717  _Z13get_device_idv                                
+0000a789  _Z18set_fixed_locationPc                          
+0000a99b  _Z18get_fixed_locationv                           
+0000a9cd  _Z17cloud_config_datav                            
+0000ab49  _Z12ADC_PortIniti                                 
+0000ad31  _Z9vADC0Initv                                     
+0000ad87  _Z7readADCh                                       
+0000ade9  _Z9updateADC14ADC_Channels_th                     
+0000b091  _Z13getODUCurrentv                                
+0000b0f5  _Z21getRouter1_DC_currentv                        
+0000b155  _Z13getODUVoltagev                                
+0000b1b1  _Z17getBatteryVoltagev                            
+0000b219  _Z14getSMPSVoltagev                               
+0000b26d  _Z19calculate_PN_AC_ADCv                          
+0000b2a5  _Z19calculate_NE_AC_ADCv                          
+0000b2df  _Z13readACVoltagev                                
+0000b2ff  _Z10GetAdcDatav                                   
+0000b39d  _Z14vDEBUGUARTInitv                               
+0000b3eb  _Z12vLTEUARTInitv                                 
+0000b447  _Z16vPERIPH_UARTInitv                             
+0000b453  DEBUGUARTIntHandler                               
+0000b5dd  LTEUARTIntHandler                                 
+0000b641  _Z13vUART_SendChrjh                               
+0000b65f  _Z13vUART_SendStrjPKh                             
+0000b68d  _Z15vUART_SendBytesjPKhj                          
+0000b6d1  _Z13vUART_SendIntji                               
+0000b6fd  _Z11Usendbufferj                                  
+0000b775  _Z23vUART_CheckFrameTimeouti                      
+0000b80d  _Z13flushRxBufferi                                
+0000b83d  _Z13flushTxBufferi                                
+0000b8a5  _Z25prepare_graphical_tx_buffjPch                 
+0000b989  _Z11getChecksumPhc                                
+0000b9df  _Z10my_sprintfPciz                                
+0000bb63  _Z8intToStriPci                                   
+0000bbd1  _Z7reversePci                                     
+0000bc21  _Z13delete_SubStrPcS_c                            
+0000bce5  _Z17generateRandomKeyiPc                          
+0000bd57  _Z25count_doubleSquareBracketPcj                  
+0000bdab  _Z11count_commaPct                                
+0000bdf3  _Z9my_strstrPKcS0_i                               
+0000be41  _Z7findMaxPii                                     
+0000be91  __mktime64                                        
+0000c149  _Z11vRTCI2CInitv                                  
+0000c1a7  _Z10I2CReceivev                                   
+0000c1f1  _Z8Read_RTCPhh                                    
+0000c2b9  _Z9Write_RTCPhh                                   
+0000c359  _Z19vPERIPH_SystickInitv                          
+0000c375  SysTickIntHandler                                 
+0000c4ad  _Z13vMAIN_DelayMSj                                
+0000c4cb  _Z9my_millisv                                     
+0000c521  GPIOPadConfigSet                                  
+0000c68d  __aeabi_ddiv                                      
+0000c7c3  __aeabi_idiv0                                     
+0000c7c3  __aeabi_ldiv0                                     
+0000c7c5  _Z15manage_gps_gprsv                              
+0000c8e5  WatchdogIntHandler                                
+0000c917  _Z7initWDTv                                       
+0000c981  _Z16reset_controllerv                             
+0000c9b3  _Z7feedWDTv                                       
+0000c9c5  _Z15setWDTreset_flgb                              
+0000c9d9  _Z15getWDTreset_flgv                              
+0000ca01  SysCtlClockGet                                    
+0000cb19  __aeabi_dmul                                      
+0000cc15  SysCtlClockSet                                    
+0000cd09  EEPROMProgram                                     
+0000cdcd  __aeabi_memcpy                                    
+0000cdcd  __aeabi_memcpy4                                   
+0000cdcd  __aeabi_memcpy8                                   
+0000cdcd  memcpy                                            
+0000ce69  __aeabi_uldivmod                                  
+0000ceff  __aeabi_cdcmpeq                                   
+0000ceff  __aeabi_cdcmple                                   
+0000cf85  ADCSequenceStepConfigure                          
+0000cfff  __aeabi_memclr                                    
+0000cfff  __aeabi_memclr4                                   
+0000cfff  __aeabi_memclr8                                   
+0000d001  __aeabi_memset                                    
+0000d001  __aeabi_memset4                                   
+0000d001  __aeabi_memset8                                   
+0000d007  memset                                            
+0000d079  ltoa                                              
+0000d0e7  __aeabi_ldivmod                                   
+0000d155  IntEnable                                         
+0000d1bd  __TI_decompress_lzss                              
+0000d225  HOSTtime64                                        
+0000d285  TimerConfigure                                    
+0000d2e5  GPIOIntTypeSet                                    
+0000d33d  _Z10vTimerInitv                                   
+0000d377  TimerIntHandler                                   
+0000d395  SysCtlPeripheralReset                             
+0000d3e5  ADCSequenceConfigure                              
+0000d435  GPIOPinConfigure                                  
+0000d481  I2CMasterInitExpClk                               
+0000d4cd  atoi                                              
+0000d519  __aeabi_d2iz                                      
+0000d561  UARTConfigSetExpClk                               
+0000d5ed  __TI_auto_init_nobinit_nopinit                    
+0000d631  __aeabi_d2uiz                                     
+0000d675  EEPROMInit                                        
+0000d6f1  EEPROMRead                                        
+0000d729  SysCtlPeripheralReady                             
+0000d761  __TI_writemsg                                     
+0000d78f  C$$IO$$                                           
+0000d799  IntRegister                                       
+0000d7cd  SysCtlPeripheralDisable                           
+0000d801  SysCtlPeripheralEnable                            
+0000d869  __TI_readmsg                                      
+0000d89d  _c_int00_noargs                                   
+0000d8d1  rand                                              
+0000d905  strstr                                            
+0000d939  ADCIntStatus                                      
+0000d967  __aeabi_i2d                                       
+0000d995  GPIODirModeSet                                    
+0000d9c1  strncmp                                           
+0000d9ed  memcmp                                            
+0000da11  srand                                             
+0000da35  UARTDisable                                       
+0000da55  __aeabi_ui2d                                      
+0000da75  ADCSequenceDataGet                                
+0000da93  GPIOPinTypeGPIOOutput                             
+0000daad  ADCProcessorTrigger                               
+0000dac5  GPIOIntRegister                                   
+0000dadd  __aeabi_lmul                                      
+0000daf5  strcmp                                            
+0000db0d  GPIOPinTypeADC                                    
+0000db23  GPIOPinTypeGPIOInput                              
+0000db39  GPIOPinTypeI2C                                    
+0000db4f  GPIOPinTypeI2CSCL                                 
+0000db65  GPIOPinTypeUART                                   
+0000db7d  SysTickEnable                                     
+0000db91  SysTickIntEnable                                  
+0000dba5  UARTEnable                                        
+0000dbb9  strcpy                                            
+0000dbcd  strlen                                            
+0000dbe1  TimerLoadSet                                      
+0000dbf3  _Z3absl                                           
+0000dc05  IntMasterEnable                                   
+0000dc15  SysTickPeriodSet                                  
+0000dc35  __time64                                          
+0000dc45  isdigit                                           
+0000dc55  ADCSequenceEnable                                 
+0000dc63  GPIOIntStatus                                     
+0000dc71  I2CRxFIFOFlush                                    
+0000dc7f  I2CTxFIFOFlush                                    
+0000dc8d  TimerEnable                                       
+0000dc9b  UARTCharGetNonBlocking                            
+0000dca9  UARTCharPutNonBlocking                            
+0000dcb7  UARTCharsAvail                                    
+0000dcc5  WatchdogLockState                                 
+0000dcd3  __TI_decompress_none                              
+0000dce1  CPUcpsie                                          
+0000dced  GPIOIntEnable                                     
+0000dcf9  SysCtlResetCauseGet                               
+0000dd05  WatchdogIntTypeSet                                
+0000dd11  WatchdogUnlock                                    
+0000dd1d  __TI_zero_init                                    
+0000dd29  ResetISR                                          
+0000dd35  ADCIntClear                                       
+0000dd3f  I2CMasterEnable                                   
+0000dd49  UARTIntStatus                                     
+0000dd53  WatchdogEnable                                    
+0000dd5d  WatchdogIntEnable                                 
+0000dd67  WatchdogResetEnable                               
+0000dd71  I2CMasterBusy                                     
+0000dd79  I2CMasterSlaveAddrSet                             
+0000dd81  TimerIntEnable                                    
+0000dd89  UARTBusy                                          
+0000dd91  UARTIntEnable                                     
+0000dd99  WatchdogLock                                      
+0000dda1  GPIOIntClear                                      
+0000dda7  GPIOPinRead                                       
+0000ddad  GPIOPinWrite                                      
+0000ddb3  SysCtlDelay                                       
+0000ddb9  WatchdogIntClear                                  
+0000ddbf  I2CMasterControl                                  
+0000ddc3  I2CMasterDataGet                                  
+0000ddc7  I2CMasterDataPut                                  
+0000ddcb  TimerIntClear                                     
+0000ddcf  UARTIntClear                                      
+0000ddd3  WatchdogReloadSet                                 
+0000ddd7  _system_pre_init                                  
+0000dddb  C$$EXIT                                           
+0000dddb  abort                                             
+0000dde0  _ctypes_                                          
+0000e2e0  __TI_Handler_Table_Base                           
+0000e2ec  __TI_Handler_Table_Limit                          
+0000e300  __TI_CINIT_Base                                   
+0000e318  __TI_CINIT_Limit                                  
 20000000  __start___llvm_prf_cnts                           
 20000000  __stop___llvm_prf_cnts                            
 20000000  g_pfnRAMVectors                                   
@@ -1174,43 +1256,47 @@ address   name
 200026e7  FLR_log_data                                      
 20002727  FL_log_data                                       
 20002767  ram_data                                          
-2000279d  time_main                                         
-200027bc  measurements                                      
-200027d8  gprs                                              
-200027ec  e2p_device_info                                   
-200027fc  e2p_location_info                                 
-2000280c  freq_updated_data                                 
-2000281c  scheduler                                         
-2000282a  Alarms                                            
-20002836  e2p_config_time                                   
-2000283e  e2p_router_config                                 
-20002846  gps_data                                          
-2000284e  parmbuf                                           
-20002856  gprs_date_time                                    
-2000285d  gps_date_time                                     
-20002864  time_stamp                                        
-2000286a  Telecom_server_query                              
-2000286e  EXTI_cnt                                          
-20002870  u32DelayCounter                                   
-20002874  relay_state                                       
-20002877  gprs_rx_isr_handler                               
-20002879  System_mode                                       
-2000287a  gps_handler_state                                 
-2000287b  voltage_mode                                      
-200028c1  server_response_str                               
-200028dc  gps_read_timeout                                  
-200028e0  gprs_read_timeout                                 
-200028e4  conn_state                                        
-200028f0  PN_ADC_RAW_MAX                                    
-200028f8  NE_ADC_RAW_MAX                                    
-20002910  _tz                                               
-20002920  gps_interval_start                                
-20002924  cnt_gps_1sec                                      
-2000292c  _lock                                             
-20002930  _unlock                                           
-2000293c  upload_time                                       
-20002940  save_offline_time                                 
-20002944  millis_cnt                                        
+2000279d  adc_arr                                           
+200027c6  time_main                                         
+200027e5  measurements                                      
+20002801  relay_state                                       
+20002804  gprs                                              
+20002818  e2p_device_info                                   
+20002828  e2p_location_info                                 
+20002838  freq_updated_data                                 
+20002848  scheduler                                         
+20002856  Alarms                                            
+20002862  e2p_config_time                                   
+2000286a  e2p_router_config                                 
+20002872  gps_data                                          
+2000287a  parmbuf                                           
+20002882  gprs_date_time                                    
+20002889  gps_date_time                                     
+20002890  time_stamp                                        
+20002896  Telecom_server_query                              
+2000289a  EXTI_cnt                                          
+2000289c  u32DelayCounter                                   
+200028a0  gprs_rx_isr_handler                               
+200028a2  System_mode                                       
+200028a3  WDT                                               
+200028a4  gps_handler_state                                 
+200028a5  voltage_mode                                      
+200028e9  server_response_str                               
+20002904  gps_read_timeout                                  
+20002908  gprs_read_timeout                                 
+2000290c  conn_state                                        
+20002918  PN_ADC_RAW_MAX                                    
+20002920  NE_ADC_RAW_MAX                                    
+2000293c  _tz                                               
+2000294c  g_bIntFlag                                        
+20002958  gps_interval_start                                
+2000295c  cnt_gps_1sec                                      
+20002964  _lock                                             
+20002968  _unlock                                           
+2000296c  millis_cnt                                        
+20002970  ACVoltReadMillis                                  
+20002974  upload_time                                       
+20002978  save_offline_time                                 
 ffffffff  __TI_pprof_out_hndl                               
 ffffffff  __TI_prof_data_size                               
 ffffffff  __TI_prof_data_start                              
@@ -1220,4 +1306,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                                        
 UNDEFED   _system_post_cinit                                
 
-[423 symbols]
+[454 symbols]

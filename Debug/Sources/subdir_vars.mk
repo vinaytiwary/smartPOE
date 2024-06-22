@@ -27,7 +27,8 @@ CPP_SRCS += \
 ../Sources/flash_logger.cpp \
 ../Sources/gprs.cpp \
 ../Sources/gps.cpp \
-../Sources/main.cpp 
+../Sources/main.cpp \
+../Sources/tiot_timer.cpp 
 
 OBJS += \
 ./Sources/ADC_Core.obj \
@@ -51,7 +52,8 @@ OBJS += \
 ./Sources/flash_logger.obj \
 ./Sources/gprs.obj \
 ./Sources/gps.obj \
-./Sources/main.obj 
+./Sources/main.obj \
+./Sources/tiot_timer.obj 
 
 CPP_DEPS += \
 ./Sources/ADC_Core.d \
@@ -75,7 +77,8 @@ CPP_DEPS += \
 ./Sources/flash_logger.d \
 ./Sources/gprs.d \
 ./Sources/gps.d \
-./Sources/main.d 
+./Sources/main.d \
+./Sources/tiot_timer.d 
 
 OBJS__QUOTED += \
 "Sources\ADC_Core.obj" \
@@ -99,7 +102,8 @@ OBJS__QUOTED += \
 "Sources\flash_logger.obj" \
 "Sources\gprs.obj" \
 "Sources\gps.obj" \
-"Sources\main.obj" 
+"Sources\main.obj" \
+"Sources\tiot_timer.obj" 
 
 CPP_DEPS__QUOTED += \
 "Sources\ADC_Core.d" \
@@ -123,7 +127,8 @@ CPP_DEPS__QUOTED += \
 "Sources\flash_logger.d" \
 "Sources\gprs.d" \
 "Sources\gps.d" \
-"Sources\main.d" 
+"Sources\main.d" \
+"Sources\tiot_timer.d" 
 
 CPP_SRCS__QUOTED += \
 "../Sources/ADC_Core.cpp" \
@@ -147,6 +152,7 @@ CPP_SRCS__QUOTED += \
 "../Sources/flash_logger.cpp" \
 "../Sources/gprs.cpp" \
 "../Sources/gps.cpp" \
-"../Sources/main.cpp" 
+"../Sources/main.cpp" \
+"../Sources/tiot_timer.cpp" 
 
 

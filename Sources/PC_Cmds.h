@@ -32,9 +32,11 @@ typedef enum
 	SET_DEVICE_ID      = 0x04,
 	GET_DEVICE_ID      = 0x05,
     SET_FIXED_LOC      = 0x06,
-    GET_FIXED_LOC      = 0x07,	
+    GET_FIXED_LOC      = 0x07,
+#if 0	
     SET_ROUTER_CFG     = 0x08,
     GET_ROUTER_CFG     = 0x09,
+#endif //if 0
     SET_LCD_UPD_TIME   = 0x0A,  
     GET_LCD_UPD_TIME   = 0x0B, 
     SET_CURRENT_LOC    = 0x0C,

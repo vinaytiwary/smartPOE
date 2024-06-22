@@ -143,6 +143,12 @@ typedef struct
 	uint32_t NE_AC_Voltage;	
 }__attribute__((packed))measurements_t;
 
+typedef struct
+{
+    int collectSamples[10];
+    uint8_t index;
+}__attribute__((packed))adc_arr_t;
+
 void ADC_PortInit(int num);
 
 void vADC0Init(void);
@@ -170,6 +176,7 @@ uint32_t calculate_PN_AC_ADC(void);
 uint32_t calculate_NE_AC_ADC(void);
 
 void GetAdcData(void);
+void readACVoltage();
 
 #if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG

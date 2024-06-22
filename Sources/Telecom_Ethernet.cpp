@@ -445,6 +445,7 @@ void ethernet_handler(void)
                     if(check_unsent_log())  //PP added on 11-06-24
                     {
                         decrement_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
+                        set_pending_request(false);
                     }
 #endif  //FLASH_EN
 

@@ -253,6 +253,7 @@ gps_status_t gps_handler(void)
             {
                 gps_wait_timeout = 0;
                 gps_retry_cnt = 0;
+                set_gps_status(NOT_AVBL);
 
                 gps_handler_state = GPS_CMD_ECHO_OFF;
             }
@@ -261,6 +262,7 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_ECHO_OFF:
         {
+            set_gps_status(NOT_AVBL);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -386,6 +388,7 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_POWER:
         {
+            set_gps_status(NOT_AVBL);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -607,6 +610,7 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_LOCATION:
         {
+            set_gps_status(NOT_AVBL);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -734,6 +738,7 @@ gps_status_t gps_handler(void)
                             get_location();
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
+                            set_gps_status(AVBL);
 // #ifdef DEBUG_GPS_HANDLER
 //                             vUART_SendStr(DEBUG_UART_BASE, "\ngotGPS:");
 //                             vUART_SendInt(DEBUG_UART_BASE, gps_interval_start);
@@ -811,6 +816,7 @@ gps_status_t gps_handler(void)
 
         case GPS_CMD_POWER_OFF:
         {
+            set_gps_status(NOT_AVBL);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -1808,12 +1814,12 @@ void utcTOlocal(gps_date_time_t *timeT)
 	}
 }
 
-gps_status_t get_gps_status()
+gprs_status_t get_gps_status()
 {
     return gps.gps_status;
 }
 
-void set_gps_status(gps_status_t sts)
+void set_gps_status(gprs_status_t sts)
 {
     gps.gps_status = sts;
 }

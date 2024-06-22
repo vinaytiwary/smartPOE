@@ -36,4 +36,6 @@ unsigned int count_comma(char *arr, uint16_t max_len);
 
 char *my_strstr(const char *haystack, const char *needle, int haystack_len);
 
+int findMax(int arr[], int size);
+
 #endif /* SOURCES__COMMON_H_ */

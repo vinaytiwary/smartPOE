@@ -7,6 +7,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <driverlib/interrupt.h>
+#include <driverlib/timer.h>
+#include <math.h>
+#include <Sources/SysTick_Timer.h>
 
 #include "driverlib/adc.h"
 #include "inc/TM4C1233E6PZ.h"
@@ -19,8 +23,10 @@
 
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
-volatile double PN_ADC_RAW_MAX = 0.000;
+adc_arr_t adc_arr;
+volatile double PN_ADC_RAW_MAX = 0.0f;
 volatile double NE_ADC_RAW_MAX = 0.000;
+extern volatile uint32_t millis_cnt;
 
 #ifdef ADC_EN
 
@@ -206,7 +212,7 @@ void vADC0Init(void)
     ADC_PortInit(SIG_BATTERY_VOLT_ADC);
     ADC_PortInit(SIG_12V_IN_ADC);
 #if HW_BOARD == TIOT_V2_00_BOARD
-    ADC_PortInit(SIG_EARTH_VTG_ADC);
+//    ADC_PortInit(SIG_EARTH_VTG_ADC);
 #endif  //HW_BOARD == TIOT_V2_00_BOARD
 
     // Enable sample sequence 3 with a processor signal trigger.  Sequence 3
@@ -253,6 +259,7 @@ uint32_t readADC(uint8_t seqno)
 {
     uint32_t adc_value,pui32ADC0Value[1];
     ADC0_SSMUX3_R = seqno;
+
     //
     // Trigger the ADC conversion.
     //
@@ -572,15 +579,40 @@ uint32_t getSMPSVoltage(void)
 
 uint32_t calculate_PN_AC_ADC(void)
 {
-    measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 83.8709677)/1000;
-    //measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 83.871)/1000;
+//    int x1 = 3045, y1 = 237 , x2 = 3055, y2 = 250;
+//    measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 85.3112033)/1000; //75585284280
+    //measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 81.6393442)/1000; // //75.5852842  //77.7150448
+    measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 80.894442); // //75.5852842  //77.7150448
+    //0.0816393442622950819672131147541
+//    measurements.PN_AC_Voltage = (PN_ADC_RAW_MAX * 83.871)/1000;
+//    measurements.PN_AC_Voltage = sqrt() / 4095 * 5 * 500.0;
+    /****************************************************************************
+    ADC_VALUE : 2999,3006,2979 -> MAIN_VOLTAGE = 228
+    ADC_VALUE : 3044,3045,3042 -> MAIN_VOLTAGE = 246
+
+    calculating voltage by line equation of two points.
+
+    (y-y1) = ((y2-y1)/(x2-x1)) * (x-x1) where y is voltage and x is adc value
+
+    if y1 = 228 , y2 is 246 and x1 = 2999 , x2 = 3044
+    y = 0.4x - 971.6 ( y = kx +c)
+
+    measurements.PN_AC_Voltage = (((246-228)/(3044-2999)) * (PN_ADC_RAW_MAX - 2999)) + 246;
+    ********************************************************************************/
+//    measurements.PN_AC_Voltage = (2.983561644 * PN_ADC_RAW_MAX) - 8849.478082;
+//    measurements.PN_AC_Voltage = (0.461 * PN_ADC_RAW_MAX) - 1159.26;
+//    measurements.PN_AC_Voltage = ((float)((y2-y1)/(x2-x1)) * (PN_ADC_RAW_MAX - x1)) + y1;
+
     PN_ADC_RAW_MAX = 0;
 
     // measurements.PN_AC_Voltage = (measurements.PN_AC_Voltage < 200)? 0 : measurements.PN_AC_Voltage;
 
-    // return (measurements.PN_AC_Voltage * 1000);
-    measurements.PN_AC_Voltage *= 1000;
-
+//     return (measurements.PN_AC_Voltage * 1000);
+//    measurements.PN_AC_Voltage *= 1000;
+#ifdef DEBUG_MAIN_ADC
+            vUART_SendStr(DEBUG_UART_BASE,", ");
+            vUART_SendInt(DEBUG_UART_BASE,measurements.PN_AC_Voltage);
+#endif
     return measurements.PN_AC_Voltage;
 }
 
@@ -597,7 +629,82 @@ uint32_t calculate_NE_AC_ADC(void)
 
     return measurements.NE_AC_Voltage;
 }
+void readACVoltage()
+{
+    static uint16_t PN_ADC_RAW = 0;
+//    int32_t Vnow = 0;
+//    uint32_t Vsum = 0;
+//    uint32_t measurements_count = 0;
+//    uint32_t t_start = my_millis();
+//    double readingVoltage = 0.0f;
+//#if HW_BOARD == TIOT_V2_00_BOARD
 
+//    if(my_millis() - ACVoltReadMillis >= 5)
+    //if(g_bIntFlag)
+//    {
+//        vUART_SendStr(DEBUG_UART_BASE,"\nFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+//        g_bIntFlag = false;
+        PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
+
+
+//        while (my_millis() - t_start < 20)
+//        {
+//            Vnow = readADC(SIG_AC_VOLTAGE_ADC) - 2048;
+//            Vsum += (Vnow * Vnow);
+//            measurements_count++;
+//        }
+//
+//        readingVoltage = sqrt(Vsum / measurements_count) / 4095 * 3.3 * 500.0f;
+//        readingVoltage -= 29;
+
+        adc_arr.collectSamples[adc_arr.index++] = PN_ADC_RAW;
+
+////        if (PN_ADC_RAW > current_adc_val)
+//        {
+//            PN_ADC_RAW_MAX = PN_ADC_RAW;
+//#if HW_BOARD == TIOT_V2_00_BOARD
+//         calculate_PN_AC_ADC();
+//        // calculate_NE_AC_ADC();
+//#endif  //HW_BOARD == TIOT_V2_00_BOARD
+//#ifdef DEBUG_MAIN_ADC
+//            vUART_SendStr(DEBUG_UART_BASE,"\nV:");
+//            vUART_SendInt(DEBUG_UART_BASE,readingVoltage);
+////            vUART_SendChr(DEBUG_UART_BASE,',');
+////            vUART_SendInt(DEBUG_UART_BASE,measurements_count);
+////            vUART_SendChr(DEBUG_UART_BASE,',');
+////            vUART_SendInt(DEBUG_UART_BASE,Vsum);
+//
+//#endif
+//        }
+//        IntDisable(INT_TIMER0B);
+//        TimerIntDisable(TIMER0_BASE, TIMER_TIMB_TIMEOUT);
+//        ACVoltReadMillis = my_millis();
+        /*PN_ADC_RAW_MAX */
+
+
+//    }
+//    if(millis_cnt % 2 == 0)
+//    {
+//         PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
+//    PN_ADC_RAW_MAX = readADC(SIG_AC_VOLTAGE_ADC);
+//         if(PN_ADC_RAW > PN_ADC_RAW_MAX)
+//         {
+//             PN_ADC_RAW_MAX = PN_ADC_RAW;
+//             PN_ADC_RAW = 0;
+//         }
+//    }
+//    else
+//    {
+        // NE_ADC_RAW = readADC(SIG_EARTH_VTG_ADC);
+        // if(NE_ADC_RAW > NE_ADC_RAW_MAX)
+        // {
+        //     NE_ADC_RAW_MAX = NE_ADC_RAW;
+        //     NE_ADC_RAW = 0;
+        // }
+//    }
+//#endif  //HW_BOARD == TIOT_V2_00_BOARD
+//    calculate_PN_AC_ADC();
+}
 void GetAdcData(void)
 {
    //getACvoltage();

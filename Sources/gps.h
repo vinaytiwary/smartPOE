@@ -126,7 +126,7 @@ typedef struct
 	unsigned char gps_ready;
 	char errcode;
 	unsigned int timeout;
-	gps_status_t gps_status;
+	gprs_status_t gps_status;
 }__attribute__((packed))gps_t;
 
 typedef struct
@@ -145,8 +145,8 @@ void utcTOlocal(gps_date_time_t *timeT);
 
 void updateGpsDateTimeToBuff(gps_date_time_t *date_time);
 
-gps_status_t get_gps_status();
-void set_gps_status(gps_status_t);
+gprs_status_t get_gps_status();
+void set_gps_status(gprs_status_t);
 
 // #endif 	// ifNOTdef ETHERNET_EN
 

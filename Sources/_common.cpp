@@ -246,3 +246,18 @@ char *my_strstr(const char *haystack, const char *needle, int haystack_len)
     return (NULL);
 }
 
+int findMax(int arr[], int size)
+{
+
+    int maxNum = arr[0];
+    for (int i = 1; i < size; ++i)
+    {
+        //vUART_SendChr(DEBUG_UART_BASE,'\n');
+        //vUART_SendInt(DEBUG_UART_BASE,arr[i]);
+        if (arr[i] > maxNum)
+        {
+            maxNum = arr[i];
+        }
+    }
+    return maxNum;
+}

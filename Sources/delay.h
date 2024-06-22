@@ -11,5 +11,5 @@
 
 void sleep_us(int);
 
-
+void delay(uint32_t ms);
 #endif /* SOURCES_DELAY_H_ */

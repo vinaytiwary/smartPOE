@@ -200,6 +200,18 @@
 #define BUCK_BOOSTER_EN4_BASE         GPIO_PORTB_BASE
 #define BUCK_BOOSTER_EN4_PIN          GPIO_PIN_0
 
+/**************************GPIO************************/
+#define FREQ_MEAS_PIN_BASE            GPIO_PORTJ_BASE
+#define FREQ_MEAS_PIN                 GPIO_PIN_0
+
+#define EARTH_DETECT_PORT_BASE        GPIO_PORTJ_BASE
+#define EARTH_DETECT_PIN              GPIO_PIN_1
+/*******************************************************/
+
+
+
+
+
 #endif//HW_BOARD == TIOT_V2_00_BOARD
 
 #endif /* SOURCES_HW_PINS_H_ */

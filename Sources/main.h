@@ -83,6 +83,8 @@ void update_ram_data(void);
 
 void update_alarm_status(void);
 
+uint32_t getRSTreason(void);
+
 // void setRAM_Alarm(uint8_t val, bool sts);
 void setRAM_Alarm(Alarm_sts_bits_t val, bool sts);
 

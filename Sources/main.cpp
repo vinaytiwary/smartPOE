@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <Sources/tiot_timer.h>
 #include "flashCore.h"
 
 #include "driverlib/gpio.h"
@@ -85,6 +86,8 @@ Alarms_t Alarms;
 extern uint32_t cnt_gps_1sec;
 
 extern sys_mode_t System_mode;
+extern volatile double PN_ADC_RAW_MAX;
+extern volatile uint8_t g_bIntFlag;
 
 char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 
@@ -97,6 +100,7 @@ int main(void)
 
 	// Initialize clock and peripherals //
     vMAIN_InitClockPeripherals();
+    vTimerInit();
 	init_config();
 
     // flashInit();
@@ -117,6 +121,10 @@ int main(void)
 #endif  // ETHERNET_EN
 
 	// update_rtc(&dummyDateBuff[0], 0);
+//    while(!g_bIntFlag)
+//    {
+//    }
+//    vUART_SendStr(DEBUG_UART_BASE,"\nHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 	IntMasterEnable();
 #ifdef DEBUG_RESTART
 	vUART_SendStr(DEBUG_UART_BASE, "\nPRG STRT");
@@ -191,13 +199,30 @@ int main(void)
 
 		if(scheduler.flg1sec == HIGH)
         {
+#ifdef DEBUG_MAIN_ADC
+            vUART_SendStr(DEBUG_UART_BASE,"\nmain_adc:");
+            vUART_SendInt(DEBUG_UART_BASE,PN_ADC_RAW_MAX);
+		        //PN_ADC_RAW_MAX = 0;
+//            vUART_SendStr(DEBUG_UART_BASE,",");
+//            vUART_SendInt(DEBUG_UART_BASE,measurements.PN_AC_Voltage);
+#endif
             scheduler.flg1sec = LOW;
+            calculate_PN_AC_ADC();
+//            readACVoltage();
+
 #ifdef DEBUG_FREQ_MEAS
             vUART_SendStr(DEBUG_UART_BASE,"\nfreq:");
             vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
 #endif
 
 			vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
+			if(vEarthDetect())
+			{
+#ifdef DEBUG_EARTH_CHECK
+            vUART_SendStr(DEBUG_UART_BASE,",");
+            vUART_SendStr(DEBUG_UART_BASE,"isEARTH!");
+#endif
+			}
 			// vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
 
 #if HW_BOARD == TIOT_V2_00_BOARD
@@ -400,12 +425,56 @@ void vPERIPH_ClockInit(void)
 
 void vMAIN_InitClockPeripherals(void)
 {
+    uint32_t RST_reason = 0;
 	vPERIPH_ClockInit();
+
+    RST_reason = getRSTreason();
+
 	vGPIOPortEnable();
 	//vPERIPH_SystickInit();
 	vPERIPH_GPIOInit();
 	vPERIPH_SystickInit();
 	vPERIPH_UARTInit();
+
+#ifdef DEBUG_PWRUP_RST_REASON
+    vUART_SendStr(UART_PC, "\nRST=");
+    if(RST_reason == SYSCTL_CAUSE_EXT)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_EXT");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_POR)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_POR");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_BOR)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_BOR");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_WDOG0)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_WDOG0");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_SW)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_SW");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_WDOG1)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_WDOG1");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_HIB)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_HIB");
+    }
+    else if(RST_reason == SYSCTL_CAUSE_HSRVREQ)
+    {
+        vUART_SendStr(UART_PC, "SYSCTL_CAUSE_HSRVREQ");
+    }
+    else
+    {
+        vUART_SendInt(UART_PC, RST_reason);
+    }
+#endif  //DEBUG_PWRUP_RST_REASON
 
 #ifdef ENABLE_GLCD
 	GLCD_Initalize();
@@ -433,7 +502,7 @@ void vMAIN_InitClockPeripherals(void)
 	//PP (24-04-24) The flash test project is on hold. It will be resumed after a few more functionalities have been have been tested: LCD, RTC, E2P etc
 	flashInit();
 #endif  //FLASH_EN
-
+	vFreqDetectInit();
 	memset(&ram_data, 0, sizeof(ram_data_t));
 
 }
@@ -791,5 +860,36 @@ void update_alarm_status(void)
     vUART_SendStr(UART_PC, "\nRAL=");
     vUART_SendInt(UART_PC, getRAM_Alarm());
 #endif  //DEBUG_ALARMS
+}
+
+uint32_t getRSTreason(void)
+{
+//     uint32_t RST_reason = 0;
+//     RST_reason = SysCtlResetCauseGet();
+
+// #ifdef DEBUG_PWRUP_RST_REASON
+//     vUART_SendStr(UART_PC, "\nRST=");
+//     if(RST_reason == SYSCTL_CAUSE_EXT)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_EXT");
+//     else if(RST_reason == SYSCTL_CAUSE_POR)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_POR");
+//     else if(RST_reason == SYSCTL_CAUSE_BOR)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_BOR");
+//     else if(RST_reason == SYSCTL_CAUSE_WDOG0)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_WDOG0");
+//     else if(RST_reason == SYSCTL_CAUSE_SW)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_SW");
+//     else if(RST_reason == SYSCTL_CAUSE_WDOG1)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_WDOG1");
+//     else if(RST_reason == SYSCTL_CAUSE_HIB)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_HIB");
+//     else if(RST_reason == SYSCTL_CAUSE_HSRVREQ)
+//         vUART_SendStr(UART_PC, "SYSCTL_CAUSE_HSRVREQ");
+    
+// #endif  //DEBUG_PWRUP_RST_REASON
+
+//     return RST_reason;
+
+    return SysCtlResetCauseGet();
 }
 

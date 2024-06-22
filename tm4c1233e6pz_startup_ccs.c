@@ -53,6 +53,8 @@ extern void DEBUGUARTIntHandler(void);
 extern void LTEUARTIntHandler(void);    //PP on 20-04-24: how did this ISR work without externing this here? realized that i didn't do it while i was externing DISPLAYUARTIntHandler(). Although I did add it to the vector table.
 // extern void DISPLAYUARTIntHandler(void);
 
+extern void TimerIntHandler(void);
+
 #ifdef WDT_IRQ_MODE
 extern void WatchdogIntHandler(void);
 #endif  //WDT_IRQ_MODE  
@@ -126,7 +128,8 @@ void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Watchdog timer
 #endif  //WDT_IRQ_MODE  
     IntDefaultHandler,                      // Timer 0 subtimer A
-    IntDefaultHandler,                      // Timer 0 subtimer B
+//    IntDefaultHandler,                      // Timer 0 subtimer B
+    TimerIntHandler,
     IntDefaultHandler,                      // Timer 1 subtimer A
     IntDefaultHandler,                      // Timer 1 subtimer B
     IntDefaultHandler,                      // Timer 2 subtimer A

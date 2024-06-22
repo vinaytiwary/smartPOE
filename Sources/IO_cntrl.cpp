@@ -209,7 +209,7 @@ void vPERIPH_GPIOInit(void)
     
 #if HW_BOARD == TIOT_V2_00_BOARD
     init_ODU_Supplypins();
-	vFreqDetectInit();
+	//vFreqDetectInit();
     vEarthCheckInit();
 	
 	GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
@@ -716,6 +716,12 @@ void FREQDetIntHandler(void)
        set_router_selection_state(RELAY_DEFAULT);
        ControlRouterSelection_Relay(RTR_MAIN_SUPPLY);
    }
+   
+   if(!(EXTI_cnt.freq_cnt%5))
+    {
+        IntEnable(INT_TIMER0B);
+        TimerEnable(TIMER0_BASE, TIMER_B);
+    }
 
 }
 

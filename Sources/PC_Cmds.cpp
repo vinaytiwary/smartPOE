@@ -335,7 +335,7 @@ void response(cmd_t cmd, int uart_no)
 			}
         }
         break;
-
+#if 0
         case SET_ROUTER_CFG:
         {
             if(get_system_state() == CONFIG_MODE)
@@ -409,6 +409,7 @@ void response(cmd_t cmd, int uart_no)
 			}
         }
         break;
+#endif	//if 0
 
 		case SET_LCD_UPD_TIME:
 		{

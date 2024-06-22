@@ -31,6 +31,7 @@
 volatile uint32_t u32DelayCounter;
 scheduler_t scheduler;
 volatile uint32_t millis_cnt = 0;
+volatile uint32_t ACVoltReadMillis = 0;
 
 extern volatile double PN_ADC_RAW_MAX;
 extern volatile EXTI_cnt_t EXTI_cnt;
@@ -48,6 +49,7 @@ extern volatile double NE_ADC_RAW_MAX;
 #ifdef ETHERNET_EN
 extern volatile unsigned long  _millis;
 #endif
+extern adc_arr_t adc_arr;
 
 void vPERIPH_SystickInit(void)
 {
@@ -68,8 +70,8 @@ void vPERIPH_SystickInit(void)
 void SysTickIntHandler(void)
 {
     // IntMasterDisable();
-    static uint16_t PN_ADC_RAW = 0;
-    static uint16_t NE_ADC_RAW = 0;
+//    static uint16_t PN_ADC_RAW = 0;
+//    static uint16_t NE_ADC_RAW = 0;
 
     if(u32DelayCounter != 0U)
     {
@@ -85,26 +87,26 @@ void SysTickIntHandler(void)
     }
 #endif
 
-#if HW_BOARD == TIOT_V2_00_BOARD
-    if(millis_cnt%2==0)
-    {
-        // PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
-        // if(PN_ADC_RAW > PN_ADC_RAW_MAX)
-        // {
-        //     PN_ADC_RAW_MAX = PN_ADC_RAW;
-        //     PN_ADC_RAW = 0;
-        // }
-    }
-    else
-    {
-        // NE_ADC_RAW = readADC(SIG_EARTH_VTG_ADC);
-        // if(NE_ADC_RAW > NE_ADC_RAW_MAX)
-        // {
-        //     NE_ADC_RAW_MAX = NE_ADC_RAW;
-        //     NE_ADC_RAW = 0;
-        // }
-    }
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
+//#if HW_BOARD == TIOT_V2_00_BOARD
+//    if(millis_cnt%2==0)
+//    {
+//         PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
+//         if(PN_ADC_RAW > PN_ADC_RAW_MAX)
+//         {
+//             PN_ADC_RAW_MAX = PN_ADC_RAW;
+//             PN_ADC_RAW = 0;
+//         }
+//    }
+//    else
+//    {
+//        // NE_ADC_RAW = readADC(SIG_EARTH_VTG_ADC);
+//        // if(NE_ADC_RAW > NE_ADC_RAW_MAX)
+//        // {
+//        //     NE_ADC_RAW_MAX = NE_ADC_RAW;
+//        //     NE_ADC_RAW = 0;
+//        // }
+//    }
+//#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
     
 
@@ -147,10 +149,10 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr20ms = 0;
         scheduler.flg20ms = HIGH;
-#if HW_BOARD == TIOT_V2_00_BOARD
-        // calculate_PN_AC_ADC();
-        // calculate_NE_AC_ADC();
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
+//#if HW_BOARD == TIOT_V2_00_BOARD
+//         calculate_PN_AC_ADC();
+//        // calculate_NE_AC_ADC();
+//#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
         //vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(24-04-24) for testing
     }
@@ -177,7 +179,11 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr1s = 0;
         scheduler.flg1sec = HIGH;
-
+        //find max from arr
+        PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,adc_arr.index);
+        memset(&adc_arr,0,sizeof(adc_arr_t));
+        //index = 0
+        //arr -> 0
         memcpy(&ram_data.ram_EXTI_cnt, (void*)&EXTI_cnt, sizeof(EXTI_cnt_t));
         memset((void*)&EXTI_cnt, 0, sizeof(EXTI_cnt_t));
     }
