@@ -127,6 +127,7 @@ typedef struct
 	char errcode;
 	unsigned int timeout;
 	gprs_status_t gps_status;
+	bool getLoc_sts;
 }__attribute__((packed))gps_t;
 
 typedef struct

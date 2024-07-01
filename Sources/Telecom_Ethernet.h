@@ -128,7 +128,7 @@ typedef struct
     ether_ping_cmd_t ether_ping_cmd;
     ether_tcp_pckt_state_t ether_tcp_pckt_state;
     bool ether_connect_sts;
-    bool ether_network_sts;
+    // bool ether_network_sts;
     bool pkt_recv;
     unsigned int ether_rx_buff_len;
 }__attribute__((packed))Telecom_Ethernet_t;
@@ -163,9 +163,9 @@ void set_ethernet_connct_sts(uint8_t sts);
 
 uint8_t get_ethernet_connct_sts(void);
 
-void set_ethernet_NWstatus(uint8_t sts);
+// void set_ethernet_NWstatus(uint8_t sts);
 
-uint8_t get_ethernet_NWstatus(void);
+// uint8_t get_ethernet_NWstatus(void);
 
 void check_ethernet_message(void);
 

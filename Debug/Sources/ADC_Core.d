@@ -45,6 +45,7 @@ Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/ADC_Core.obj: ../Sources/UartCore.h
 Sources/ADC_Core.obj: ../Sources/ADC_Core.h
 Sources/ADC_Core.obj: ../Sources/_debug.h
+Sources/ADC_Core.obj: ../Sources/GLCD.h
 
 ../Sources/ADC_Core.cpp:
 
@@ -135,4 +136,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 ../Sources/ADC_Core.h:
 
 ../Sources/_debug.h:
+
+../Sources/GLCD.h:
 

@@ -35,6 +35,11 @@ typedef struct
     bool pending_request;
 }Telecom_server_query_t;
 
+typedef struct
+{
+    unsigned char server_status;
+}Network_status_t;
+
 char *Query_decode(char *Query_String, const char *Query_data, char *destination, int max_len);
 
 bool server_query(void);
@@ -64,5 +69,9 @@ server_request_type_t getServerReqType(void);
 void setClientMSGType(client_message_type_t msg_type);
 
 client_message_type_t getClientMSGType(void);
+
+void set_network_status(uint8_t status);
+
+uint8_t get_network_status(void);
 
 #endif /* SOURCES_TELECOM_SERVER_QUERY_H_ */

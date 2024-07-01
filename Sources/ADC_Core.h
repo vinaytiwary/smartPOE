@@ -34,9 +34,15 @@
 #define CHG_RANGE_LOW   (10)
 #define CHG_RANGE_HIGH  (13)
 
+// // #define BATT_RANGE_LOW   (10)
+// #define BATT_RANGE_LOW  (11)
+// // #define BATT_RANGE_HIGH (13)
+// #define BATT_RANGE_HIGH (12)
+
 // #define BATT_RANGE_LOW   (10)
-#define BATT_RANGE_LOW  (11)
-#define BATT_RANGE_HIGH (13)
+#define BATT_RANGE_LOW  (11000)
+// #define BATT_RANGE_HIGH (13)
+#define BATT_RANGE_HIGH (12000)
 
 #define FREQ_RANGE_LOW  (48)
 #define FREQ_RANGE_HIGH (52)
@@ -47,7 +53,7 @@
 #define R1C_RANGE_LOW   (0.020)
 #define R2C_RANGE_LOW   (0.020)
 
-#define BATT_HYSTERESIS_LOW		(10600)	//10.60V
+#define BATT_HYSTERESIS_LOW		(10800)	//(10600)	//10.60V
 #define BATT_HYSTERESIS_HIGH	(11200)	//11.20V
 
 

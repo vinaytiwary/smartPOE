@@ -63,6 +63,7 @@ extern conn_state_t conn_state;
 #endif  //ETHERNET_EN
 
 Telecom_server_query_t Telecom_server_query;
+Network_status_t network_status;
 
 uint8_t dummy_json_string[390];
 uint8_t server_response_str[27] = "{ \"response\": \"accepted\" }";
@@ -471,7 +472,7 @@ bool server_query(void)
                 
             }
         }
-#if 0
+#if 1
         // else
         // else if(ret_addr = Query_decode(found_brace,"\"odu_voltage\"",decoded_query, strlen((const char*)"\"odu_voltage\"}")))
         else if(ret_addr = Query_decode(found_brace,"\"odu_voltage\"",decoded_query, strlen((const char*)"\"odu_voltage\"")))
@@ -520,11 +521,12 @@ bool server_query(void)
                     
                     if(getServerReqType() == NO_REQ)
                     {
+#if 0
                         e2p_router_config.router2 = (voltage_mode_t)ODU_temp_cfg;
                         e2p_write_voltage_config();
                         // SetRouterMode(e2p_router_config.router2, ROUTER_2);  //PP 13-05-24: For later when we have the hardware.
                         ram_data.supply_mode_R2 = (e2p_router_config.router2 == MODE_36V)? (e2p_router_config.router2 * 10) : (e2p_router_config.router2 * 12); //PP 14-03-24: this is to be uncommented if ckt successfully creates 30V
-                        
+#endif  //if 0                        
                         set_pending_request(true);
                         setServerReqType(ODU_VOLTAGE_UPDATE);
                         retVal = true;
@@ -683,6 +685,9 @@ unsigned int prepare_JSON_pckt(void)
 
     my_sprintf((char*)dummy_json_string, 26,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d}]}",
 			e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.NE_AC_Voltage/1000,ram_data.ram_ADC.NE_AC_Voltage%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms);
+
+    // my_sprintf((char*)dummy_json_string, 27,"{\"telecom\":[{\"deviceId\":\"%s\",\"timestamp\":\"%01d\",\"batteryVoltage\":%01d.%03d,\"chargerVoltage\":%01d.%03d,\"router1Voltage\":%01d.%03d,\"router1Current\":%01d.%03d,\"router2Voltage\":%01d.%03d,\"router2Current\":%01d.%03d,\"inputVoltage\":%01d.%03d,\"frequency\":%01d.%02d,\"earthDetected\":%s,\"router1SupplyMode\":%01d,\"router2SupplyMode\":%01d,\"longitude\":%01d.%06d,\"latitude\":%01d.%06d,\"alarms\":%01d,\"FW_VER\":\"%s\"}]}",
+	// 		e2p_device_info.device_id,epoch_time,ram_data.ram_ADC.DC_Battery_voltage/1000, ram_data.ram_ADC.DC_Battery_voltage%1000,ram_data.ram_ADC.DC_Charger_voltage/1000,ram_data.ram_ADC.DC_Charger_voltage%1000,ram_data.ram_ADC.NE_AC_Voltage/1000,ram_data.ram_ADC.NE_AC_Voltage%1000,ram_data.ram_ADC.DC_current_router1/1000,ram_data.ram_ADC.DC_current_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,ram_data.ram_ADC.DC_Voltage_router2%1000,ram_data.ram_ADC.DC_current_router2/1000,ram_data.ram_ADC.DC_current_router2%1000,ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000,(ram_data.ram_EXTI_cnt.freq_cnt * 100)/100,(ram_data.ram_EXTI_cnt.freq_cnt * 100)%100,earth_temp,ram_data.supply_mode_R1,ram_data.supply_mode_R2,ram_data.Longitude/1000000L,abs(ram_data.Longitude%1000000L),ram_data.Latitude/1000000L,abs(ram_data.Latitude%1000000L), ram_data.ram_alarms, FIRMWARE_VERSION);
 
 #ifdef DEBUG_JSON_PKT_PREP
     // UWriteString((char*)"\nPrep=",DBG_UART);
@@ -1229,6 +1234,16 @@ void setClientMSGType (client_message_type_t msg_type)
 client_message_type_t getClientMSGType(void)
 {
     return Telecom_server_query.client_message_type;
+}
+
+void set_network_status(uint8_t status)
+{
+    network_status.server_status = status;
+}
+
+uint8_t get_network_status(void)
+{
+    return network_status.server_status;
 }
 
 

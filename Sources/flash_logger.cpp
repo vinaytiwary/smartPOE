@@ -20,6 +20,7 @@
 
 #include "gprs.h"
 #include "Telecom_Ethernet.h"
+#include "Telecom_server_query.h"
 
 static FL_data_t FL_data = {0,FL_TLOG_START_ADDR,FL_TLOG_START_ADDR};
 
@@ -927,8 +928,26 @@ void save_OfflineTelecomData(void)
 	prepare_OfflineTelecomData();
 	save_TELECOM_data();
 
-#ifdef ETHERNET_EN
-	if(!get_ethernet_NWstatus() || check_unsent_log())
+// #ifdef ETHERNET_EN
+// 	// if(!getServerStatus() || check_unsent_log())
+//     if(!get_network_status() || check_unsent_log())
+// 	{
+// #ifdef DEBUG_FL_UNSENT
+// 	    vUART_SendStr(DEBUG_UART_BASE,"\nunsnt");
+// #endif
+// 		increment_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
+// 		flashWriteFreqUpdatedConfig();
+// 	}
+// #else
+// 	// if(!getServerStatus() || check_unsent_log())
+//     if(!get_network_status() || check_unsent_log())
+// 	{
+// 		increment_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
+// 		flashWriteFreqUpdatedConfig();
+// 	}
+// #endif 	//ETHERNET_EN
+
+    if(!get_network_status() || check_unsent_log())
 	{
 #ifdef DEBUG_FL_UNSENT
 	    vUART_SendStr(DEBUG_UART_BASE,"\nunsnt");
@@ -936,13 +955,6 @@ void save_OfflineTelecomData(void)
 		increment_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
 		flashWriteFreqUpdatedConfig();
 	}
-#else
-	if(!getServerStatus() || check_unsent_log())
-	{
-		increment_unsent_log_cnt(TELECOM_OFFLINE_LOGS);
-		flashWriteFreqUpdatedConfig();
-	}
-#endif 	//ETHERNET_EN
 }
 
 void prepare_OfflineTelecomData(void)

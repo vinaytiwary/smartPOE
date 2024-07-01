@@ -21,6 +21,8 @@
 #include "ADC_Core.h"
 #include "_debug.h"
 
+#include "GLCD.h"
+
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
 adc_arr_t adc_arr;
@@ -516,6 +518,8 @@ uint32_t getBatteryVoltage(void)
 
     adc_avg = updateADC(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
 
+    _delay_us(50);
+
     //analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98097) * BATTERY_RESISTOR_RATIO;
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * BATTERY_RESISTOR_RATIO;
      analog_vtg = (adc_avg * (ADC_REFV/ADC_RESOLUTION)) * BATTERY_RESISTOR_RATIO; //PP (24-04-24) commented until HW is finalized
@@ -646,7 +650,6 @@ void readACVoltage()
 //        g_bIntFlag = false;
         PN_ADC_RAW = readADC(SIG_AC_VOLTAGE_ADC);
 
-
 //        while (my_millis() - t_start < 20)
 //        {
 //            Vnow = readADC(SIG_AC_VOLTAGE_ADC) - 2048;
@@ -657,7 +660,37 @@ void readACVoltage()
 //        readingVoltage = sqrt(Vsum / measurements_count) / 4095 * 3.3 * 500.0f;
 //        readingVoltage -= 29;
 
-        adc_arr.collectSamples[adc_arr.index++] = PN_ADC_RAW;
+        if(adc_arr.index < 10)
+        {
+            // adc_arr.collectSamples[adc_arr.index++] = PN_ADC_RAW;
+
+            adc_arr.collectSamples[adc_arr.index] = PN_ADC_RAW;
+
+            adc_arr.index++;
+        }
+        
+
+#ifdef DEBUG_MAIN_ADC
+        // vUART_SendStr(DEBUG_UART_BASE, "\nRAW=");
+        // vUART_SendInt(DEBUG_UART_BASE,PN_ADC_RAW);
+        // vUART_SendChr(DEBUG_UART_BASE, ',');
+        // vUART_SendInt(DEBUG_UART_BASE, adc_arr.index);
+#endif  //DEBUG_MAIN_ADC
+
+        // if(adc_arr.index > 9)
+        // {
+        //     adc_arr.index = 0;
+        // }
+        // else
+        // {
+        //     adc_arr.index++;
+        // }
+// #ifdef DEBUG_MAIN_ADC
+//         vUART_SendStr(DEBUG_UART_BASE, "\nRAW=");
+//         vUART_SendInt(DEBUG_UART_BASE,PN_ADC_RAW);
+//         vUART_SendChr(DEBUG_UART_BASE, ',');
+//         vUART_SendInt(DEBUG_UART_BASE, adc_arr.index - 1);
+// #endif  //DEBUG_MAIN_ADC
 
 ////        if (PN_ADC_RAW > current_adc_val)
 //        {

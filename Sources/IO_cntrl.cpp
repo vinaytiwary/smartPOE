@@ -27,6 +27,7 @@
 #include "ADC_Core.h"
 #include "E2P.h"
 #include "_common.h"
+#include "SysTick_Timer.h"
 
 #ifdef ENABLE_GLCD
 #include "GLCD.h"         //only for testing
@@ -41,6 +42,8 @@ BCD_MODE_t BCD_MODE;
 relay_state_t relay_state;
 
 relay_ctrl_state_t relay_ctrl_state;
+
+extern uint32_t relay_startup_time;
 
 //********************** GPIOD_IRQ_Handler *************************//
 //extern "C" void GPIODIntHandler(void)
@@ -209,7 +212,7 @@ void vPERIPH_GPIOInit(void)
     
 #if HW_BOARD == TIOT_V2_00_BOARD
     init_ODU_Supplypins();
-	//vFreqDetectInit();
+	// // vFreqDetectInit();
     vEarthCheckInit();
 	
 	GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
@@ -261,11 +264,11 @@ void readBCD_SelectorSW(void)
     }
     else
     {
-        BCD_MODE.BCD_code = BCD_MODE.prev_BCDcode;
 #ifdef  DEBUG_BCD_SEL_SW
         vUART_SendStr(UART_PC, "\nINV_BCD:");
         vUART_SendInt(UART_PC, BCD_MODE.BCD_code);
 #endif  //DEBUG_BCD_SEL_SW        
+        BCD_MODE.BCD_code = BCD_MODE.prev_BCDcode;
     }
 #ifdef  DEBUG_BCD_SEL_SW
     vUART_SendStr(UART_PC, "\n2BCD:");
@@ -421,10 +424,15 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
 #ifdef  DEBUG_GPIO
             vUART_SendStr(UART_PC, "\n30VM");
 #endif  //DEBUG_GPIO
+            // GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+            // GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);
+            // GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
+            // GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+
             GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
-            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW);
+            GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, BUCK_BOOSTER_EN2_PIN);
             GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW);
-            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+            GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);
 
             // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
         }
@@ -473,7 +481,11 @@ void controlRelays(void)
             set_router_state(RELAY_OFF);
             set_router_selection_state(RELAY_OFF);
             //set_ODU_state(RELAY_OFF);
-            ControlODU_Relay(OFF);
+
+            if(my_millis() - relay_startup_time >= 10000)
+            {
+                ControlODU_Relay(OFF);
+            }
 #ifdef DEBUG_RELAY_STATE_LCD
             GLCD_GoTo(0,7);                      //ONLY FOR TEST
             GLCD_Clear_Line(7);                  //ONLY FOR TEST
@@ -508,7 +520,7 @@ void controlRelays(void)
             vUART_SendChr(UART_PC, ',');
             vUART_SendInt(UART_PC, get_router_selection_state());
 #endif
-            if(isSupplyStable())
+            if(isSupplyStable() && (my_millis() - relay_startup_time >= 10000))
             {
                 //GPIOPinWrite(RELAY_ODU_PORT,RELAY_ODU, RELAY_ODU);
                 //set_ODU_state(RELAY_ON);
@@ -519,8 +531,11 @@ void controlRelays(void)
             }
             else
             {
-                //set_ODU_state(RELAY_OFF);
-                ControlODU_Relay(OFF);
+                if(my_millis() - relay_startup_time >= 10000)
+                {
+                    //set_ODU_state(RELAY_OFF);
+                    ControlODU_Relay(OFF);
+                }
                 ram_data.ram_ADC.DC_current_router2 = 0;
                 ram_data.ram_ADC.DC_Voltage_router2 = 0;
 #ifdef DEBUG_RELAY
@@ -533,10 +548,13 @@ void controlRelays(void)
 
         case BATT_MODE:
         {
-            //set_router_selection_state(RELAY_ON);
-            //set_router_state(RELAY_ON);
-            ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
-            // ControlRouter_Relay(ON);    //PP: ONLY FOR TEST
+            if(my_millis() - relay_startup_time >= 10000)
+            {
+                //set_router_selection_state(RELAY_ON);
+                //set_router_state(RELAY_ON);
+                ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
+                // ControlRouter_Relay(ON);    //PP: ONLY FOR TEST
+            }
 #ifdef DEBUG_RELAY_STATE_LCD
             GLCD_GoTo(0,7);                  //ONLY FOR TEST
             GLCD_Clear_Line(7);                  //ONLY FOR TEST
@@ -551,12 +569,15 @@ void controlRelays(void)
 #ifdef DEBUG_RELAY
                 vUART_SendStr(UART_PC, "\nBL:");
 #endif
-                //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
-                //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
-                ControlRouter_Relay(OFF);
-                ControlODU_Relay(OFF);
-                //set_router_state(RELAY_OFF);
-                //set_ODU_state(RELAY_OFF);
+                if((my_millis() - relay_startup_time >= 10000))
+                {
+                    //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
+                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+                    ControlRouter_Relay(OFF);
+                    ControlODU_Relay(OFF);
+                    //set_router_state(RELAY_OFF);
+                    //set_ODU_state(RELAY_OFF);
+                }
                 
                 ram_data.ram_ADC.DC_current_router2 = 0;
                 ram_data.ram_ADC.DC_Voltage_router2 = 0;
@@ -575,10 +596,14 @@ void controlRelays(void)
 #ifdef DEBUG_RELAY
                 vUART_SendStr(UART_PC, "\n1BH:");
 #endif
-                //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
-                //set_relay_state(RELAY_ON);
-                ControlRouter_Relay(ON);
-                if(isSupplyStable())
+                if(my_millis() - relay_startup_time >= 10000)
+                {
+                    //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
+                    //set_relay_state(RELAY_ON);
+                    ControlRouter_Relay(ON);
+                }
+
+                if(isSupplyStable() && (my_millis() - relay_startup_time >= 10000))
                 {
                     //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
                     ControlODU_Relay(ON);
@@ -595,9 +620,12 @@ void controlRelays(void)
                     vUART_SendStr(UART_PC, "\nBMunst:");
                     vUART_SendInt(UART_PC, ram_data.ram_ADC.DC_Voltage_router2);
 #endif
-                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
-                    ControlODU_Relay(OFF);
-                    //set_ODU_state(RELAY_OFF);
+                    if(my_millis() - relay_startup_time >= 10000)
+                    {
+                        //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+                        ControlODU_Relay(OFF);
+                        //set_ODU_state(RELAY_OFF);
+                    }
 
                     ram_data.ram_ADC.DC_current_router2 = 0;
                     ram_data.ram_ADC.DC_Voltage_router2 = 0;
@@ -605,7 +633,7 @@ void controlRelays(void)
 
                     mid_hysteresis_ODUrelay_state = false;
 #ifdef DEBUG_RELAY
-                    vUART_SendStr(UART_PC, "\n2BMH:RTR_OFF,RS_INV,ODU_OFF");
+                    vUART_SendStr(UART_PC, "\n2BMH:RTR_ON,RS_INV,ODU_OFF");
 #endif
                 }
 #ifdef DEBUG_RELAY
@@ -628,6 +656,11 @@ void controlRelays(void)
                 ram_data.ram_ADC.DC_current_router1 = mid_hysteresis_RTRrelay_state? ram_data.ram_ADC.DC_current_router1 : 0;
             }
 #endif  //if 0
+
+#if 0
+            ControlRouter_Relay(ON);
+            ControlODU_Relay(ON);
+#endif  // if 0
         }
         break;
 
@@ -682,7 +715,8 @@ void vFreqDetectInit(void)
 {
     GPIOIntRegister(FREQ_MEAS_PIN_BASE, FREQDetIntHandler);
     GPIOPinTypeGPIOInput(FREQ_MEAS_PIN_BASE,FREQ_MEAS_PIN);
-    GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_RISING_EDGE);
+    // GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_RISING_EDGE);
+    GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_FALLING_EDGE);
 //    GPIOIntTypeSet(ZERO_CROSS_DET_PIN_BASE, ZERO_CROSS_DET_PIN , GPIO_BOTH_EDGES);
     GPIOIntEnable(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN);
 }
@@ -695,23 +729,23 @@ void FREQDetIntHandler(void)
     EXTI_cnt.freq_cnt++;
     GPIOIntClear(FREQ_MEAS_PIN_BASE, GPIOIntStatus(FREQ_MEAS_PIN_BASE, true));
 
-   if(get_router_state()==RELAY_ON)
+   if((get_router_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
    {
        set_router_state(RELAY_DEFAULT);
        ControlRouter_Relay(ON);
    }
-   else if(get_router_state()==RELAY_OFF)
+   else if((get_router_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
    {
        set_router_state(RELAY_DEFAULT);
        ControlRouter_Relay(OFF);
    }
 
-   if(get_router_selection_state()==RELAY_ON)
+   if((get_router_selection_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
    {
        set_router_selection_state(RELAY_DEFAULT);
        ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
    }
-   else if(get_router_selection_state()==RELAY_OFF)
+   else if((get_router_selection_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
    {
        set_router_selection_state(RELAY_DEFAULT);
        ControlRouterSelection_Relay(RTR_MAIN_SUPPLY);

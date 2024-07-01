@@ -44,6 +44,7 @@
 #include "WDT.h"
 #include "flashCore.h"
 #include "flash_logger.h"
+#include "delay.h"
 
 #ifdef ENABLE_GLCD
 #include "GLCD.h"
@@ -89,10 +90,13 @@ extern sys_mode_t System_mode;
 extern volatile double PN_ADC_RAW_MAX;
 extern volatile uint8_t g_bIntFlag;
 
+extern gps_t gps;
+
 char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 
 unsigned int upload_time = 0;
 unsigned int save_offline_time = 0;
+uint32_t relay_startup_time = 0;
 
 int main(void)
 {
@@ -103,6 +107,8 @@ int main(void)
     vTimerInit();
 	init_config();
 
+    relay_startup_time = my_millis();
+
     // flashInit();
 
 #if RTC_SIMULATOR
@@ -112,6 +118,16 @@ int main(void)
     // update_rtc(&dummyDateBuff[0], 0);
 #endif
     
+#ifdef ENABLE_GLCD
+    GLCD_ClearScreen();
+    GLCD_GoTo(36,4);
+    GLCD_WriteString((char*)"Smart POE");
+    GLCD_GoTo(48,5);
+    GLCD_WriteString((char*)FIRMWARE_VERSION);
+    GLCD_GoTo(15,6);
+    GLCD_WriteString((char*)"Booting Up...");
+#endif  //ENABLE_GLCD
+
 #ifdef  ENABLE_WDT_RESET
     initWDT();
 #endif  //ENABLE_WDT_RESET
@@ -125,7 +141,9 @@ int main(void)
 //    {
 //    }
 //    vUART_SendStr(DEBUG_UART_BASE,"\nHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+
 	IntMasterEnable();
+
 #ifdef DEBUG_RESTART
 	vUART_SendStr(DEBUG_UART_BASE, "\nPRG STRT");
 #endif
@@ -251,11 +269,15 @@ int main(void)
 			Data_Screen_lcd();
 #endif  //if 0
 
-// #if HW_BOARD == TIOT_V2_00_BOARD
-// #ifdef DEBUG_ADC_SIG
-//             get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
-// #endif  // DEBUG_ADC_SIG
-// #endif  //HW_BOARD == TIOT_V2_00_BOARD
+#if HW_BOARD == TIOT_V2_00_BOARD
+#ifdef DEBUG_ADC_SIG
+            get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
+            // vUART_SendStr(UART_PC, "\nODUV_RAW=");
+            // vUART_SendInt(UART_PC, readADC(SIG_ODU_VOLTAGE_ADC));
+            // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
+            // vUART_SendInt(UART_PC, readADC(SIG_BATTERY_VOLT_ADC));
+#endif  // DEBUG_ADC_SIG
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 
             if(get_system_state() != CONFIG_MODE)
@@ -326,8 +348,26 @@ void update_ram_data(void)
 		get_present_time(&ram_data.ram_time);
 		// update_rtc(&dummyDateBuff[0], 0);
 #endif
-        ram_data.Latitude = gps_data.Latitude;
-        ram_data.Longitude = gps_data.Longitude;
+        // ram_data.Latitude = gps_data.Latitude;
+        // ram_data.Longitude = gps_data.Longitude;
+
+        if(gps.getLoc_sts)
+        {
+#ifdef DEBUG_GET_LOC
+            // UWriteString((char*)"\nFGPS",DBG_UART);
+            vUART_SendStr(DEBUG_UART_BASE, "\nFGPS");
+#endif
+            ram_data.Latitude = e2p_location_info.latitude;  //PP commented on 28-02-24
+            ram_data.Longitude = e2p_location_info.longitude;
+        }
+        else
+        {
+#ifdef DEBUG_GET_LOC
+            vUART_SendStr(DEBUG_UART_BASE, "\nKGPS");
+#endif
+            ram_data.Latitude = gps_data.Latitude;
+            ram_data.Longitude = gps_data.Longitude;
+        }
 
 #ifdef DEBUG_EPOCHTIME
     // uint32_t ET = 0;
@@ -428,13 +468,18 @@ void vMAIN_InitClockPeripherals(void)
     uint32_t RST_reason = 0;
 	vPERIPH_ClockInit();
 
+    delay(100);
+
     RST_reason = getRSTreason();
 
 	vGPIOPortEnable();
 	//vPERIPH_SystickInit();
-	vPERIPH_GPIOInit();
 	vPERIPH_SystickInit();
+	vPERIPH_GPIOInit();
 	vPERIPH_UARTInit();
+#ifdef  ADC_EN
+	vADC0Init();
+#endif  //ADC_EN
 
 #ifdef DEBUG_PWRUP_RST_REASON
     vUART_SendStr(UART_PC, "\nRST=");
@@ -480,9 +525,6 @@ void vMAIN_InitClockPeripherals(void)
 	GLCD_Initalize();
 #endif  //ENABLE_GLCD
 
-#ifdef  ADC_EN
-	vADC0Init();
-#endif  //ADC_EN
 
 // #if defined(FLASH_EN)
 // 	//PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
@@ -830,7 +872,8 @@ void update_alarm_status(void)
 #ifdef DEBUG_ALARMS
         // UWriteString((char*)"\nCHG_NC",DBG_UART);
 #endif
-        Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage/1000 < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage/1000 > BATT_RANGE_HIGH)) ? true : false;
+        // Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage/1000 < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage/1000 > BATT_RANGE_HIGH)) ? true : false;
+        Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage > BATT_RANGE_HIGH)) ? true : false;
         setRAM_Alarm(BATT_FAULT, Alarms.Batt_low);
     }
     else

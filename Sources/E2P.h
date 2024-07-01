@@ -16,6 +16,8 @@
 #include "_config.h"
 #include "IO_cntrl.h"
 
+#define FIRMWARE_VERSION    "V2.00"
+
 #define DEVICE_ID_MAX_LEN	(15)
 #define CLOUD_URL_MAX_LEN	(127)
 

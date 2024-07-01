@@ -133,7 +133,7 @@ void SysTickIntHandler(void)
 #elif HW_VER == VER_3
         //    vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
         //    vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
-        vGPIO_Toggle(LED_PORT_BASE, LED2_PIN, LED2_PIN );
+        // vGPIO_Toggle(LED_PORT_BASE, LED2_PIN, LED2_PIN );
 //#ifndef ETHERNET_EN
 //            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
 //#endif
@@ -180,7 +180,8 @@ void SysTickIntHandler(void)
         scheduler.u16Cntr1s = 0;
         scheduler.flg1sec = HIGH;
         //find max from arr
-        PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,adc_arr.index);
+        // PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,adc_arr.index);
+        PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,10);
         memset(&adc_arr,0,sizeof(adc_arr_t));
         //index = 0
         //arr -> 0
@@ -218,4 +219,9 @@ uint32_t my_millis(void)
 	// SREG = oldSREG;
 
 	return m;
+}
+
+void _delay_us(int microseconds)
+{
+    SysCtlDelay((SysCtlClockGet() / 3/ 1000000) * microseconds);
 }

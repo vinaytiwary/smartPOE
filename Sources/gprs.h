@@ -341,8 +341,8 @@ typedef struct
     unsigned char connect_sts;
     unsigned char tcp_sts;
     unsigned char websocket_sts;
-    gprs_status_t NW_connSts;
-	gprs_status_t serverConn_Sts;
+    // gprs_status_t NW_connSts;
+	// gprs_status_t serverConn_Sts;
 //    char errcode;
     unsigned int gprs_rx_buff_len;
     //unsigned int data_length;
@@ -397,10 +397,10 @@ void set_upload_data(upload_data_t);
 void set_gprs_connct_sts(uint8_t sts);
 uint8_t get_gprs_connct_sts(void);
 
-void setNWstatus(gprs_status_t sts);
-gprs_status_t getNW_status(void);
-void setServerStatus(gprs_status_t sts);
-gprs_status_t getServerStatus(void);
+// void setNWstatus(gprs_status_t sts);
+// gprs_status_t getNW_status(void);
+// void setServerStatus(gprs_status_t sts);
+// gprs_status_t getServerStatus(void);
 // void prepare_websckt_data(char *ip, int *port, char *path);
 
 #endif /* SOURCES_GPRS_H_ */

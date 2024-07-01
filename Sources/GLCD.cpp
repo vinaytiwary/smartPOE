@@ -31,12 +31,6 @@ extern Alarms_t Alarms;
 extern sys_mode_t System_mode;
 extern e2p_config_time_t e2p_config_time;
 
-
-void _delay_us(int microseconds)
-{
-    SysCtlDelay((SysCtlClockGet() / 10/ 1000000) * microseconds);
-}
-
 void GLCD_InitalizePorts(void)
 {
     // Enable the GPIO ports
@@ -185,9 +179,20 @@ void GLCD_WriteString(char *stringToWrite)
 void GLCD_PrintBatterySts()
 {
     GLCD_GoTo(115,0);
-    uint8_t batt=0;
-    batt=80;
-    int index = ((batt-20)/20)*BATTERY_STS_WIDTH;
+    uint8_t index,batt_percentage=0;
+    if(ram_data.ram_ADC.DC_Battery_voltage <= BATT_RANGE_LOW)
+    {
+        batt_percentage =0;
+    }
+    else if(ram_data.ram_ADC.DC_Battery_voltage >= BATT_RANGE_HIGH)
+    {
+        batt_percentage =100;
+    }
+    else
+    {
+        batt_percentage = (((ram_data.ram_ADC.DC_Battery_voltage -BATTERY_MIN_RANGE)*100)/(BATTERY_MAX_RANGE-BATTERY_MIN_RANGE));
+    }
+    index = (batt_percentage/BATTERY_BASE_PERCENTAGE)*BATTERY_STS_WIDTH;
     for (int i = 0; i < BATTERY_STS_WIDTH; i++)
     {
         GLCD_WriteData(BattFont5x8[index + i]);
@@ -211,7 +216,9 @@ void GLCD_PrintRightIcon()
 void GLCD_PrintNetworkSts()
 {
     GLCD_GoTo(0,0);
-    int index = getNW_status() *NETWORK_STS_WIDTH ;
+    // int index = getNW_status() *NETWORK_STS_WIDTH ;
+    int index = get_network_status() *NETWORK_STS_WIDTH ;
+    
     //index=10;
     for (int i = 0; i < NETWORK_STS_WIDTH; i++)
     {
@@ -219,6 +226,14 @@ void GLCD_PrintNetworkSts()
     }
 }
 void GLCD_PrintTopBoarder()
+{
+    for(int i=0;i<KS0108_SCREEN_WIDTH;i++)
+    {
+        GLCD_WriteData(0x04);
+    }
+}
+
+void GLCD_PrintButtomBoarder()
 {
     for(int i=0;i<KS0108_SCREEN_WIDTH;i++)
     {
@@ -241,7 +256,7 @@ void Data_Screen_lcd()
       GLCD_PrintNetworkSts();
       GLCD_PrintBatterySts();
       memset(tmpstr,0,sizeof(tmpstr));
-      sprintf(tmpstr,"E%cG%c  F:%02dHz",earth,gps,ram_data.ram_EXTI_cnt.freq_cnt);
+      my_sprintf(tmpstr,3,"E%cG%c  F:%02dHz",earth,gps,ram_data.ram_EXTI_cnt.freq_cnt);
       GLCD_GoTo(12,0);
       GLCD_WriteString((char*)tmpstr);
 
@@ -249,28 +264,39 @@ void Data_Screen_lcd()
       GLCD_PrintTopBoarder();
 
       memset(tmpstr,0,sizeof(tmpstr));
-      sprintf(tmpstr,"ACV:%03u.%02u",ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000);
+      my_sprintf(tmpstr,3,"ACV:%03d.%02d",ram_data.ram_ADC.PN_AC_Voltage/1000,ram_data.ram_ADC.PN_AC_Voltage%1000);
       GLCD_GoTo(0,2);
       GLCD_WriteString((char*)tmpstr);
 
       memset(tmpstr,0,sizeof(tmpstr));
-      //sprintf(tmpstr,"RV :%03u.%02u ODUV:%02u.%02u",ram_data.ram_ADC.DC_Voltage_router1/1000,ram_data.ram_ADC.DC_Voltage_router1%1000,ram_data.ram_ADC.DC_Voltage_router2/1000,(ram_data.ram_ADC.DC_Voltage_router2%1000)/10);
+      my_sprintf(tmpstr,3,"ODUV:%02d.%02d",ram_data.ram_ADC.DC_Voltage_router2/1000,(ram_data.ram_ADC.DC_Voltage_router2%1000)/10);
       GLCD_GoTo(0,3);
       GLCD_WriteString((char*)tmpstr);
 
       memset(tmpstr,0,sizeof(tmpstr));
-      sprintf(tmpstr,"RC :%02u.%02u  ODUC:%02u.%02u",ram_data.ram_ADC.DC_current_router1/1000,(ram_data.ram_ADC.DC_current_router1%1000)/10,ram_data.ram_ADC.DC_current_router2/1000,(ram_data.ram_ADC.DC_current_router2%1000)/10);
+      my_sprintf(tmpstr,5,"RC :%02d.%02d  ODUC:%02d.%02d",ram_data.ram_ADC.DC_current_router1/1000,(ram_data.ram_ADC.DC_current_router1%1000)/10,ram_data.ram_ADC.DC_current_router2/1000,(ram_data.ram_ADC.DC_current_router2%1000)/10);
       GLCD_GoTo(0,4);
       GLCD_WriteString((char*)tmpstr);
 
       memset(tmpstr,0,sizeof(tmpstr));
-      sprintf(tmpstr,"BAT:%02u.%02u  SMPS:%02u.%02u",ram_data.ram_ADC.DC_Battery_voltage/1000,(ram_data.ram_ADC.DC_Battery_voltage%1000)/10,ram_data.ram_ADC.DC_Charger_voltage/1000,(ram_data.ram_ADC.DC_Charger_voltage%1000)/10);
+      my_sprintf(tmpstr,5,"BAT:%02d.%02d  SMPS:%02d.%02d",ram_data.ram_ADC.DC_Battery_voltage/1000,(ram_data.ram_ADC.DC_Battery_voltage%1000)/10,ram_data.ram_ADC.DC_Charger_voltage/1000,(ram_data.ram_ADC.DC_Charger_voltage%1000)/10);
+      //sprintf(tmpstr,"BAT:%02u.%02u  SMPS:%02u.%02u",ram_data.ram_ADC.DC_Battery_voltage/1000,(ram_data.ram_ADC.DC_Battery_voltage%1000)/10,ram_data.ram_ADC.DC_Charger_voltage/1000,(ram_data.ram_ADC.DC_Charger_voltage%1000)/10);
       GLCD_GoTo(0,5);
       GLCD_WriteString((char*)tmpstr);
 
+/*
       memset(tmpstr,0,sizeof(tmpstr));
       memcpy(tmpstr," ",sizeof(" "));
       GLCD_GoTo(0,6);
+      GLCD_WriteString((char*)tmpstr);
+*/
+      GLCD_GoTo(0,6);
+      GLCD_PrintButtomBoarder();
+
+      memset(tmpstr,0,sizeof(tmpstr));
+      my_sprintf(tmpstr,7," %02d/%02d/20%02d %02d:%02d:%02d",ram_data.ram_time.date,ram_data.ram_time.month,ram_data.ram_time.year,ram_data.ram_time.hour,ram_data.ram_time.min,ram_data.ram_time.sec);
+      //sprintf(tmpstr,"%02d/%02d20/%02d %02d:%02d:%02d",ram_data.ram_time.date,ram_data.ram_time.month,ram_data.ram_time.year,ram_data.ram_time.hour,ram_data.ram_time.min,ram_data.ram_time.sec);
+      GLCD_GoTo(0,7);
       GLCD_WriteString((char*)tmpstr);
     }
    else
@@ -319,29 +345,32 @@ void AlarmDisplay()
        GLCD_PrintTopBoarder();
 
        memset(tmpstr,0,sizeof(tmpstr));
-       sprintf(tmpstr,"MAINS F:%c  MAINSOVF:%c", localAlarm.MAINS_fault, localAlarm.MAINS_OVF_fault);
+       my_sprintf(tmpstr,3,"MAINS F:%c  MAINSOVF:%c", localAlarm.MAINS_fault, localAlarm.MAINS_OVF_fault);
        GLCD_GoTo(0,2);
        GLCD_WriteString((char*)tmpstr);
 
        memset(tmpstr,0,sizeof(tmpstr));
-       sprintf(tmpstr,"EARTH F:%c  LOS     :%c",localAlarm.ACEarth_fault,localAlarm.Supply_mode);
+       my_sprintf(tmpstr,3,"EARTH F:%c  LOS     :%c",localAlarm.ACEarth_fault,localAlarm.Supply_mode);
        GLCD_GoTo(0,3);
        GLCD_WriteString((char*)tmpstr);
 
        memset(tmpstr,0,sizeof(tmpstr));
-       sprintf(tmpstr,"RTR  NC:%c  POE F   :%c", localAlarm.Router1_NC, localAlarm.Router1_V_fault);
+       my_sprintf(tmpstr,3,"RTR  NC:%c  POE F   :%c", localAlarm.Router1_NC, localAlarm.Router1_V_fault);
        GLCD_GoTo(0,4);
        GLCD_WriteString((char*)tmpstr);
 
        memset(tmpstr,0,sizeof(tmpstr));
-       sprintf(tmpstr,"ODU  NC:%c  BAT L   :%c",localAlarm.Router2_NC, localAlarm.Batt_low);
+       my_sprintf(tmpstr,3,"ODU  NC:%c  BAT L   :%c",localAlarm.Router2_NC, localAlarm.Batt_low);
        GLCD_GoTo(0,5);
        GLCD_WriteString((char*)tmpstr);
 
-       memset(tmpstr,0,sizeof(tmpstr));
-       memcpy(tmpstr," ",sizeof(" "));
        GLCD_GoTo(0,6);
-       GLCD_WriteString((char*)tmpstr);
+       GLCD_PrintButtomBoarder();
+
+       memset(tmpstr,0,sizeof(tmpstr));
+	   my_sprintf(tmpstr,7," %02d/%02d/20%02d %02d:%02d:%02d",ram_data.ram_time.date,ram_data.ram_time.month,ram_data.ram_time.year,ram_data.ram_time.hour,ram_data.ram_time.min,ram_data.ram_time.sec);
+	   GLCD_GoTo(0,7);
+	   GLCD_WriteString((char*)tmpstr);
      }
      else
      {

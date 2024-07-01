@@ -18,6 +18,10 @@
 #define BATTERY_STS_WIDTH       0X0D
 #define ON                      1
 #define OFF                     0
+
+#define BATTERY_MIN_RANGE       10800
+#define BATTERY_MAX_RANGE       12000
+#define BATTERY_BASE_PERCENTAGE 20
 #define DISPLAY_STATUS_BUSY     0x80
 
 typedef struct
@@ -39,7 +43,6 @@ void GLCD_ClearScreen(void);
 void GLCD_WriteChar(char charToWrite);
 void GLCD_WriteString(char *stringToWrite);
 void GLCD_Clear_Line(unsigned char line_num);
-void _delay_us(int microseconds);
 void GLCD_PrintBatterySts();
 void GLCD_PrintRightIcon();
 void GLCD_PrintNetworkCnt();
@@ -48,7 +51,8 @@ void Data_Screen_lcd();
 void AlarmDisplay();
 void updateGlcd();
 void Display_CFGScreen(void);
-
+void GLCD_PrintButtomBoarder();
+void GLCD_PrintTopBoarder();
 #endif //ENABLE_GLCD
 
 #endif /* GRAPHIC_LCD_KS0108_H_ */

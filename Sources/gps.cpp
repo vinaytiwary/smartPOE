@@ -29,6 +29,7 @@
 #include "Telecom_server_query.h"
 
 extern ram_data_t ram_data;
+extern e2p_location_info_t e2p_location_info;
 gps_info_t gps_info;
 
 gps_t gps;
@@ -735,7 +736,8 @@ gps_status_t gps_handler(void)
                             {
                                 updateGpsDateTimeToBuff(&gps_date_time);
                             }
-                            get_location();
+                            gps.getLoc_sts = get_location();
+
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
                             set_gps_status(AVBL);

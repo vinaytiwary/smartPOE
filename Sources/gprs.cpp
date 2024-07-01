@@ -71,13 +71,14 @@ void TCP_Handler(void)
                 timeout = 0;
 
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_gprs_connct_sts(0);
-                // set_network_status(0);
-                setNWstatus(NOT_AVBL);
-                setServerStatus(NOT_AVBL);
+                set_gprs_connct_sts(0);
+                set_network_status(0);
+
+                // setNWstatus(NOT_AVBL);
+                // setServerStatus(NOT_AVBL);
                 set_pending_request(false);
 
-                gprs.websocket_sts = FALSE;
+                set_webconn_sts(FALSE);
 
                 gprs.gprs_handler_state = GPRS_CONNECT;
 
@@ -103,8 +104,8 @@ void TCP_Handler(void)
 #ifdef DEBUG_TCP_HANDLER
                 vUART_SendStr(UART_PC,"\nGCF");
 #endif
-                setNWstatus(NOT_AVBL);
-                setServerStatus(NOT_AVBL);
+                // setNWstatus(NOT_AVBL);
+                // setServerStatus(NOT_AVBL);
                 gprs.gprs_handler_state = GPRS_IDLE;
             }
             else if (status == CON_IN_PRG)
@@ -133,11 +134,11 @@ void TCP_Handler(void)
                 //gprs.connect_sts = TRUE;
 
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_gprs_connct_sts(1);
+                set_gprs_connct_sts(1);
 
                 gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                 //setGPRSConnSts(AVBL);
-                setNWstatus(AVBL);
+                // setNWstatus(AVBL);
             }
             else if(status == CON_FAIL)
             {
@@ -148,11 +149,11 @@ void TCP_Handler(void)
                 //gprs.connect_sts = FALSE;
 
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_gprs_connct_sts(0);
-                // set_network_status(0);
+                set_gprs_connct_sts(0);
+                set_network_status(0);
 
-                setNWstatus(NOT_AVBL);
-                setServerStatus(NOT_AVBL);
+                // setNWstatus(NOT_AVBL);
+                // setServerStatus(NOT_AVBL);
                 gprs.gprs_handler_state = GPRS_IDLE;
 
             }
@@ -182,7 +183,8 @@ void TCP_Handler(void)
                 vUART_SendStr(UART_PC,"\nTCF");
 #endif
                 gprs.tcp_sts = FALSE;
-                setServerStatus(NOT_AVBL);
+                set_network_status(0);
+                // setServerStatus(NOT_AVBL);
                 // gprs.gprs_handler_state = GPRS_CONN_STS;
                 gprs.gprs_handler_state = GPRS_TCP_DISCONNECT;
             }
@@ -211,12 +213,12 @@ void TCP_Handler(void)
 #ifdef DEBUG_TCP_HANDLER
                 vUART_SendStr(UART_PC,"\nWCK");
 #endif
-                gprs.websocket_sts = TRUE;
-                setServerStatus(AVBL);  //PP added on 07-06-24
+                set_webconn_sts(TRUE);
+                // setServerStatus(AVBL);  //PP added on 07-06-24
 
                 //set_webconn_sts(1);
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_network_status(1);
+                set_network_status(1);
 
                 //gprs.gprs_handler_state = GPRS_SESSION_IDLE;//a
                 gprs.gprs_handler_state = GPRS_PING;
@@ -228,10 +230,10 @@ void TCP_Handler(void)
                 vUART_SendStr(UART_PC,"\nWCF");
 #endif
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_network_status(0);
+                set_network_status(0);
 
-                setServerStatus(NOT_AVBL);
-                gprs.websocket_sts = FALSE;
+                // setServerStatus(NOT_AVBL);
+                set_webconn_sts(FALSE);
                 // gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                 gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
             }
@@ -250,13 +252,13 @@ void TCP_Handler(void)
 #ifdef DEBUG_TCP_HANDLER
                 vUART_SendStr(UART_PC,"\nPK");
 #endif
-                gprs.websocket_sts = TRUE;
+                set_webconn_sts(TRUE);
 
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_network_status(1);
+                set_network_status(1);
 
                 flushRxBuffer(LTE_UART);
-                setServerStatus(AVBL);
+                // setServerStatus(AVBL);
                 gprs.gprs_handler_state = GPRS_SESSION_IDLE;
 
                 //gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;
@@ -268,10 +270,10 @@ void TCP_Handler(void)
                 vUART_SendStr(UART_PC,"\nPF");
 #endif
                 //gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;
-                gprs.websocket_sts = FALSE;
+                set_webconn_sts(FALSE);
 
                 // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
-                // set_network_status(0);
+                set_network_status(0);
 
                 // gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                 gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
@@ -312,8 +314,8 @@ void TCP_Handler(void)
 #endif  //ENABLE_WDT_RESET
                 }
 
-                
-                setServerStatus(NOT_AVBL);
+                set_network_status(0);
+                // setServerStatus(NOT_AVBL);
                 // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT;
                 gprs.gprs_handler_state = GPRS_TCP_DISCONNECT;
             }
@@ -339,7 +341,9 @@ void TCP_Handler(void)
 #endif  //ENABLE_WDT_RESET
                 }
                 //LTEmodule.HandlerSts = GPRS_CONN_STS;
-                setServerStatus(NOT_AVBL);
+
+                set_network_status(0);
+                // setServerStatus(NOT_AVBL);
                 // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT;
                 gprs.gprs_handler_state = GPRS_TCP_DISCONNECT;
             }
@@ -361,14 +365,16 @@ void TCP_Handler(void)
             {
                 // LTEmodule.HandlerSts = GPRS_CONN_STS;
                 gprs.gprs_handler_state = GPRS_CONN_STS;
-                setServerStatus(NOT_AVBL);
+                set_network_status(0);
+                // setServerStatus(NOT_AVBL);
             }
             else if(status == TCP_DISCON_FAIL)
             {
                 // LTEmodule.HandlerSts = GPRS_CONNECT;
                 // LTEmodule.HandlerSts = GPRS_CONN_STS;
                 gprs.gprs_handler_state = GPRS_CONN_STS;
-                setServerStatus(NOT_AVBL);
+                set_network_status(0);
+                // setServerStatus(NOT_AVBL);
             }
             else if(status == TCP_DISCON_IN_PRG)
             {
@@ -462,7 +468,8 @@ void TCP_Handler(void)
                     //flushTxBuffer(LTE_UART);
                     //gprs_tx_buff.index = 0;
                     setREQmode(NOT_AVBL);
-                    setServerStatus(AVBL);
+                    // setServerStatus(AVBL);
+                    set_network_status(1);
                 }
                 else if(status == TCP_SEND_FAIL)
                 {
@@ -472,6 +479,7 @@ void TCP_Handler(void)
                     // gprs.gprs_handler_state = GPRS_TCP_CONNECT;
                     gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
                     //setREQmode(NOT_AVBL);
+                    set_network_status(0);
                 }
                 else if(status == TCP_SEND_IN_PRG)
                 {
@@ -557,7 +565,7 @@ void TCP_Handler(void)
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                 vUART_SendStr(UART_PC,"\nAVBL");
 #endif
-                if (gprs.websocket_sts == TRUE)
+                if (get_webconn_sts() == TRUE)
                 {
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nUPD_LOGS");
@@ -596,7 +604,7 @@ void TCP_Handler(void)
 // #ifdef DEBUG_GPRS_DATA_UPLOAD
 //                 vUART_SendStr(UART_PC,"\nAVBL");
 // #endif
-//                 if (gprs.websocket_sts == TRUE)
+//                 if (get_webconn_sts() == TRUE)
 //                 {
 // #ifdef DEBUG_GPRS_DATA_UPLOAD
 //                     vUART_SendStr(UART_PC,"\nUPD_LOGS");
@@ -2093,7 +2101,7 @@ websckt_sts_t websckt_connect(void)
 
                         gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_RSP_1;
                     }
-                    //gprs.websocket_sts = TRUE;
+                    //set_webconn_sts(TRUE);
                     //sts = WEBSOCKET_PASS;
                     // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_RSP_1;   //PP commented on 01-05-24
                     //flushRxBuffer(LTE_UART);
@@ -2170,7 +2178,7 @@ websckt_sts_t websckt_connect(void)
 
                 case (GPRS_MATCH_OK):
                 {
-                    //gprs.websocket_sts = TRUE;
+                    //set_webconn_sts(TRUE);
                     // if((strstr(tmpstr, "connected")) || (strstr(tmpstr,"101")))  //PP should i use this conition instead? 30-04-24
                     // if(valid_code(tmpstr))
                     if((strstr(tmpstr, "101"))||(strstr(tmpstr, "connected")))
@@ -2437,7 +2445,7 @@ ping_status_t ping_send(void)
 #endif
                     //if(pong_received(tmpstr))
                     //{
-                        //gprs.websocket_sts = TRUE;
+                        //set_webconn_sts(TRUE);
 
                         //sts = WEBSOCKET_PASS;
                         // ping_state = PING_SEND_RSP_1;    //PP commented this line on 30-04-24
@@ -2447,7 +2455,7 @@ ping_status_t ping_send(void)
                     //}
                     //else
                     //{
-                        //gprs.websocket_sts = FALSE;
+                        //set_webconn_sts(FALSE);
 //#ifdef DEBUG_WEBSOCKET_CONN
 //            vUART_SendStr(UART_PC,"PING_SEND_CIPSEND:f\n");
 //#endif
@@ -4154,25 +4162,26 @@ uint8_t get_gprs_connct_sts(void)
     return gprs.connect_sts;
 }
 
-void setNWstatus(gprs_status_t sts)
-{
-    gprs.NW_connSts = sts;
-}
+// void setNWstatus(gprs_status_t sts)
+// {
+//     gprs.NW_connSts = sts;
+// }
+//
+// gprs_status_t getNW_status(void)
+// {
+//     return gprs.NW_connSts;
+// }
+//
+// void setServerStatus(gprs_status_t sts)
+// {
+//     gprs.serverConn_Sts = sts;
+// }
+//
+// gprs_status_t getServerStatus(void)
+// {
+//     return gprs.serverConn_Sts;
+// }
 
-gprs_status_t getNW_status(void)
-{
-    return gprs.NW_connSts;
-}
-
-void setServerStatus(gprs_status_t sts)
-{
-    gprs.serverConn_Sts = sts;
-}
-
-gprs_status_t getServerStatus(void)
-{
-    return gprs.serverConn_Sts;
-}
 // #endif  // ifNOTdef ETHERNET_EN
 
 

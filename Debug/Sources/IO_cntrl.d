@@ -46,6 +46,8 @@ Sources/IO_cntrl.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/inc
 Sources/IO_cntrl.obj: ../Sources/E2P.h
 Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
 Sources/IO_cntrl.obj: ../Sources/_common.h
+Sources/IO_cntrl.obj: ../Sources/SysTick_Timer.h
+Sources/IO_cntrl.obj: ../Sources/GLCD.h
 
 ../Sources/IO_cntrl.cpp:
 
@@ -138,4 +140,8 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 
 ../Sources/_common.h:
+
+../Sources/SysTick_Timer.h:
+
+../Sources/GLCD.h:
 

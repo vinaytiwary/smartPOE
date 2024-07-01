@@ -121,13 +121,15 @@ int DhcpClass::request_DHCP_lease(void){
 //    unsigned long startTime;/// = millis();
 //    startTime = millis();
       //startTime = millis();
+
 #ifdef DEBUG_ETHERNET
 //  vUART_SendStr(UART_PC,"\nstr_time:");
 //  vUART_SendInt(UART_PC,startTime);
  vUART_SendStr(UART_PC,"\ndhcp_state:");
  vUART_SendInt(UART_PC,_dhcp_state);
-
 #endif
+
+
 //      while(_dhcp_state != STATE_DHCP_LEASED)
 //      {
     if(_dhcp_state != STATE_DHCP_LEASED)
@@ -199,13 +201,12 @@ int DhcpClass::request_DHCP_lease(void){
 
             messageType = parseDHCPResponse(respId);
 #ifdef DEBUG_ETHERNET
- vUART_SendStr(UART_PC,"\nDHCP_REQUEST:");
- vUART_SendInt(UART_PC,(millis() - startTime));
- //vUART_SendInt(UART_PC,respId);
- vUART_SendChr(UART_PC,',');
-   vUART_SendStr(UART_PC,"messageType:");
-   vUART_SendInt(UART_PC,messageType);
-
+            vUART_SendStr(UART_PC,"\nDHCP_REQUEST:");
+            vUART_SendInt(UART_PC,(millis() - startTime));
+            //vUART_SendInt(UART_PC,respId);
+            vUART_SendChr(UART_PC,',');
+            vUART_SendStr(UART_PC,"messageType:");
+            vUART_SendInt(UART_PC,messageType);
 #endif
             if(messageType == DHCP_ACK)
             {
@@ -244,7 +245,7 @@ int DhcpClass::request_DHCP_lease(void){
             //_dhcp_state = STATE_DHCP_REREQUEST;
             _dhcp_state = STATE_DHCP_START;
 #ifdef DEBUG_ETHERNET
- vUART_SendChr(UART_PC,'X');
+            vUART_SendChr(UART_PC,'X');
 #endif
         }
         

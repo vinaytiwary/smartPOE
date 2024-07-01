@@ -57,7 +57,7 @@
 
 // #define CHECKSTR_EXP
 
-//  #define ETHERNET_EN
+#define ETHERNET_EN
 
 #define ENABLE_WDT_RESET
 
@@ -83,6 +83,6 @@
 #define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
 #endif
 
-// #define ENABLE_GLCD
+#define ENABLE_GLCD
 
 #endif /* SOURCES__CONFIG_H_ */

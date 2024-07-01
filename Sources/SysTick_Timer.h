@@ -33,6 +33,8 @@ void vMAIN_DelayMS(uint32_t u32Value);
 
 uint32_t my_millis(void);
 
+void _delay_us(int microseconds);
+
 #ifdef __cplusplus
 extern "C" {
 #endif

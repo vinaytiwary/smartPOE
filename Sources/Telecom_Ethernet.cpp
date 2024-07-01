@@ -143,7 +143,8 @@ void ethernet_handler(void)
             // ethernet_state = ETHER_DHCP_CONN;
             Telecom_Ethernet.ethernet_state = ETHER_DHCP_CONN;
             ether_ws_sts = FALSE;
-            set_ethernet_NWstatus(FALSE);
+            // set_ethernet_NWstatus(FALSE);
+            set_network_status(FALSE);
             set_ethernet_connct_sts(FALSE);
 
 #ifdef DEBUG_ETHERNET
@@ -179,7 +180,8 @@ void ethernet_handler(void)
 //                 vUART_SendInt(UART_PC, ((my_millis() - start_millis)/1000));
 // #endif
                 // _dhcp_state = STATE_DHCP_START;
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
                 set_ethernet_connct_sts(FALSE);
 
                 // ethernet_state = ETHER_DHCP_CONN;
@@ -227,7 +229,8 @@ void ethernet_handler(void)
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\neTC:f");
 #endif
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
                 set_ethernet_connct_sts(FALSE);
 
                 // _dhcp_state = STATE_DHCP_START;
@@ -246,7 +249,8 @@ void ethernet_handler(void)
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\neWC:k");
 #endif
-                set_ethernet_NWstatus(TRUE);
+                // set_ethernet_NWstatus(TRUE);
+                set_network_status(TRUE);
                 set_ethernet_connct_sts(TRUE);
 
                 ether_ws_sts = TRUE;
@@ -260,7 +264,8 @@ void ethernet_handler(void)
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\neWC:f");
 #endif
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
 
                 ether_ws_sts = FALSE;
                 // _dhcp_state = STATE_DHCP_START;
@@ -300,7 +305,8 @@ void ethernet_handler(void)
 #endif  //ENABLE_WDT_RESET
                 }
 
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
                 set_ethernet_connct_sts(FALSE);
 
                 ether_ws_sts = FALSE;
@@ -308,8 +314,8 @@ void ethernet_handler(void)
                 // Telecom_Ethernet.ethernet_state = ETHER_WS_CONN;
                 Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;   //It won't respond if I do WSconn again so I did TCPconn after this instead and it ran ok. Not getting into client.stop() coz so far it's not neede.
             }
-            // else if(ws_disconn() == ETHER_WS_CON_FAIL)
-            else if(sts == ETHER_WS_CON_FAIL)
+            // else if(ws_disconn() == ETHER_WS_DISCON_FAIL)
+            else if(sts == ETHER_WS_DISCON_FAIL)
             {
 #ifdef DEBUG_ETHERNET
                 vUART_SendStr(UART_PC,"\neWDC:f");
@@ -334,7 +340,8 @@ void ethernet_handler(void)
 #endif  //ENABLE_WDT_RESET
                 }
 
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
 
                 ether_ws_sts = FALSE;
                 // _dhcp_state = STATE_DHCP_START;
@@ -355,7 +362,8 @@ void ethernet_handler(void)
                 vUART_SendStr(UART_PC,"\nePS:k");
 #endif
                 ether_ws_sts = TRUE;
-                set_ethernet_NWstatus(TRUE);
+                // set_ethernet_NWstatus(TRUE);
+                set_network_status(TRUE);
                 set_ethernet_connct_sts(TRUE);
 
                 // ethernet_state = ETHER_SESSION_IDLE;
@@ -368,7 +376,8 @@ void ethernet_handler(void)
                 vUART_SendStr(UART_PC,"\nePS:f");
 #endif
                 ether_ws_sts = FALSE;
-                set_ethernet_NWstatus(FALSE);
+                // set_ethernet_NWstatus(FALSE);
+                set_network_status(FALSE);
 
                 //_dhcp_state = STATE_DHCP_START;
                 set_ethernet_connct_sts(FALSE);
@@ -462,12 +471,14 @@ void ethernet_handler(void)
                     //flushTxBuffer(LTE_UART);
                     //ethernet_tx_buff.index = 0;
                     setREQmode(NOT_AVBL);
+                    set_network_status(TRUE);
                 }
                 else if(status == ETHER_TCP_SEND_FAIL)
                 {
 #ifdef DEBUG_GPRS_DATA_UPLOAD
                     vUART_SendStr(UART_PC,"\nTCP_SEND_FAIL");
 #endif
+                    set_network_status(FALSE);
                     // ethernet_state = ETHER_TCP_CONN;
                     Telecom_Ethernet.ethernet_state = ETHER_TCP_CONN;
                     //setREQmode(NOT_AVBL);
@@ -686,9 +697,9 @@ ether_tcp_sts_t ether_tcp_connect(void)
     }
     else
     {
-        // uint8_t conn_sts = client.connect((const char *)cloud_config.ip_addr, cloud_config.port_num);
+        uint8_t conn_sts = client.connect((const char *)cloud_config.ip_addr, cloud_config.port_num);
         // uint8_t conn_sts = client.connect(IPAddress(192, 168, 1, 101), 5000);
-        uint8_t conn_sts = client.connect(IPAddress(192, 168, 1, 101), 10001);
+        // uint8_t conn_sts = client.connect(IPAddress(192, 168, 1, 101), 10001);
 #ifdef DEBUG_ETHER_TCP_CONN
         vUART_SendStr(UART_PC, "\nconn_sts:");
         vUART_SendInt(UART_PC, conn_sts);
@@ -741,9 +752,9 @@ ether_ws_sts_t ws_connect(void)
             // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Protocol: ocpp1.6\r\n\r\n",cloud_config.path,cloud_config.ip_addr,cloud_config.port_num,randomKey);
             // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Protocol: ocpp1.6\r\n\r\n",cloud_config.path,"192.168.1.101",cloud_config.port_num,randomKey);
             
-            my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,"192.168.1.101",cloud_config.port_num,randomKey);
+            // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,"192.168.1.101",cloud_config.port_num,randomKey);
 
-            // my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,cloud_config.ip_addr,cloud_config.port_num,randomKey);
+            my_sprintf(temp_buff,5,"GET %s HTTP/1.1\r\nHost: %s:%d\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: %s\r\n\r\n",cloud_config.path,cloud_config.ip_addr,cloud_config.port_num,randomKey);
 
             int final_index = strlen(temp_buff);
 
@@ -1458,16 +1469,16 @@ uint8_t get_ethernet_connct_sts(void)
     return Telecom_Ethernet.ether_connect_sts;
 }
 
-void set_ethernet_NWstatus(uint8_t sts)
-{
-    // ether_network_sts = sts;
-    Telecom_Ethernet.ether_network_sts = sts;
-}
-uint8_t get_ethernet_NWstatus(void)
-{
-    // return ether_network_sts;
-    return Telecom_Ethernet.ether_network_sts;
-}
+// void set_ethernet_NWstatus(uint8_t sts)
+// {
+//     // ether_network_sts = sts;
+//     Telecom_Ethernet.ether_network_sts = sts;
+// }
+// uint8_t get_ethernet_NWstatus(void)
+// {
+//     // return ether_network_sts;
+//     return Telecom_Ethernet.ether_network_sts;
+// }
 
 bool get_pkt_recv(void)
 {
