@@ -233,12 +233,12 @@ int main(void)
             vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
 #endif
 
-			vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
+			// vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
 			if(vEarthDetect())
 			{
 #ifdef DEBUG_EARTH_CHECK
-            vUART_SendStr(DEBUG_UART_BASE,",");
-            vUART_SendStr(DEBUG_UART_BASE,"isEARTH!");
+                vUART_SendStr(DEBUG_UART_BASE,",");
+                vUART_SendStr(DEBUG_UART_BASE,"isEARTH!");
 #endif
 			}
 			// vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
@@ -248,7 +248,9 @@ int main(void)
 #endif
 
 #ifdef ADC_EN
+            GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LOW );
 			GetAdcData();
+            GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN );
 #endif  //ADC_EN
 			if(ram_data.ram_EXTI_cnt.freq_cnt)
 			{
@@ -272,6 +274,7 @@ int main(void)
 #if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
             get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
+            // get_ADC_SIGarray(SIG_12V_IN_ADC, ADC_INDX_12VIN);
             // vUART_SendStr(UART_PC, "\nODUV_RAW=");
             // vUART_SendInt(UART_PC, readADC(SIG_ODU_VOLTAGE_ADC));
             // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
@@ -351,7 +354,8 @@ void update_ram_data(void)
         // ram_data.Latitude = gps_data.Latitude;
         // ram_data.Longitude = gps_data.Longitude;
 
-        if(gps.getLoc_sts)
+        // if(!gps.getLoc_sts)
+        if(!get_loc_status())
         {
 #ifdef DEBUG_GET_LOC
             // UWriteString((char*)"\nFGPS",DBG_UART);

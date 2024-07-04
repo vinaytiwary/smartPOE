@@ -206,8 +206,10 @@
 
 #define EARTH_DETECT_PORT_BASE        GPIO_PORTJ_BASE
 #define EARTH_DETECT_PIN              GPIO_PIN_1
-/*******************************************************/
 
+/*************************INVERTER CTRL*************************/
+#define INVERTER_CTRL_PORT_BASE         GPIO_PORTD_BASE
+#define INVERTER_CTRL_PIN               GPIO_PIN_0
 
 
 

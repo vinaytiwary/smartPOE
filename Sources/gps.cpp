@@ -255,6 +255,7 @@ gps_status_t gps_handler(void)
                 gps_wait_timeout = 0;
                 gps_retry_cnt = 0;
                 set_gps_status(NOT_AVBL);
+                set_loc_status(FALSE);
 
                 gps_handler_state = GPS_CMD_ECHO_OFF;
             }
@@ -264,6 +265,7 @@ gps_status_t gps_handler(void)
         case GPS_CMD_ECHO_OFF:
         {
             set_gps_status(NOT_AVBL);
+            set_loc_status(FALSE);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -390,6 +392,7 @@ gps_status_t gps_handler(void)
         case GPS_CMD_POWER:
         {
             set_gps_status(NOT_AVBL);
+            set_loc_status(FALSE);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -605,13 +608,15 @@ gps_status_t gps_handler(void)
 
         // case GPS_RSP_STATUS:
         // {
-
+        //
         // }
         // break;
 
         case GPS_CMD_LOCATION:
         {
-            set_gps_status(NOT_AVBL);
+            // set_gps_status(NOT_AVBL);
+            // set_loc_status(FALSE);
+
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -635,19 +640,19 @@ gps_status_t gps_handler(void)
 #endif  //ETHERNET_EN
             {
 #ifdef DEBUG_QUERY_STATES
-            // UWriteString((char*)"\nNR_gl", DBG_UART);
-            vUART_SendStr(UART_PC, "\nNR_gl");
+                // UWriteString((char*)"\nNR_gl", DBG_UART);
+                vUART_SendStr(UART_PC, "\nNR_gl");
 #endif
-            flushRxBuffer(LTE_UART);
+                flushRxBuffer(LTE_UART);
 #ifdef GNS_PKT_EN
-			// UWriteString((char *)"AT+CGNSSINFO\r", LTE_UART);
-            vUART_SendStr(LTE_UART_BASE, "AT+CGNSSINFO\r");
+                // UWriteString((char *)"AT+CGNSSINFO\r", LTE_UART);
+                vUART_SendStr(LTE_UART_BASE, "AT+CGNSSINFO\r");
 #else
-			// UWriteString((char *)"AT+CGPSINFO\r", LTE_UART);
-            vUART_SendStr(LTE_UART_BASE, "AT+CGPSINFO\r");
+                // UWriteString((char *)"AT+CGPSINFO\r", LTE_UART);
+                vUART_SendStr(LTE_UART_BASE, "AT+CGPSINFO\r");
 #endif	//GNS_PKT_EN
 
-            gps_handler_state = GPS_RSP_LOCATION;
+                gps_handler_state = GPS_RSP_LOCATION;
             }
         }
         break;
@@ -671,8 +676,8 @@ gps_status_t gps_handler(void)
                 break;
             }
 #ifdef DEBUG_QUERY_STATES
-                // UWriteString((char*)"\nNR_gl", DBG_UART);
-                vUART_SendStr(UART_PC, "\nNR_gl");
+            // UWriteString((char*)"\nNR_gl", DBG_UART);
+            vUART_SendStr(UART_PC, "\nNR_gl");
 #endif
 #endif  //ETHERNET_EN
 
@@ -721,6 +726,7 @@ gps_status_t gps_handler(void)
 // #endif
                     gps_wait_timeout = 0;
                     gps_retry_cnt = 0;
+                    bool loc_status = 0;
 
                     if(count_comma(tmpstr, 68) == MIN_COMMAS)
                     {
@@ -736,7 +742,9 @@ gps_status_t gps_handler(void)
                             {
                                 updateGpsDateTimeToBuff(&gps_date_time);
                             }
-                            gps.getLoc_sts = get_location();
+                            // gps.getLoc_sts = get_location();
+                            loc_status = get_location();
+                            set_loc_status(loc_status);
 
                             sts = GPS_PASS;
                             gps.gps_ready = TRUE;
@@ -812,13 +820,14 @@ gps_status_t gps_handler(void)
 
         // case GPS_RSP_1_LOCATION:
         // {
-
+        //
         // }
         // break;
 
         case GPS_CMD_POWER_OFF:
         {
             set_gps_status(NOT_AVBL);
+            set_loc_status(FALSE);
             // flushTxBuffer(LTE_UART);
 #ifdef ETHERNET_EN
             flushRxBuffer(LTE_UART);
@@ -1824,6 +1833,16 @@ gprs_status_t get_gps_status()
 void set_gps_status(gprs_status_t sts)
 {
     gps.gps_status = sts;
+}
+
+bool get_loc_status(void)
+{
+    return gps.getLoc_sts;
+}
+
+void set_loc_status(bool sts)
+{
+    gps.getLoc_sts = sts;
 }
 // #endif  // ifNOTdef ETHERNET_EN
 

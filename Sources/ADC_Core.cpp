@@ -513,12 +513,13 @@ uint32_t getBatteryVoltage(void)
 {
     GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, GPIO_LOW);  //PP added on 20-06-24
 
+    _delay_us(50);
+
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
     adc_avg = updateADC(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
 
-    _delay_us(50);
 
     //analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98097) * BATTERY_RESISTOR_RATIO;
     // analog_vtg = ((adc_avg * (ADC_REFV/ADC_RESOLUTION)) * 0.98223) * BATTERY_RESISTOR_RATIO;

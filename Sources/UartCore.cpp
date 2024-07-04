@@ -449,9 +449,11 @@ extern "C" void LTEUARTIntHandler(void)
     while(UARTCharsAvail(LTE_UART_BASE))
     {
         tmpudr = UARTCharGetNonBlocking(LTE_UART_BASE);
-
+        
+#ifdef ECHO_LTE_TO_DBG
         // UARTCharPutNonBlocking(LTE_UART_BASE, tmpudr);
         UARTCharPutNonBlocking(DEBUG_UART_BASE, tmpudr);
+#endif  //ECHO_LTE_TO_DBG
 
         gprs_rx_isr_handler.state = GPRS_RX_INPROG;
         

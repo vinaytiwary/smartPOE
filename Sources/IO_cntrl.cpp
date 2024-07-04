@@ -224,7 +224,12 @@ void vPERIPH_GPIOInit(void)
     //GPIOPinTypeGPIOOutput(RELAY_RTR_PORT, RELAY_RTR );
     GPIOPinTypeGPIOOutput(BATT_CTRL_PORT, BATT_CTRL_PIN);
     GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN);
+    // GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, LOW);
     //ControlODU_Relay(ON);
+
+    GPIOPinTypeGPIOOutput(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN);
+    GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
+    // GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
 #endif  //HW_BOARD == TIOT_V2_00_BOARD  
 }
 
@@ -658,6 +663,9 @@ void controlRelays(void)
 #endif  //if 0
 
 #if 0
+#ifdef DEBUG_RELAY
+            vUART_SendStr(UART_PC, "\nBM_test_relaysON");
+#endif
             ControlRouter_Relay(ON);
             ControlODU_Relay(ON);
 #endif  // if 0

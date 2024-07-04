@@ -85,4 +85,6 @@
 
 #define ENABLE_GLCD
 
+#define ECHO_LTE_TO_DBG
+
 #endif /* SOURCES__CONFIG_H_ */

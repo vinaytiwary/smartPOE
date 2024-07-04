@@ -149,6 +149,9 @@ void updateGpsDateTimeToBuff(gps_date_time_t *date_time);
 gprs_status_t get_gps_status();
 void set_gps_status(gprs_status_t);
 
+bool get_loc_status(void);
+void set_loc_status(bool sts);
+
 // #endif 	// ifNOTdef ETHERNET_EN
 
 #endif /* SOURCES_GPS_H_ */
