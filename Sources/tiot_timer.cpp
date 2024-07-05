@@ -69,7 +69,7 @@ void vTimerInit(void)
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 6000);
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 8000);
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 3000);
-    // TimerLoadSet(TIMER0_BASE, TIMER_B, 30000);
+    // TimerLoadSet(TIMER0_BASE, TIMER_B, 30000);   //15ms
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 29600);
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 29400);
     // TimerLoadSet(TIMER0_BASE, TIMER_B, 29200);

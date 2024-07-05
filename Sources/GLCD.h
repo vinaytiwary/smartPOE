@@ -50,9 +50,12 @@ void GLCD_PrintNetworkDscnt();
 void Data_Screen_lcd();
 void AlarmDisplay();
 void updateGlcd();
+void Display_BootUPscreen(void);
+void print_dash();
 void Display_CFGScreen(void);
 void GLCD_PrintButtomBoarder();
 void GLCD_PrintTopBoarder();
+void AlarmDisplayTest();
 #endif //ENABLE_GLCD
 
 #endif /* GRAPHIC_LCD_KS0108_H_ */

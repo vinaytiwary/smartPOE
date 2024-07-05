@@ -85,6 +85,8 @@
 
 #define ENABLE_GLCD
 
-#define ECHO_LTE_TO_DBG
+// #define ECHO_LTE_TO_DBG
 
+#define SMPS_HARDCODED        //only for testing
+#define RTR_HARDCODED         //only for testing
 #endif /* SOURCES__CONFIG_H_ */

@@ -97,6 +97,7 @@ char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 unsigned int upload_time = 0;
 unsigned int save_offline_time = 0;
 uint32_t relay_startup_time = 0;
+uint32_t GLCD_startup_time = 0;
 
 int main(void)
 {
@@ -108,6 +109,7 @@ int main(void)
 	init_config();
 
     relay_startup_time = my_millis();
+    GLCD_startup_time = my_millis();
 
     // flashInit();
 
@@ -117,16 +119,8 @@ int main(void)
     get_present_time(&ram_data.ram_time);
     // update_rtc(&dummyDateBuff[0], 0);
 #endif
-    
-#ifdef ENABLE_GLCD
-    GLCD_ClearScreen();
-    GLCD_GoTo(36,4);
-    GLCD_WriteString((char*)"Smart POE");
-    GLCD_GoTo(48,5);
-    GLCD_WriteString((char*)FIRMWARE_VERSION);
-    GLCD_GoTo(15,6);
-    GLCD_WriteString((char*)"Booting Up...");
-#endif  //ENABLE_GLCD
+
+    Display_BootUPscreen();
 
 #ifdef  ENABLE_WDT_RESET
     initWDT();
