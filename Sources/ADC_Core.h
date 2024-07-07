@@ -80,6 +80,8 @@
 #define GAIN_OPAMP_U3		(INPUT_RESISTOR/FEEDBACK_RESISTOR)		//inverse of Gain
 #define OPAMP_INPUT_SHUNT_RESISTOR	(2)		//inverse of the shunt resistor (0.5)
 
+#define INVERTER_IDLE_CURRENT	(560)
+
 enum	//ADC indexes Used for adc raw array queue sampling
 {
 	ADC_INDX_ACV = 0,	//0

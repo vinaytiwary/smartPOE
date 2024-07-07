@@ -288,13 +288,13 @@ void Data_Screen_lcd()
 
 #ifdef RTR_HARDCODED
       memset(tmpstr,0,sizeof(tmpstr));
-      if(ram_data.ram_ADC.DC_current_router1 < 425)
+      if(ram_data.ram_ADC.DC_current_router1 < INVERTER_IDLE_CURRENT)
       {
           my_sprintf(tmpstr,3,"RC :00.00  ODUC:%02d.%02d",ram_data.ram_ADC.DC_current_router2/1000,(ram_data.ram_ADC.DC_current_router2%1000)/10);
       }
       else
       {
-          my_sprintf(tmpstr,5,"RC :%02d.%02d  ODUC:%02d.%02d",(ram_data.ram_ADC.DC_current_router1-425)/1000,((ram_data.ram_ADC.DC_current_router1-425)%1000)/10,ram_data.ram_ADC.DC_current_router2/1000,(ram_data.ram_ADC.DC_current_router2%1000)/10);
+          my_sprintf(tmpstr,5,"RC :%02d.%02d  ODUC:%02d.%02d",(ram_data.ram_ADC.DC_current_router1-INVERTER_IDLE_CURRENT)/1000,((ram_data.ram_ADC.DC_current_router1-INVERTER_IDLE_CURRENT)%1000)/10,ram_data.ram_ADC.DC_current_router2/1000,(ram_data.ram_ADC.DC_current_router2%1000)/10);
       }
       GLCD_GoTo(0,4);
       GLCD_WriteString((char*)tmpstr);
@@ -441,7 +441,7 @@ void AlarmDisplayTest()
      localAlarm.Batt_low = Alarms.Batt_low;
 
 #ifdef RTR_HARDCODED
-     localAlarm.Router1_NC = ram_data.ram_ADC.DC_current_router1 < 425 ? 'Y' : 'N';
+     localAlarm.Router1_NC = ram_data.ram_ADC.DC_current_router1 < INVERTER_IDLE_CURRENT ? 'Y' : 'N';
 #else
      localAlarm.Router1_NC = Alarms.Router1_NC ? 'Y' : 'N';
 #endif  //RTR_HARDCODED
@@ -523,7 +523,7 @@ void AlarmDisplayTest()
        GLCD_GoTo(71,3);
        GLCD_WriteString((char*)tmpstr);
        GLCD_GoTo(118,3);
-       ram_data.ram_ADC.DC_current_router1 < 425 ? GLCD_PrintWrongIcon() :GLCD_PrintRightIcon();
+       ram_data.ram_ADC.DC_current_router1 < 550 ? GLCD_PrintWrongIcon() :GLCD_PrintRightIcon();
 
        memset(tmpstr,0,sizeof(tmpstr));
        memcpy(tmpstr,"ODU CON:",sizeof("ODU CON:"));

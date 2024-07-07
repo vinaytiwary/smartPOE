@@ -267,8 +267,9 @@ int main(void)
 
 #if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
-            get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
+            // get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
             // get_ADC_SIGarray(SIG_12V_IN_ADC, ADC_INDX_12VIN);
+            get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
             // vUART_SendStr(UART_PC, "\nODUV_RAW=");
             // vUART_SendInt(UART_PC, readADC(SIG_ODU_VOLTAGE_ADC));
             // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
