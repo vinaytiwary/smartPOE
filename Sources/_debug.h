@@ -72,7 +72,7 @@
 #define DEBUG_BCD_SEL_SW
 // // #define DEBUG_RESTART
 #define DEBUG_RELAY
-// // #define DEBUG_EARTHDETECT
+#define DEBUG_EARTHDETECT
 // // // #define DEBUG_FREQ_MEAS
 // // #define DEBUG_MAINS_FAULT
 // // // #define DEBUG_RELAY_STATE_LCD

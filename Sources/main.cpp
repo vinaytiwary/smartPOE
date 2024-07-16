@@ -99,6 +99,8 @@ unsigned int save_offline_time = 0;
 uint32_t relay_startup_time = 0;
 uint32_t GLCD_startup_time = 0;
 
+extern volatile uint32_t counter_10sec;
+
 int main(void)
 {
     // static unsigned int upload_time = 0;
@@ -143,14 +145,80 @@ int main(void)
 #endif
 
 #if 0
+
+#ifdef ODU_RELAY_TST
+    SetODU_Mode(MODE_12V);
+
+    // uint32_t start_time = 0;
+    // start_time = my_millis();
+
+    // ControlODU_Relay(OFF);
+    ControlODU_Relay(ON);
+#endif  //ODU_RELAY_TST
+
 	while(1)
 	{
 		vGPIO_Toggle(LED_PORT_BASE, LED2_PIN,  LED2_PIN);	//PP(25-04-24) for testing
-		// GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
-		readADC(SIG_AC_VOLTAGE_ADC);
-		// GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN);
+#ifdef  ENABLE_WDT_RESET
+        feedWDT();
+#endif  //ENABLE_WDT_RESET
+		// // GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
+		// readADC(SIG_AC_VOLTAGE_ADC);
+		// // GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN);
+
+        // if((counter_10sec % 10) == 0)
+        // {
+        //     ControlODU_Relay(ON);
+        //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+        // }
+        // else
+        // {
+        //     ControlODU_Relay(OFF);
+        //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, OFF );
+        // }
+
+        // if(counter_10sec >= 10)
+        // {
+        //     counter_10sec = 0;
+        //     vGPIO_Toggle(LED_PORT_BASE, RELAY_ODU,  RELAY_ODU);
+        //     vGPIO_Toggle(RELAY_ODU_PORT, LED1_PIN,  LED1_PIN);
+        //     // ControlODU_Relay(ON);
+        //     // GPIOPinWrite(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+        // }
+        // // else
+        // // {
+        // //     ControlODU_Relay(OFF);
+        // //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, OFF );
+        // // }
+
+        // if((my_millis() - start_time) >= 10000)
+        // {
+        //     start_time = my_millis();
+        //     ControlODU_Relay(ON);
+        //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+        // }
+        // else
+        // {
+        //     ControlODU_Relay(OFF);
+        //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, OFF );
+        // }
+
+        // if((my_millis() - start_time) >= 10000)
+        // {
+        //     start_time = my_millis();
+        //     vGPIO_Toggle(LED_PORT_BASE, RELAY_ODU,  RELAY_ODU);
+        //     vGPIO_Toggle(RELAY_ODU_PORT, LED1_PIN,  LED1_PIN);
+        //     // ControlODU_Relay(ON);
+        //     // GPIOPinWrite(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+        // }
+        // // else
+        // // {
+        // //     ControlODU_Relay(OFF);
+        // //     GPIOPinWrite(LED_PORT_BASE, LED1_PIN, OFF );
+        // // }
+
 	}
-#endif
+#endif  // if 0
 
 #if 1
 	while(1)
@@ -246,20 +314,24 @@ int main(void)
 			GetAdcData();
             GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN );
 #endif  //ADC_EN
-			if(ram_data.ram_EXTI_cnt.freq_cnt)
-			{
-                if(vEarthDetect())
-                {
-                    ram_data.ram_EXTI_cnt.earth_cnt = true;
-#ifdef DEBUG_EARTHDETECT
-                    vUART_SendStr(UART_PC,"\nisEARTH!");
-#endif
-                }
-                else
-                {
-                    ram_data.ram_EXTI_cnt.earth_cnt = false;
-                }
-			}
+
+            // PP commented on 10-07-24. (BOARD E:) We finally got a situation where frequency detection optocoupler 
+            // is slightly damaged so it won't detect it, but earth is there, but not getting detected because Vinay 
+            // only called it when there is frequency detected. Now calling this in update_ram_data().
+// 			if(ram_data.ram_EXTI_cnt.freq_cnt)
+// 			{
+//                 if(vEarthDetect())
+//                 {
+//                     ram_data.ram_EXTI_cnt.earth_cnt = true;
+// #ifdef DEBUG_EARTHDETECT
+//                     vUART_SendStr(UART_PC,"\nisEARTH!");
+// #endif
+//                 }
+//                 else
+//                 {
+//                     ram_data.ram_EXTI_cnt.earth_cnt = false;
+//                 }
+// 			}
 			update_ram_data();
 #if 0
 			Data_Screen_lcd();
@@ -267,9 +339,9 @@ int main(void)
 
 #if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
-            // get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
+            get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
             // get_ADC_SIGarray(SIG_12V_IN_ADC, ADC_INDX_12VIN);
-            get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
+            // get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
             // vUART_SendStr(UART_PC, "\nODUV_RAW=");
             // vUART_SendInt(UART_PC, readADC(SIG_ODU_VOLTAGE_ADC));
             // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
@@ -340,6 +412,8 @@ void update_ram_data(void)
     memcpy(&ram_data.ram_ADC, &measurements, sizeof(measurements_t));
 
 	memset(&ram_data.ram_time, 0, sizeof(time_stamp_t));    //PP added on 23-02-24.
+
+    ram_data.ram_EXTI_cnt.earth_cnt = vEarthDetect();
 #if RTC_SIMULATOR
 		//update_date_time();
 #elif defined(RTC_ENABLE)
@@ -854,6 +928,8 @@ void update_alarm_status(void)
         vUART_SendStr(UART_PC, "\nMAINS FAULT");
 #endif
         setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
+
+        control_inverter_input(ON);
     }
     else
     {
@@ -864,6 +940,8 @@ void update_alarm_status(void)
         vUART_SendStr(UART_PC, "\nMAINS OK");
 #endif
         setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
+
+        control_inverter_input(OFF);
     }
 
     if(Alarms.Supply_mode)

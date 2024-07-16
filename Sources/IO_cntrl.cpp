@@ -228,8 +228,8 @@ void vPERIPH_GPIOInit(void)
     //ControlODU_Relay(ON);
 
     GPIOPinTypeGPIOOutput(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN);
-    GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
-    // GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
+    // GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
+    GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
 #endif  //HW_BOARD == TIOT_V2_00_BOARD  
 }
 
@@ -473,6 +473,9 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
         }
         break;
     }
+#ifdef  DEBUG_GPIO
+    vUART_SendStr(UART_PC, "\nSOM");
+#endif  //DEBUG_GPIO
 }
 
 #endif  // HW_BOARD == TIOT_V2_00_BOARD
@@ -767,10 +770,26 @@ void FREQDetIntHandler(void)
 
 }
 
-uint8_t vEarthDetect(void)
+// PP commented on 10-07-24
+// uint8_t vEarthDetect(void)
+// {
+//     uint32_t value = 0;
+//     value = GPIOPinRead(EARTH_DETECT_PORT_BASE,EARTH_DETECT_PIN);
+//
+//         //value /= WELDCHECK1_PIN;
+// #ifdef DEBUG_EARTHDETECT
+// //    vUART_SendStr(UART_PC,"\nEarth Detect:");
+// //    vUART_SendInt(UART_PC,value);
+// #endif
+//
+//     return value;
+// }
+
+// PP added on 10-07-24
+bool vEarthDetect(void)
 {
-    uint32_t value = 0;
-    value = GPIOPinRead(EARTH_DETECT_PORT_BASE,EARTH_DETECT_PIN);
+    bool value = 0;
+    value = ((GPIOPinRead(EARTH_DETECT_PORT_BASE,EARTH_DETECT_PIN))/EARTH_DETECT_PIN);
 
         //value /= WELDCHECK1_PIN;
 #ifdef DEBUG_EARTHDETECT
@@ -841,5 +860,30 @@ void set_router_selection_state(relay_ctrl_state_t state)
 relay_ctrl_state_t get_router_selection_state(void)
 {
     return relay_state.router_selection;
+}
+
+void control_battery_charging(bool sts)
+{
+    if(sts)
+    {
+        GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN); //PP added on 20-06-24
+    }
+    else
+    {
+        GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, GPIO_LOW);  //PP added on 20-06-24
+        _delay_us(50);
+    }
+}
+
+void control_inverter_input(bool sts)
+{
+    if(sts)
+    {
+        GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
+    }
+    else
+    {
+        GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
+    }
 }
 

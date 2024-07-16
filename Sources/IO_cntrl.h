@@ -23,17 +23,16 @@ typedef enum
 
 typedef enum
 {
-    RELAY_DEFAULT,
-    RELAY_ON,
-    RELAY_OFF,
+  RELAY_DEFAULT,
+  RELAY_ON,
+  RELAY_OFF,
 }relay_ctrl_state_t;
 
 typedef struct
 {
-    relay_ctrl_state_t router;
-    relay_ctrl_state_t router_selection;
-    relay_ctrl_state_t ODU;
-
+  relay_ctrl_state_t router;
+  relay_ctrl_state_t router_selection;
+  relay_ctrl_state_t ODU;
 }relay_state_t;
 
 typedef enum
@@ -90,7 +89,10 @@ bool isSupplyStable();
 void vFreqDetectInit(void);
 void FREQDetIntHandler(void);
 void vEarthCheckInit(void);
-uint8_t vEarthDetect(void);
+
+// uint8_t vEarthDetect(void);  // PP commented on 10-07-24
+bool vEarthDetect(void);  // PP added on 10-07-24
+
 void ControlODU_Relay(uint8_t val);
 void ControlRouter_Relay(uint8_t val);
 void ControlRouterSelection_Relay(uint8_t val);
@@ -101,5 +103,9 @@ void set_router_state(relay_ctrl_state_t state);
 relay_ctrl_state_t get_router_state(void);
 void set_router_selection_state(relay_ctrl_state_t state);
 relay_ctrl_state_t get_router_selection_state(void);
+
+void control_battery_charging(bool sts);
+
+void control_inverter_input(bool sts);
 
 #endif /* SOURCES_IO_CNTRL_H_ */

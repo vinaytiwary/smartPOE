@@ -59,7 +59,7 @@
 
 #define ETHERNET_EN
 
-#define ENABLE_WDT_RESET
+// #define ENABLE_WDT_RESET
 
 #ifdef ENABLE_WDT_RESET
 #define WDT_IRQ_MODE
@@ -89,4 +89,7 @@
 
 #define SMPS_HARDCODED        //only for testing
 #define RTR_HARDCODED         //only for testing
+
+// #define ODU_RELAY_TST
+
 #endif /* SOURCES__CONFIG_H_ */

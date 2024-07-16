@@ -22,6 +22,7 @@
 #include "_debug.h"
 
 #include "GLCD.h"
+#include "IO_cntrl.h"
 
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
@@ -511,9 +512,9 @@ uint32_t getODUVoltage(void)
 
 uint32_t getBatteryVoltage(void)
 {
-    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, GPIO_LOW);  //PP added on 20-06-24
-
-    _delay_us(50);
+    // GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, GPIO_LOW);  //PP added on 20-06-24
+    // _delay_us(50);
+    control_battery_charging(OFF);
 
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
@@ -545,7 +546,8 @@ uint32_t getBatteryVoltage(void)
 //     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);  
 // #endif
 
-    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN); //PP added on 20-06-24
+    // GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN); //PP added on 20-06-24
+    control_battery_charging(ON);
     return measurements.DC_Battery_voltage;
 }
 

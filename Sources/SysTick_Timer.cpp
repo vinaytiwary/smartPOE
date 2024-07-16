@@ -32,6 +32,7 @@ volatile uint32_t u32DelayCounter;
 scheduler_t scheduler;
 volatile uint32_t millis_cnt = 0;
 volatile uint32_t ACVoltReadMillis = 0;
+volatile uint32_t counter_10sec = 0;
 
 extern volatile double PN_ADC_RAW_MAX;
 extern volatile EXTI_cnt_t EXTI_cnt;
@@ -179,6 +180,8 @@ void SysTickIntHandler(void)
     {
         scheduler.u16Cntr1s = 0;
         scheduler.flg1sec = HIGH;
+
+        counter_10sec++;
         //find max from arr
         // PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,adc_arr.index);
         PN_ADC_RAW_MAX = findMax(adc_arr.collectSamples,10);
