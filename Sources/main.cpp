@@ -918,7 +918,7 @@ void update_alarm_status(void)
     setRAM_Alarm(SMPS_FAULT, Alarms.Chg_fault);
 
 
-    if((!ram_data.ram_EXTI_cnt.freq_cnt) || (ram_data.ram_EXTI_cnt.freq_cnt < 40) || (Alarms.Chg_fault))
+    if((!ram_data.ram_EXTI_cnt.freq_cnt) || (ram_data.ram_EXTI_cnt.freq_cnt < 40) /* || (Alarms.Chg_fault) */)  //PP commented on 17-07-24
     {
         ram_data.ram_ADC.PN_AC_Voltage = 0;
         Alarms.Supply_mode = true;

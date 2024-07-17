@@ -92,4 +92,6 @@
 
 // #define ODU_RELAY_TST
 
+#define ENABLE_CLI_SEI
+
 #endif /* SOURCES__CONFIG_H_ */

@@ -260,8 +260,16 @@ void vADC0Init(void)
 
 uint32_t readADC(uint8_t seqno)
 {
+#ifdef ENABLE_CLI_SEI
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
+
     uint32_t adc_value,pui32ADC0Value[1];
     ADC0_SSMUX3_R = seqno;
+
+#ifdef DEBUG_MAIN_ADC
+    uint32_t i = 0;
+#endif  //DEBUG_MAIN_ADC
 
     //
     // Trigger the ADC conversion.
@@ -273,6 +281,12 @@ uint32_t readADC(uint8_t seqno)
     //
     while(!ADCIntStatus(ADC0_BASE, 3, false))
     {
+#ifdef DEBUG_MAIN_ADC
+        if(seqno == SIG_AC_VOLTAGE_ADC)
+        {
+            i++;
+        }
+#endif  //DEBUG_MAIN_ADC
     }
 
     //
@@ -293,6 +307,19 @@ uint32_t readADC(uint8_t seqno)
         vUART_SendInt(DEBUG_UART_BASE,adc_value);
     }    
 #endif
+
+#ifdef DEBUG_MAIN_ADC
+        if(seqno == SIG_AC_VOLTAGE_ADC)
+        {
+            vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)"\ni=");
+            vUART_SendInt(DEBUG_UART_BASE,i);
+        }
+#endif  //DEBUG_MAIN_ADC
+
+#ifdef ENABLE_CLI_SEI
+    IntMasterEnable();
+#endif//ENABLE_CLI_SEI
+
     return adc_value;
 }
 

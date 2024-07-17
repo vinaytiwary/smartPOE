@@ -11,7 +11,7 @@
 #include "_config.h"
 
 // #define DEBUG_ADC
- #define DEBUG_ADC_SIG
+//  #define DEBUG_ADC_SIG
 // #define DEBUG_AC_ADC
 // #define DEBUG_ODU_ADC
 
