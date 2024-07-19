@@ -83,7 +83,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
     i = strlen(Query_data);
 
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
     vUART_SendStr(DEBUG_UART_BASE, "\nQDlen=");
     vUART_SendInt(DEBUG_UART_BASE, i);
     vUART_SendStr(DEBUG_UART_BASE, "\nQS=");
@@ -100,7 +100,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
     if(found_key)
     {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
         vUART_SendStr(DEBUG_UART_BASE, "\n1KF=");
         vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)found_key);
         vUART_SendStr(DEBUG_UART_BASE, "\n2KF=");
@@ -110,7 +110,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
         if(found_key[i] == ':')
         {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
             // printf("\n3found_key");
             // printf("\nf[%d]=%c",i,found_key[i]);
             vUART_SendStr(DEBUG_UART_BASE, "\n3KF1,i=");
@@ -121,7 +121,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
             i++;
 
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
             // printf("\nf[%d]=%c",i,found_key[i]);
             vUART_SendStr(DEBUG_UART_BASE, "\n3KF2,i=");
             vUART_SendChr(DEBUG_UART_BASE, (uint8_t)found_key[i]);
@@ -131,7 +131,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
             
             if((found_key[i]=='"')||(found_key[i]=='['))
             {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                 // printf("\n4found_key");
                 // printf("\nf[%d]=%c",i,found_key[i]);
                 vUART_SendStr(DEBUG_UART_BASE, "\n4KF,i=");
@@ -142,7 +142,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
                 if((found_key[i]=='['))
 			    {
                     i++;
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                     // printf("\n5found_key");
                     // printf("\nf[%d]=%c",i,found_key[i]);
                     vUART_SendStr(DEBUG_UART_BASE, "\n5KF,i=");
@@ -153,7 +153,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
                     if(found_key[i] == ']')
                     {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                         // printf("\nfound [], returnig 0");
                         vUART_SendStr(DEBUG_UART_BASE, "\nerr[]");
 #endif
@@ -163,7 +163,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
                 i++;
 
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                 // printf("\n6found_key");
                 // printf("\nf[%d]=%c",i,found_key[i]);
                 vUART_SendStr(DEBUG_UART_BASE, "\n6KF,i=");
@@ -175,7 +175,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
                 {
                     if(j > max_len)
                     {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                         // printf("\n1cantFindEnd %d,%d",j, max_len);
                         vUART_SendStr(DEBUG_UART_BASE, "\n1NoEnd");
 #endif                     
@@ -184,7 +184,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
                     // destination_data[j++] = found_key[i++];
                     destination_data[j] = found_key[i];
 
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                     // printf("\n1destination_data[%d]=%c,found_key[%d]=%c",j,destination_data[j],i,found_key[i]);
                     vUART_SendStr(DEBUG_UART_BASE, "\n1dd[j],j,kf[i],i");
                     vUART_SendChr(DEBUG_UART_BASE, (uint8_t)destination_data[j]);
@@ -201,7 +201,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
             }
             else
             {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                 // printf("\n7found_key");
                 // printf("\nf[%d]=%c",i,found_key[i]);
                 vUART_SendStr(DEBUG_UART_BASE, "\n7KF,i=");
@@ -216,13 +216,13 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
                 {
                     if(j > max_len)
                     {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                         // printf("\n2cantFindEnd %d,%d",j, max_len);
                         vUART_SendStr(DEBUG_UART_BASE, "\n2NoEnd");
 #endif
                         return 0;
                     }
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
                     // printf("\n2destination_data[%d]=%c,found_key[%d]=%c",j,destination_data[j],i,found_key[i]);
                     vUART_SendStr(DEBUG_UART_BASE, "\n2dd[j],j,kf[i],i");
                     vUART_SendChr(DEBUG_UART_BASE, (uint8_t)destination_data[j]);
@@ -237,7 +237,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
                 }
             }
 
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
             vUART_SendStr(DEBUG_UART_BASE, "\nj=");
             vUART_SendInt(DEBUG_UART_BASE, j);
             vUART_SendStr(DEBUG_UART_BASE, "\n1dest=");
@@ -249,7 +249,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
 
             // printf("\ndest_data = %s\n",destination_data);
             // printBytes((unsigned char*)destination_data,j);
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
             // printf("\ndest = %s\n",destination);
             // printBytes((unsigned char*)destination,j);
             vUART_SendStr(DEBUG_UART_BASE, "\n2dest=");
@@ -269,7 +269,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
         }
         else
         {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
             // printf("\nno':'found");
             vUART_SendStr(DEBUG_UART_BASE, "\nNo:F");
 #endif
@@ -277,7 +277,7 @@ char* Query_decode(char *Query_String ,const char *Query_data, char *destination
     }
     else
     {
-#ifdef DEBUG_SERVER_QUERY
+#ifdef DEBUG_QUERY_DECODE
         // printf("\n1no_key_found");
         vUART_SendStr(DEBUG_UART_BASE, "\nKNF");
 #endif

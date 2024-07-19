@@ -166,6 +166,7 @@
 #define BCD_SELECTOR_S3             GPIO_PIN_4
 #define BCD_SELECTOR_S4             GPIO_PIN_5
 
+#ifdef ENABLE_GLCD
 // Define the control and data ports and pins
 #define KS0108_DATA_PORT GPIO_PORTH_BASE
 #define KS0108_CTRL_PORT GPIO_PORTK_BASE
@@ -174,6 +175,7 @@
 #define KS0108_EN GPIO_PIN_0    // Enable pin
 #define KS0108_CS1 GPIO_PIN_2   // Chip Select 1
 #define KS0108_CS2 GPIO_PIN_3   // Chip Select 2
+#endif  //ENABLE_GLCD
 
 /**************************GPIO************************/
 #define FREQ_MEAS_PIN_BASE            GPIO_PORTJ_BASE
@@ -211,7 +213,33 @@
 #define INVERTER_CTRL_PORT_BASE         GPIO_PORTD_BASE
 #define INVERTER_CTRL_PIN               GPIO_PIN_0
 
+#ifdef LEDS_ON_GLCD_PINS
 
+#define LED_0VM_BASE                    GPIO_PORTH_BASE
+#define LED_0VM_PIN                     GPIO_PIN_0
+
+#define LED_12VM_BASE                   GPIO_PORTH_BASE
+#define LED_12VM_PIN                    GPIO_PIN_1
+
+#define LED_24VM_BASE                   GPIO_PORTH_BASE
+#define LED_24VM_PIN                    GPIO_PIN_2
+
+#define LED_30VM_BASE                   GPIO_PORTH_BASE
+#define LED_30VM_PIN                    GPIO_PIN_3
+
+#define LED_48VM_BASE                   GPIO_PORTH_BASE
+#define LED_48VM_PIN                    GPIO_PIN_4
+
+#define LED_56VM_BASE                   GPIO_PORTH_BASE
+#define LED_56VM_PIN                    GPIO_PIN_5
+
+#define LED_BATT_MODE_BASE              GPIO_PORTH_BASE
+#define LED_BATT_MODE_PIN               GPIO_PIN_6
+
+#define LED_LOW_BATT_BASE               GPIO_PORTH_BASE
+#define LED_LOW_BATT_PIN                GPIO_PIN_7
+
+#endif  //LEDS_ON_GLCD_PINS
 
 
 #endif//HW_BOARD == TIOT_V2_00_BOARD

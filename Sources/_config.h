@@ -57,7 +57,7 @@
 
 // #define CHECKSTR_EXP
 
-#define ETHERNET_EN
+// #define ETHERNET_EN
 
 // #define ENABLE_WDT_RESET
 
@@ -93,5 +93,9 @@
 // #define ODU_RELAY_TST
 
 #define ENABLE_CLI_SEI
+
+#ifndef ENABLE_GLCD
+#define LEDS_ON_GLCD_PINS
+#endif  //ENABLE_GLCD
 
 #endif /* SOURCES__CONFIG_H_ */

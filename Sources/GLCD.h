@@ -16,8 +16,8 @@
 
 #define NETWORK_STS_WIDTH       0X0A
 #define BATTERY_STS_WIDTH       0X0D
-#define ON                      1
-#define OFF                     0
+// #define ON                      1
+// #define OFF                     0
 
 #define BATTERY_MIN_RANGE       10800
 #define BATTERY_MAX_RANGE       12000

@@ -24,6 +24,8 @@
 #include "GLCD.h"
 #include "IO_cntrl.h"
 
+#include "_common.h"
+
 adc_t adc[TOTAL_ADC_SIGNALS];
 measurements_t measurements;
 adc_arr_t adc_arr;
@@ -267,9 +269,7 @@ uint32_t readADC(uint8_t seqno)
     uint32_t adc_value,pui32ADC0Value[1];
     ADC0_SSMUX3_R = seqno;
 
-#ifdef DEBUG_MAIN_ADC
-    uint32_t i = 0;
-#endif  //DEBUG_MAIN_ADC
+    uint32_t adc_retry = 0;
 
     //
     // Trigger the ADC conversion.
@@ -281,12 +281,23 @@ uint32_t readADC(uint8_t seqno)
     //
     while(!ADCIntStatus(ADC0_BASE, 3, false))
     {
-#ifdef DEBUG_MAIN_ADC
-        if(seqno == SIG_AC_VOLTAGE_ADC)
+        if(adc_retry++ >= 10)
         {
-            i++;
+            break;
         }
-#endif  //DEBUG_MAIN_ADC
+    }
+
+    if(adc_retry >= 10)
+    {
+#ifdef DEBUG_ADC_READ_FAIL
+        vUART_SendStr(UART_PC, "\nARF:");
+        vUART_SendInt(UART_PC, adc_retry);
+        vUART_SendChr(UART_PC, ',');
+        vUART_SendInt(UART_PC, seqno);
+#endif  //DEBUG_ADC_READ_FAIL
+        adc_value = 0;
+
+        return adc_value;
     }
 
     //
