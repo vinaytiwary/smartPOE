@@ -399,8 +399,11 @@ int main(void)
                     }
                 }
 #endif //FLASH_EN
-            }   //if(get_system_state() != CONFIG_MODE)    
-		}   
+            }   //if(get_system_state() != CONFIG_MODE)  
+#ifdef  LEDS_ON_GLCD_PINS
+            displayODUmode_LED();
+#endif  //LEDS_ON_GLCD_PINS
+		}   //1sec scheduler end
         tx_pending_dataPC();
 	}
 #endif	//if 0
@@ -903,6 +906,7 @@ void update_alarm_status(void)
 
     Alarms.ACEarth_fault = (!ram_data.ram_EXTI_cnt.earth_cnt) ? true : false;
     setRAM_Alarm(EARTHING_FAULT, Alarms.ACEarth_fault);
+    EarthFaultLED_sts(Alarms.ACEarth_fault);
 
 #ifdef  DEBUG_MAINS_FAULT
     if(Alarms.ACEarth_fault)
@@ -954,6 +958,8 @@ void update_alarm_status(void)
         // Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage/1000 < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage/1000 > BATT_RANGE_HIGH)) ? true : false;
         Alarms.Batt_low = ((ram_data.ram_ADC.DC_Battery_voltage < BATT_RANGE_LOW) || (ram_data.ram_ADC.DC_Battery_voltage > BATT_RANGE_HIGH)) ? true : false;
         setRAM_Alarm(BATT_FAULT, Alarms.Batt_low);
+        LowBattIndicationLED(ON);
+        EarthFaultLED_sts(ON);
     }
     else
     {
@@ -962,6 +968,7 @@ void update_alarm_status(void)
 #endif
         Alarms.Batt_low = false;
         setRAM_Alarm(BATT_FAULT, Alarms.Batt_low);
+        LowBattIndicationLED(OFF);
     }
 
     R1C = ((double)ram_data.ram_ADC.DC_current_router1/1000);

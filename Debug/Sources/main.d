@@ -65,7 +65,6 @@ Sources/main.obj: ../Sources/main.h
 Sources/main.obj: ../Sources/WDT.h
 Sources/main.obj: ../Sources/flash_logger.h
 Sources/main.obj: ../Sources/delay.h
-Sources/main.obj: ../Sources/GLCD.h
 
 ../Sources/main.cpp:
 
@@ -196,6 +195,4 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 ../Sources/flash_logger.h:
 
 ../Sources/delay.h:
-
-../Sources/GLCD.h:
 

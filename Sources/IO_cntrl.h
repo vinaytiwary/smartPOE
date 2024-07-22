@@ -97,8 +97,8 @@ void ControlODU_Relay(uint8_t val);
 void ControlRouter_Relay(uint8_t val);
 void ControlRouterSelection_Relay(uint8_t val);
 
-//void set_ODU_state(relay_ctrl_state_t state);
-//relay_ctrl_state_t get_ODU_state(void);
+void set_ODU_state(relay_ctrl_state_t state);
+relay_ctrl_state_t get_ODU_state(void);
 void set_router_state(relay_ctrl_state_t state);
 relay_ctrl_state_t get_router_state(void);
 void set_router_selection_state(relay_ctrl_state_t state);
@@ -107,5 +107,11 @@ relay_ctrl_state_t get_router_selection_state(void);
 void control_battery_charging(bool sts);
 
 void control_inverter_input(bool sts);
+
+#ifdef LEDS_ON_GLCD_PINS
+void displayODUmode_LED(void);
+void EarthFaultLED_sts(bool val);
+void LowBattIndicationLED(bool val);
+#endif  //LEDS_ON_GLCD_PINS
 
 #endif /* SOURCES_IO_CNTRL_H_ */

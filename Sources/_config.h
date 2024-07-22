@@ -83,7 +83,7 @@
 #define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
 #endif
 
-#define ENABLE_GLCD
+// #define ENABLE_GLCD
 
 #define ECHO_LTE_TO_DBG
 
@@ -97,5 +97,7 @@
 #ifndef ENABLE_GLCD
 #define LEDS_ON_GLCD_PINS
 #endif  //ENABLE_GLCD
+
+#define ENABLE_BCD_SW
 
 #endif /* SOURCES__CONFIG_H_ */

@@ -214,6 +214,7 @@
 #define INVERTER_CTRL_PIN               GPIO_PIN_0
 
 #ifdef LEDS_ON_GLCD_PINS
+#define LED_ODUMODE_BASE                GPIO_PORTH_BASE
 
 #define LED_0VM_BASE                    GPIO_PORTH_BASE
 #define LED_0VM_PIN                     GPIO_PIN_0
@@ -233,12 +234,11 @@
 #define LED_56VM_BASE                   GPIO_PORTH_BASE
 #define LED_56VM_PIN                    GPIO_PIN_5
 
-#define LED_BATT_MODE_BASE              GPIO_PORTH_BASE
-#define LED_BATT_MODE_PIN               GPIO_PIN_6
+#define LED_ETH_DET_BASE              GPIO_PORTH_BASE
+#define LED_ETH_DET_PIN               GPIO_PIN_6
 
 #define LED_LOW_BATT_BASE               GPIO_PORTH_BASE
 #define LED_LOW_BATT_PIN                GPIO_PIN_7
-
 #endif  //LEDS_ON_GLCD_PINS
 
 

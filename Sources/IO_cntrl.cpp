@@ -202,6 +202,31 @@ void vLEDGPIOInit(void)
 // //set_RGB_led(RGB_YELLOW);          //PROBLEM: Program Hang
 // // set_evse_status(CP_NOT_READY);
 #endif	
+
+#ifdef LEDS_ON_GLCD_PINS
+
+    GPIOPinTypeGPIOOutput(LED_0VM_BASE, LED_0VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_12VM_BASE, LED_12VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_24VM_BASE, LED_24VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_30VM_BASE, LED_30VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_48VM_BASE, LED_48VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_56VM_BASE, LED_56VM_PIN);
+
+    GPIOPinWrite(LED_0VM_BASE, LED_0VM_PIN, LED_0VM_PIN);
+    GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+    GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+    GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+    GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+    GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+
+    GPIOPinTypeGPIOOutput(LED_ETH_DET_BASE, LED_ETH_DET_PIN);
+    GPIOPinWrite(LED_ETH_DET_BASE, LED_ETH_DET_PIN, LED_ETH_DET_PIN);
+
+    GPIOPinTypeGPIOOutput(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN);
+    GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, LED_LOW_BATT_PIN);
+
+#endif  //LEDS_ON_GLCD_PINS
+
 }
 
 void vPERIPH_GPIOInit(void)
@@ -804,10 +829,12 @@ void ControlODU_Relay(uint8_t val)
 {
     if(val)
     {
+        set_ODU_state(RELAY_ON);
         GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, RELAY_ODU);
     }
     else
     {
+        set_ODU_state(RELAY_OFF);
         GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
     }
 }
@@ -834,7 +861,7 @@ void ControlRouterSelection_Relay(uint8_t val)
         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL, 0);
     }
 }
-/*
+
 void set_ODU_state(relay_ctrl_state_t state)
 {
     relay_state.ODU = state;
@@ -843,7 +870,7 @@ relay_ctrl_state_t get_ODU_state(void)
 {
     return  relay_state.ODU;
 }
-*/
+
 void set_router_state(relay_ctrl_state_t state)
 {
     relay_state.router = state;
@@ -886,4 +913,132 @@ void control_inverter_input(bool sts)
         GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
     }
 }
+
+#ifdef LEDS_ON_GLCD_PINS
+
+void displayODUmode_LED(void)
+{
+    if(get_ODU_state() != RELAY_ON)
+    {
+#ifdef DEBUG_ODUM_LED
+        vUART_SendStr(UART_PC, "\nL1:");
+        vUART_SendInt(UART_PC, get_ODU_state());
+#endif  //DEBUG_ODUM_LED
+        GPIOPinWrite(LED_0VM_BASE, LED_0VM_PIN, GPIO_LOW);
+        GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+        GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+        GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+        GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+        GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+    }
+    else
+    {
+#ifdef DEBUG_ODUM_LED
+        vUART_SendStr(UART_PC, "\nL2:");
+        vUART_SendInt(UART_PC, get_ODU_state());
+#endif  //DEBUG_ODUM_LED
+
+        GPIOPinWrite(LED_0VM_BASE, LED_0VM_PIN, LED_0VM_PIN);
+
+        if(ram_data.supply_mode_R2 == 12)
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.1");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+        }
+        else if(ram_data.supply_mode_R2 == 24)
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.2");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+        }
+        else if(ram_data.supply_mode_R2 == 30)
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.3");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+        }
+        else if(ram_data.supply_mode_R2 == 48)
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.4");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+        }
+        else if(ram_data.supply_mode_R2 == 56)
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.5");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+        }
+        else
+        {
+#ifdef DEBUG_ODUM_LED
+            vUART_SendStr(UART_PC, "\nL2.6");
+#endif  //DEBUG_ODUM_LED
+            GPIOPinWrite(LED_0VM_BASE, LED_0VM_PIN, GPIO_LOW);
+
+            GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+            GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+            GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+            GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+            GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+        }
+    }
+}
+
+void EarthFaultLED_sts(bool val)
+{
+    if(val)
+    {
+        GPIOPinWrite(LED_ETH_DET_BASE, LED_ETH_DET_PIN, GPIO_LOW);
+    }
+    else
+    {
+        GPIOPinWrite(LED_ETH_DET_BASE, LED_ETH_DET_PIN, LED_ETH_DET_PIN);
+    }
+}
+
+void LowBattIndicationLED(bool val)
+{
+    if(val)
+    {
+        GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, GPIO_LOW);
+    }
+    else
+    {
+        GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, LED_LOW_BATT_PIN);
+    }
+}
+
+#endif  //LEDS_ON_GLCD_PINS
 

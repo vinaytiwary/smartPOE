@@ -86,6 +86,8 @@
 
 // #define DEBUG_MAIN_ADC
 
+#define DEBUG_ODUM_LED
+
 #define DEBUG_PWRUP_RST_REASON
 
 #endif /* SOURCES__DEBUG_H_ */
