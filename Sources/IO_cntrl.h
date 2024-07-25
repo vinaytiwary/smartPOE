@@ -15,6 +15,10 @@
 #define RTR_MAIN_SUPPLY        (0)
 #define RTR_INVERTER_SUPPLY    (1)
 
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+#define SWITCH_LONG_PRESS   (50)
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+
 typedef enum
 {
   ROUTER_1,
@@ -44,11 +48,29 @@ typedef enum
   MODE_48V,
   MODE_56V
 }__attribute__((packed))voltage_mode_t;
+
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+typedef enum
+{
+  SW_READ,
+  SW_DEBOUNCE,
+  SW_RELEASE,
+}button_sw_state_t;
+
+typedef enum
+{
+  SHORT_PRESS,
+  LONG_PRESS,
+  NO_PRESS,
+}sw_press_event_t;
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+
 typedef struct
 {
     uint8_t BCD_code;
     uint8_t prev_BCDcode;
 }__attribute__((packed))BCD_MODE_t;
+
 typedef struct
 {
   uint8_t freq_cnt;
@@ -112,6 +134,11 @@ void control_inverter_input(bool sts);
 void displayODUmode_LED(void);
 void EarthFaultLED_sts(bool val);
 void LowBattIndicationLED(bool val);
-#endif  //LEDS_ON_GLCD_PINS
+
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+sw_press_event_t readODUVTG_SelSWpin(void);
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+
+#endif // LEDS_ON_GLCD_PINS
 
 #endif /* SOURCES_IO_CNTRL_H_ */

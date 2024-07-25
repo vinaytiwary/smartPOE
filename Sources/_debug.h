@@ -10,10 +10,10 @@
 
 #include "_config.h"
 
-// #define DEBUG_ADC
- #define DEBUG_ADC_SIG
-// #define DEBUG_AC_ADC
-// #define DEBUG_ODU_ADC
+// // #define DEBUG_ADC
+//  #define DEBUG_ADC_SIG
+// // #define DEBUG_AC_ADC
+// // #define DEBUG_ODU_ADC
 
 #define DEBUG_ADC_READ_FAIL
 
@@ -34,30 +34,30 @@
 #define DEBUG_GPRS_PING
 #define DEBUG_TCP_SEND
 #define DEBUG_GPRS_DATA_UPLOAD
-// // // #define DEBUG_JSON_PKT_PREP
-// // // // #define DEBUG_WS_DISCONN
-// // // // #define DEBUG_TCP_DISCONN
+// // // // #define DEBUG_JSON_PKT_PREP
+// // // // // #define DEBUG_WS_DISCONN
+// // // // // #define DEBUG_TCP_DISCONN
 
-// // // // // #define DEBUG_EPOCHTIME
+// // // // // // #define DEBUG_EPOCHTIME
 
-// #define DEBUG_GPS_HANDLER
-// // // //#define DEBUG_GPS_DECODE
+// // #define DEBUG_GPS_HANDLER
+// // // // //#define DEBUG_GPS_DECODE
 #define DEBUG_GET_LOC
 
-// // #define DEBUG_WEBB_COMM
+// // // #define DEBUG_WEBB_COMM
 
-// #define DEBUG_ETHERNET
-// #define DEBUG_ETHER_TCP_CONN
-// #define DEBUG_ETHER_WS
-// #define DEBUG_ETHER_PS
-// #define DEBUG_ETHER_WSD
-// #define DEBUG_ETHER_TCP_SEND
+// // #define DEBUG_ETHERNET
+// // #define DEBUG_ETHER_TCP_CONN
+// // #define DEBUG_ETHER_WS
+// // #define DEBUG_ETHER_PS
+// // #define DEBUG_ETHER_WSD
+// // #define DEBUG_ETHER_TCP_SEND
 
 #define DEBUG_SERVER_QUERY
 
-// #define DEBUG_QUERY_DECODE
+// // #define DEBUG_QUERY_DECODE
 
-// // #define DEBUG_WEB_PREP
+// // // #define DEBUG_WEB_PREP
 
 #define DEBUG_QUERY_STATES
 
@@ -74,19 +74,21 @@
 // #define DEBUG_READ_FREQ
 
 #define DEBUG_BCD_SEL_SW
-// // #define DEBUG_RESTART
+// // // #define DEBUG_RESTART
 #define DEBUG_RELAY
-#define DEBUG_EARTHDETECT
-// // // #define DEBUG_FREQ_MEAS
-// // #define DEBUG_MAINS_FAULT
-// // // #define DEBUG_RELAY_STATE_LCD
-// // #define DEBUG_RELAY_STATE
+// #define DEBUG_EARTHDETECT
+// // // // #define DEBUG_FREQ_MEAS
+// // // #define DEBUG_MAINS_FAULT
+// // // // #define DEBUG_RELAY_STATE_LCD
+// // // #define DEBUG_RELAY_STATE
 
 #define DEBUG_ALARMS
 
-// #define DEBUG_MAIN_ADC
+// // #define DEBUG_MAIN_ADC
 
-#define DEBUG_ODUM_LED
+// #define DEBUG_ODUM_LED
+
+// #define DEBUG_SW_PRESS_EVENT
 
 #define DEBUG_PWRUP_RST_REASON
 

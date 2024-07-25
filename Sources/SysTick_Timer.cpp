@@ -126,19 +126,12 @@ void SysTickIntHandler(void)
     {
         display_uart_rx.elapsed++;
     }
-
-#if HW_VER == VER_1
-           vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN | LED3_PIN | LED4_PIN), (LED1_PIN | LED3_PIN));
-#elif HW_VER == VER_2
-           MCP23017_pin_toggle(LED_PORT,STATUS_LED_PIN);
-#elif HW_VER == VER_3
         //    vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
         //    vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
         // vGPIO_Toggle(LED_PORT_BASE, LED2_PIN, LED2_PIN );
 //#ifndef ETHERNET_EN
 //            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
 //#endif
-#endif
 
     if(scheduler.u16Cntr10ms >= 10U)
     {

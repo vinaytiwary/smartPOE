@@ -34,6 +34,7 @@
 #define VER_3   (3)
 
 #define HW_VER  (VER_3)
+
 #define UART0   (0)
 #define UART1   (1)
 #define UART2   (2)
@@ -83,7 +84,7 @@
 #define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
 #endif
 
-// #define ENABLE_GLCD
+#define ENABLE_GLCD
 
 #define ECHO_LTE_TO_DBG
 
@@ -98,6 +99,10 @@
 #define LEDS_ON_GLCD_PINS
 #endif  //ENABLE_GLCD
 
-#define ENABLE_BCD_SW
+#define BCD_SW_TYPE_1       (0)
+#define PUSH_BUTTON_TYPE    (1)
+
+// #define ODUVTG_SEL_SW       (PUSH_BUTTON_TYPE)
+#define ODUVTG_SEL_SW       (BCD_SW_TYPE_1)
 
 #endif /* SOURCES__CONFIG_H_ */

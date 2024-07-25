@@ -22,38 +22,14 @@
 // #define GPIO_HIGH    1
 
 //*********************** LEDs ************************//
-#if HW_VER == VER_1
-	#define LED_PORT_BASE               GPIO_PORTG_BASE
-	#define STATUS_LED_PIN              GPIO_PIN_1
-	#define LED2_PIN                    GPIO_PIN_3
-	#define LED3_PIN                    GPIO_PIN_2
-	#define LED4_PIN                    GPIO_PIN_0
-#elif HW_VER == VER_2
-    #define LED_DIR                     IODIRA
-	#define LED_PORT                    GPA_ADDR
-	#define STATUS_LED_PIN              GPA0
-	#define LED2_PIN                    GPA1
-	#define LED3_PIN                    GPA2
-	#define LED4_PIN                    GPA3
+#define LED_PWM_PORT_BASE           GPIO_PORTH_BASE
+#define RED_PWM_PIN                 GPIO_PIN_1
+#define GREEN_PWM_PIN               GPIO_PIN_2
+#define BLUE_PWM_PIN                GPIO_PIN_3
 
-    #define LED_PWM_PORT_BASE           GPIO_PORTH_BASE
-    #define RED_PWM_PIN                 GPIO_PIN_2
-    #define GREEN_PWM_PIN               GPIO_PIN_3
-    #define BLUE_PWM_PIN               GPIO_PIN_4
-
-    #define LED_PORT_BASE               GPIO_PORTF_BASE
-    #define LED5_PIN                    GPIO_PIN_4
-    #define LED6_PIN                    GPIO_PIN_5
-#elif HW_VER == VER_3
-    #define LED_PWM_PORT_BASE           GPIO_PORTH_BASE
-    #define RED_PWM_PIN                 GPIO_PIN_1
-    #define GREEN_PWM_PIN               GPIO_PIN_2
-    #define BLUE_PWM_PIN                GPIO_PIN_3
-
-    #define LED_PORT_BASE               GPIO_PORTF_BASE
-    #define LED1_PIN                    GPIO_PIN_4
-    #define LED2_PIN                    GPIO_PIN_5
-#endif
+#define LED_PORT_BASE               GPIO_PORTF_BASE
+#define LED1_PIN                    GPIO_PIN_4
+#define LED2_PIN                    GPIO_PIN_5
 
 //*********************** UARTs ************************//
 #define LTE_UART_PERIPH             SYSCTL_PERIPH_UART3
@@ -234,13 +210,19 @@
 #define LED_56VM_BASE                   GPIO_PORTH_BASE
 #define LED_56VM_PIN                    GPIO_PIN_5
 
-#define LED_ETH_DET_BASE              GPIO_PORTH_BASE
-#define LED_ETH_DET_PIN               GPIO_PIN_6
+#define LED_ETH_DET_BASE                GPIO_PORTH_BASE
+#define LED_ETH_DET_PIN                 GPIO_PIN_6
 
 #define LED_LOW_BATT_BASE               GPIO_PORTH_BASE
 #define LED_LOW_BATT_PIN                GPIO_PIN_7
-#endif  //LEDS_ON_GLCD_PINS
 
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+
+#define SW_ODUVTG_SEL_BASE              GPIO_PORTK_BASE
+#define SW_ODUVTG_SEL_PIN               GPIO_PIN_0     
+
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+#endif  //LEDS_ON_GLCD_PINS
 
 #endif//HW_BOARD == TIOT_V2_00_BOARD
 

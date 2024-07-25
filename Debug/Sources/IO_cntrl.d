@@ -47,6 +47,7 @@ Sources/IO_cntrl.obj: ../Sources/E2P.h
 Sources/IO_cntrl.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h
 Sources/IO_cntrl.obj: ../Sources/_common.h
 Sources/IO_cntrl.obj: ../Sources/SysTick_Timer.h
+Sources/IO_cntrl.obj: ../Sources/GLCD.h
 
 ../Sources/IO_cntrl.cpp:
 
@@ -141,4 +142,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/eeprom.h:
 ../Sources/_common.h:
 
 ../Sources/SysTick_Timer.h:
+
+../Sources/GLCD.h:
 

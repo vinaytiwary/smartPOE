@@ -45,6 +45,11 @@ relay_ctrl_state_t relay_ctrl_state;
 
 extern uint32_t relay_startup_time;
 
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+button_sw_state_t ODUVTGSEL_switch_state;
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+
+#if 0
 //********************** GPIOD_IRQ_Handler *************************//
 //extern "C" void GPIODIntHandler(void)
 //{
@@ -122,6 +127,7 @@ extern "C" void GPIODIntHandler(void)
         }
     }
 }
+#endif //if 0
 
 //********************** GPIO *************************//
 void vGPIOPortEnable(void)
@@ -171,37 +177,12 @@ void vGPIO_UnlockGPIO(uint32_t ui32Port, uint8_t ui8Pins)
 
 void vLEDGPIOInit(void)
 {
-#if HW_VER == VER_1
-    GPIOPinTypeGPIOOutput(LED_PORT_BASE, (LED1_PIN | LED2_PIN));
-    GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
-#elif HW_VER == VER_2
-#if 1
-    //i2c_send_byte(MCP23017_ADDR,LED_DIR,~STATUS_LED_PIN);
-    //i2c_send_byte(MCP23017_ADDR,LED_PORT,~STATUS_LED_PIN);
-    MCP23017_set_dir(LED_DIR,STATUS_LED_PIN,LOW);
-    MCP23017_pin_write(LED_PORT,STATUS_LED_PIN,LOW);
-#endif
-    GPIOPinTypeGPIOOutput(LED_PWM_PORT_BASE,RED_PWM_PIN|GREEN_PWM_PIN|BLUE_PWM_PIN);
-    GPIOPinWrite(LED_PWM_PORT_BASE,RED_PWM_PIN|GREEN_PWM_PIN|BLUE_PWM_PIN,0);
-    set_RGB_led(RGB_YELLOW);
-
-
-
-#elif HW_VER == VER_3
-    //for hardware version 3.0
     GPIOPinTypeGPIOOutput(LED_PORT_BASE, (LED1_PIN | LED2_PIN));
     // GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
     GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
 
-//    GPIOPinTypeGPIOOutput(LED_PORT_BASE, LED2_PIN);
-//    GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
-
-// GPIOPinTypeGPIOOutput(LED_PWM_PORT_BASE,RED_PWM_PIN|GREEN_PWM_PIN|BLUE_PWM_PIN);
-// GPIOPinWrite(LED_PWM_PORT_BASE,RED_PWM_PIN|GREEN_PWM_PIN|BLUE_PWM_PIN,0);
-
-// //set_RGB_led(RGB_YELLOW);          //PROBLEM: Program Hang
-// // set_evse_status(CP_NOT_READY);
-#endif	
+    //    GPIOPinTypeGPIOOutput(LED_PORT_BASE, LED2_PIN);
+    //    GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
 
 #ifdef LEDS_ON_GLCD_PINS
 
@@ -226,7 +207,6 @@ void vLEDGPIOInit(void)
     GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, LED_LOW_BATT_PIN);
 
 #endif  //LEDS_ON_GLCD_PINS
-
 }
 
 void vPERIPH_GPIOInit(void)
@@ -256,6 +236,12 @@ void vPERIPH_GPIOInit(void)
     // GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
     GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
 #endif  //HW_BOARD == TIOT_V2_00_BOARD  
+
+#ifdef LEDS_ON_GLCD_PINS
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+    GPIOPinTypeGPIOInput(SW_ODUVTG_SEL_BASE,SW_ODUVTG_SEL_PIN);
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+#endif  //LEDS_ON_GLCD_PINS
 }
 
 #if HW_BOARD == TIOT_V2_00_BOARD
@@ -310,6 +296,13 @@ void readBCD_SelectorSW(void)
 }
 #endif  //#if HW_BOARD == TIOT_V2_00_BOARD
 
+void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val)
+{
+    ASSERT(_GPIOBaseValid(ui32Port));
+    HWREG(ui32Port + (GPIO_O_DATA + (ui8Pins << 2))) ^= ui8Val;
+}
+
+#if 0
 void vInit_InputTestpins(void)
 {
     GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_0);  //output pin to toggle and to be connected to input pin for input detection.
@@ -318,12 +311,6 @@ void vInit_InputTestpins(void)
 //      GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, GPIO_PIN_1);   //input pin
       GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, GPIO_PIN_2);   //input pin
 //      vEXTIpinInit();
-}
-
-void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val)
-{
-    ASSERT(_GPIOBaseValid(ui32Port));
-    HWREG(ui32Port + (GPIO_O_DATA + (ui8Pins << 2))) ^= ui8Val;
 }
 
 void vInput_PollingRead(void)
@@ -376,20 +363,15 @@ void vEXTIpinInit(void)
 //    IntEnable(INT_GPIOD);
 
 }
+#endif  //if 0
 
 void ToggleLEDs(void)
 {
-#if HW_VER == VER_1
-            vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN | LED3_PIN | LED4_PIN), (LED1_PIN | LED3_PIN));
-#elif HW_VER == VER_2
-            MCP23017_pin_toggle(LED_PORT,STATUS_LED_PIN);
-#elif HW_VER == VER_3
-            // vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
-            vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
-//#ifndef ETHERNET_EN
-//            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
-//#endif
-#endif
+    // vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
+    vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+    //#ifndef ETHERNET_EN
+    //            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
+    //#endif
 }
 
 #if HW_BOARD == TIOT_V2_00_BOARD
@@ -753,7 +735,7 @@ void vFreqDetectInit(void)
     GPIOPinTypeGPIOInput(FREQ_MEAS_PIN_BASE,FREQ_MEAS_PIN);
     // GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_RISING_EDGE);
     GPIOIntTypeSet(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN , GPIO_FALLING_EDGE);
-//    GPIOIntTypeSet(ZERO_CROSS_DET_PIN_BASE, ZERO_CROSS_DET_PIN , GPIO_BOTH_EDGES);
+    //    GPIOIntTypeSet(ZERO_CROSS_DET_PIN_BASE, ZERO_CROSS_DET_PIN , GPIO_BOTH_EDGES);
     GPIOIntEnable(FREQ_MEAS_PIN_BASE, FREQ_MEAS_PIN);
 }
 void vEarthCheckInit(void)
@@ -1040,5 +1022,115 @@ void LowBattIndicationLED(bool val)
     }
 }
 
-#endif  //LEDS_ON_GLCD_PINS
+#if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+sw_press_event_t readODUVTG_SelSWpin(void)
+{
+    sw_press_event_t event = NO_PRESS;
+    uint8_t swState;//,lastswState = 1;
+    static int debounce_counter = 0;
+    static int switch_press_count = 0;
+    swState = GPIOPinRead(SW_ODUVTG_SEL_BASE,SW_ODUVTG_SEL_PIN)/SW_ODUVTG_SEL_PIN;
 
+
+    switch(ODUVTGSEL_switch_state)
+    {
+        case SW_READ:
+        {
+            if(!swState)
+            {
+                ODUVTGSEL_switch_state = SW_DEBOUNCE;
+#ifdef DEBUG_SW_PRESS_EVENT
+                vUART_SendStr(UART_PC,"\nSW_DEBOUNCE");
+#endif
+            }
+        }
+        break;
+
+        case SW_DEBOUNCE:
+        {
+            // if(++debounce_counter >= 2)
+            if(++debounce_counter >= 5)
+            {
+                debounce_counter = 0;
+                if(!swState)
+                {
+#ifdef DEBUG_SW_PRESS_EVENT
+                    vUART_SendStr(UART_PC,"\nSW_RELEASE");
+#endif
+                    ODUVTGSEL_switch_state = SW_RELEASE;
+                }
+                else
+                {
+#ifdef DEBUG_SW_PRESS_EVENT
+                    vUART_SendStr(UART_PC,"\nSW_READ");
+#endif
+                    ODUVTGSEL_switch_state = SW_READ;
+                }
+
+            }
+
+        }
+        break;
+
+        case SW_RELEASE:
+        {
+            if(swState)
+            {
+                if(switch_press_count > SWITCH_LONG_PRESS)
+                {
+#ifdef DEBUG_SW_PRESS_EVENT
+                    vUART_SendStr(UART_PC,"\nLONG_PRESS");
+#endif
+                    // switch_press_count = 0;  //PP commented on 22-07-24. Doing this commonly now
+                    event = LONG_PRESS;
+                    // encoder_state.flg_sw_pin = TRUE;
+                }
+                else
+                {
+#ifdef DEBUG_SW_PRESS_EVENT
+                    vUART_SendStr(UART_PC,"\nSHORT_PRESS");
+#endif
+                    event = SHORT_PRESS;
+                    // encoder_state.flg_sw_pin = TRUE;
+                }
+                ODUVTGSEL_switch_state = SW_READ;
+                switch_press_count = 0; //PP added on 22-07-24. Doing this commonly now
+            }
+            else
+            {
+                switch_press_count++;
+            }
+
+        }
+        break;
+
+        default:break;
+    }
+
+//    if((swState == 0) && (lastswState != 0))
+//    {
+//        if(swState == 0)
+//        {
+//            //encoder_state.flg_sw_pin = TRUE;
+//            long_press++;
+//        }
+//        else
+//        {
+//            if(long_press > SWITCH_LONG_PRESS)
+//            {
+//
+//            }
+//            else
+//            {
+//
+//            }
+//        }
+//    }
+//    lastswState = swState;
+    return event;
+}
+
+
+
+#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
+#endif  //LEDS_ON_GLCD_PINS
