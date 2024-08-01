@@ -14,12 +14,14 @@
 
 #include "gprs.h"
 
+#ifdef ENABLE_GPS
+
 #define LTE_WARMUP_TIME (10000/GPRS_STATE_MC_TIME)
 
 // #define GNS_PKT_EN	//PP(14-02-2023): this is declared here now.
 
-#define LAT_LEN						(11)			// No NULL always use memcpy
-#define LONG_LEN					(12)			// No NULL always use memcpy
+// #define LAT_LEN						(11)			// No NULL always use memcpy
+// #define LONG_LEN					(12)			// No NULL always use memcpy
 
 #ifdef GNS_PKT_EN
 #define MIN_COMMAS					(14)			//Fixed commas required for AT+CGNSSINFO pckt.
@@ -153,5 +155,7 @@ bool get_loc_status(void);
 void set_loc_status(bool sts);
 
 // #endif 	// ifNOTdef ETHERNET_EN
+
+#endif	// ENABLE_GPS
 
 #endif /* SOURCES_GPS_H_ */

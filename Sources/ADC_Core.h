@@ -125,7 +125,6 @@ typedef enum	//used for adc channel number of the gpio pin
 	SIG_EARTH_VTG_ADC,			//ADC_AIN5
 	SIG_RTR_CURRENT_ADC,		//ADC_AIN6
 }ADC_Channels_t;
-
 #endif
 
 typedef struct

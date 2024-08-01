@@ -150,7 +150,9 @@ void vPERIPH_UARTInit(void)
 
 extern "C" void DEBUGUARTIntHandler(void)
 {
-    // IntMasterDisable(); //PP added on 11-06-24
+#ifdef ENABLE_CLI_SEI
+    IntMasterDisable(); //PP added on 11-06-24
+#endif  //ENABLE_CLI_SEI
     uint32_t ui32Status;//, u32Data;
 
     // Get the interrrupt status. //
@@ -283,7 +285,7 @@ extern "C" void DEBUGUARTIntHandler(void)
         }
     }
 #endif
-    // IntMasterEnable(); //PP added on 11-06-24
+    IntMasterEnable(); //PP added on 11-06-24
 }
 
 #ifdef UART_TX_IRQ_EN
@@ -413,7 +415,7 @@ static inline void U0_TxIntHandler(void)
 //*********************************************************************************//
 extern "C" void LTEUARTIntHandler(void)
 {
-    // IntMasterDisable(); //PP added on 11-06-24
+    IntMasterDisable(); //PP added on 11-06-24
     uint32_t ui32Status;//, u32Data;
 
     // Get the interrrupt status. //
@@ -464,7 +466,10 @@ extern "C" void LTEUARTIntHandler(void)
         }
     }
 #endif  //UART_TX_IRQ_EN
-    // IntMasterEnable(); //PP added on 11-06-24
+
+#ifdef  ENABLE_CLI_SEI
+    IntMasterEnable(); //PP added on 11-06-24
+#endif//ENABLE_CLI_SEI
 }
 
 #ifdef UART_TX_IRQ_EN

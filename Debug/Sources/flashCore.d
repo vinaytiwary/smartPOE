@@ -46,6 +46,7 @@ Sources/flashCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/in
 Sources/flashCore.obj: ../Sources/SPI.h
 Sources/flashCore.obj: ../Sources/UartCore.h
 Sources/flashCore.obj: ../Sources/SysTick_Timer.h
+Sources/flashCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h
 
 ../Sources/flashCore.cpp:
 
@@ -138,4 +139,6 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/xlocale/_time.h:
 ../Sources/UartCore.h:
 
 ../Sources/SysTick_Timer.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h:
 

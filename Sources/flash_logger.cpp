@@ -22,6 +22,8 @@
 #include "Telecom_Ethernet.h"
 #include "Telecom_server_query.h"
 
+#include "driverlib/interrupt.h"    //PP added on 01-08-24
+
 static FL_data_t FL_data = {0,FL_TLOG_START_ADDR,FL_TLOG_START_ADDR};
 
 FL_log_data_t FL_log_data;
@@ -107,8 +109,10 @@ int updateFlashCurrAddr(void)                                                   
     FL_data.MR_BR_ser = 0;
     MR_BR_t MR, BR, MR_backup;
     char pass_TR = FALSE/*, pass_RR = FALSE*/, flash_read_retries = 1;
-
+#ifdef  ENABLE_CLI_SEI
     //cli();
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     while(FL_data.MR_BR_ser < FL_MAX_MR_ENTRIES)
     {
 /*#ifdef DEBUG_SPCL_FLASH
@@ -324,7 +328,11 @@ int updateFlashCurrAddr(void)                                                   
         FL_data.curr_data_write_addr_telecom_log = FL_TLOG_START_ADDR;
         sts = FALSE;
     }
+#ifdef ENABLE_CLI_SEI
     //sei();      //Anand 28.03.14
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
+
 #ifdef DEBUG_SPCL_FLASH
     // UWriteString((char*)"MR Comp", UART_PC);
     vUART_SendStr(UART_PC, "MR_Comp");

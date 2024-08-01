@@ -11,7 +11,7 @@
 #include "_config.h"
 
 // // #define DEBUG_ADC
-//  #define DEBUG_ADC_SIG
+#define DEBUG_ADC_SIG
 // // #define DEBUG_AC_ADC
 // // #define DEBUG_ODU_ADC
 
@@ -34,6 +34,7 @@
 #define DEBUG_GPRS_PING
 #define DEBUG_TCP_SEND
 #define DEBUG_GPRS_DATA_UPLOAD
+#define DEBUG_QCIPOPEN_RESP_DECODE
 // // // // #define DEBUG_JSON_PKT_PREP
 // // // // // #define DEBUG_WS_DISCONN
 // // // // // #define DEBUG_TCP_DISCONN

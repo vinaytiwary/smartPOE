@@ -59,7 +59,9 @@ extern FL_log_data_t FLR_log_data;
 #endif  //FLASH_EN
 
 #ifndef ETHERNET_EN
+#ifdef ENABLE_GPS
 extern conn_state_t conn_state;
+#endif  //ENABLE_GPS
 #endif  //ETHERNET_EN
 
 Telecom_server_query_t Telecom_server_query;
@@ -1088,7 +1090,9 @@ void HandleQueryStates(void)    //Call to this should be only made once, not per
 #ifndef ETHERNET_EN
             // LTEmodule.HandlerSts = GPRS_TCP_DISCONNECT;
             gprs.gprs_handler_state = GPRS_WEBSOCKET_DISCONNECT;
+#ifdef  ENABLE_GPS
             conn_state =  CONNECT_DATA_UPLOAD;
+#endif  //ENABLE_GPS
             set_pending_request(false); //PP added on 15-05-24: This was not being rest although it will restart the MCU before that.
 #else
             //PP 14-05-24: make a ETHER_WEBSOCKET_DISCONNECT cmd later, for now only decode server message
@@ -1110,7 +1114,9 @@ void HandleQueryStates(void)    //Call to this should be only made once, not per
             setClientMSGType(RESPONSE_LOG);
             // prepare_server_pkt();    //will call this in PREPARE_LOGS case instead.
             gprs.gprs_handler_state = GPRS_SESSION_IDLE;
+#ifdef  ENABLE_GPS
             conn_state =  CONNECT_DATA_UPLOAD;
+#endif  //ENABLE_GPS            
 #else
             Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
             setClientMSGType(RESPONSE_LOG);
@@ -1130,7 +1136,9 @@ void HandleQueryStates(void)    //Call to this should be only made once, not per
             setClientMSGType(RESPONSE_LOG);
             // prepare_server_pkt();    //will call this in PREPARE_LOGS case instead.
             gprs.gprs_handler_state = GPRS_SESSION_IDLE;
+#ifdef  ENABLE_GPS
             conn_state =  CONNECT_DATA_UPLOAD;
+#endif  //ENABLE_GPS            
 #else
             Telecom_Ethernet.ethernet_state = ETHER_SESSION_IDLE;
             setClientMSGType(RESPONSE_LOG);

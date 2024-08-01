@@ -101,6 +101,9 @@ void vTimerInit(void)
 
 extern "C" void TimerIntHandler(void)
 {
+#ifdef ENABLE_CLI_SEI
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     //
     // Clear the timer interrupt flag.
     //
@@ -155,5 +158,8 @@ extern "C" void TimerIntHandler(void)
     readACVoltage();
 
     // vGPIO_Toggle(LED_PORT_BASE, LED2_PIN, LED2_PIN );
+#ifdef ENABLE_CLI_SEI
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 

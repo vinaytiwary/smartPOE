@@ -446,6 +446,9 @@ uint32_t getODUCurrent(void)
 
     measurements.DC_current_router2 = analog_vtg;
 
+    // adc[ADC_INDX_ODUC].max_adc = 0;
+    // adc[ADC_INDX_ODUC].min_adc = 0;
+
 // #ifdef DEBUG_ADC
 //     // UWriteString((char*)"\nAVGadc:", DBG_UART);
 //     // UWriteInt(adc_avg, DBG_UART);
@@ -473,6 +476,9 @@ uint32_t getRouter1_DC_current(void)
     analog_vtg *= 1000;
 
     measurements.DC_current_router1 = analog_vtg;
+
+    // adc[ADC_INDX_RTRC].max_adc = 0;
+    // adc[ADC_INDX_RTRC].min_adc = 0;
 
 // #ifdef DEBUG_ADC
 //     // UWriteString((char*)"\nAVGadc:", DBG_UART);
@@ -524,14 +530,25 @@ uint32_t getODUVoltage(void)
     uint32_t adc_avg = 0;
     double analog_vtg = 0.0;
 
+    double calibrated_adc = 0.0;    //PP added on 31-07-24
+
     adc_avg = updateADC(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
 
     analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION) * ODUV_RESISTOR_RATIO;   //PP (24-04-24) commented until HW is finalized
     // analog_vtg = adc_avg * (ADC_REFV/ADC_RESOLUTION);
-    analog_vtg *= 1000;
 
-    //measurements.DC_Voltage_router2 = analog_vtg*10215;
-    measurements.DC_Voltage_router2 = analog_vtg;
+    calibrated_adc = ((1.05 * analog_vtg) + 0.8775);    //PP added on 31-07-24
+
+    calibrated_adc *= 1000;
+    measurements.DC_Voltage_router2 =  calibrated_adc;
+
+    // analog_vtg *= 1000;
+
+    // //measurements.DC_Voltage_router2 = analog_vtg*10215;
+    // measurements.DC_Voltage_router2 = analog_vtg;
+
+    // // adc[ADC_INDX_ODUV].max_adc = 0;
+    // // adc[ADC_INDX_ODUV].min_adc = 0;
 
 #ifdef DEBUG_ADC
     // UWriteString((char*)"\nAVGadc:", DBG_UART);
@@ -572,6 +589,9 @@ uint32_t getBatteryVoltage(void)
     //measurements.DC_Battery_voltage = analog_vtg*2866; //(analog_vtg * 1000);;
     measurements.DC_Battery_voltage = analog_vtg; 
 
+    // adc[ADC_INDX_BATTV].max_adc = 0;
+    // adc[ADC_INDX_BATTV].min_adc = 0;
+
 // #ifdef DEBUG_ADC
 //     // UWriteString((char*)"\nAVGadc:", DBG_UART);
 //     // UWriteInt(adc_avg, DBG_UART);
@@ -605,6 +625,9 @@ uint32_t getSMPSVoltage(void)
     //analog_vtg *= DC_CHARGER_RESISTOR_RATIO;
 
     measurements.DC_Charger_voltage = analog_vtg; //(analog_vtg * 1000);
+
+    // adc[ADC_INDX_12VIN].max_adc = 0;
+    // adc[ADC_INDX_12VIN].min_adc = 0;
 
 // #ifdef DEBUG_ADC
 //     // UWriteString((char*)"\nAVGadc:", DBG_UART);

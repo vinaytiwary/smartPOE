@@ -65,8 +65,9 @@ void TCP_Handler(void)
     {
         case GPRS_IDLE:
         {
-
-            // if (timeout++ >= GSM_WARMUP_SECS)
+#ifndef ENABLE_GPS
+            if (timeout++ >= GSM_WARMUP_SECS)
+#endif  //ENABLE_GPS
             {
                 timeout = 0;
 
@@ -80,10 +81,30 @@ void TCP_Handler(void)
 
                 set_webconn_sts(FALSE);
 
+                gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
+
+                gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
+
+                gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;
+
+                gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;
+
+                gprs.tcp_ping_states = PING_CMD_ECHO_OFF;
+
+                gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;
+
+                gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF;
+
+                gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF;
+
                 gprs.gprs_handler_state = GPRS_CONNECT;
 
-                gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
             }
+#ifdef DEBUG_TCP_HANDLER
+            vUART_SendStr(DEBUG_UART_BASE, "\nGI:");
+            vUART_SendInt(DEBUG_UART_BASE, timeout);
+#endif
         }
         break;
 
@@ -106,7 +127,7 @@ void TCP_Handler(void)
 #endif
                 // setNWstatus(NOT_AVBL);
                 // setServerStatus(NOT_AVBL);
-                gprs.gprs_handler_state = GPRS_IDLE;
+                gprs.gprs_handler_state = GPRS_IDLE;   
             }
             else if (status == CON_IN_PRG)
             {
@@ -154,7 +175,12 @@ void TCP_Handler(void)
 
                 // setNWstatus(NOT_AVBL);
                 // setServerStatus(NOT_AVBL);
-                gprs.gprs_handler_state = GPRS_IDLE;
+
+                //PP on 30-07-24: why go to idle straight? If there's a problem it should goto 
+                //gprs_connect() again and if it still fails, the CRESET cmd in gprs_connect() 
+                //will restart the LTE module. What's going in the idle case and waiting for 10secs going to do?
+                // gprs.gprs_handler_state = GPRS_IDLE;    
+                gprs.gprs_handler_state = GPRS_CONNECT; 
 
             }
             else if (status == CON_IN_PRG)
@@ -195,8 +221,18 @@ void TCP_Handler(void)
 #ifdef DEBUG_TCP_CONN
                 vUART_SendStr(UART_PC,"ALRDY_CONN\n");
 #endif
-                gprs.gprs_handler_state = GPRS_PING;
-                //gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;//a
+                // gprs.gprs_handler_state = GPRS_PING;
+                // //gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;//a
+                if (get_webconn_sts() == TRUE)
+                {
+                    gprs.gprs_handler_state = GPRS_PING;
+                    set_network_status(true);
+                }
+                else
+                {
+                    gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;
+                    set_network_status(false);
+                }
             }
             else if (status == TCP_IN_PRG)
             {
@@ -259,7 +295,8 @@ void TCP_Handler(void)
 
                 flushRxBuffer(LTE_UART);
                 // setServerStatus(AVBL);
-                gprs.gprs_handler_state = GPRS_SESSION_IDLE;
+                gprs.gprs_handler_state = GPRS_SESSION_IDLE; //PP commented on 29-07-24 for testing. To uncommented after testing.
+                // gprs.gprs_handler_state = GPRS_CONN_STS;    //PP added on 29-09-24 for testing read_ip_port(). To be commented later after testing.
 
                 //gprs.gprs_handler_state = GPRS_WEBSOCKET_CONNECT;
 
@@ -632,9 +669,15 @@ void TCP_Handler(void)
 
 void resetTCP_SubHandlers(void)
 {
-    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
-    gprs.tcp_ping_states = PING_CMD_CIPSEND;
-    gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+    // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+    // gprs.tcp_ping_states = PING_CMD_CIPSEND;
+    // gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+
+    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;
+
+    gprs.tcp_ping_states = PING_CMD_ECHO_OFF;
+
+    gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;
 }
 
 con_status_t gprs_connect(void)
@@ -655,8 +698,9 @@ con_status_t gprs_connect(void)
     {
         case GPRS_CONNCT_CMD_ECHO_OFF:
         {
+            flushRxBuffer(LTE_UART);
 #ifdef DEBUG_GPRS_CONN
-            vUART_SendStr(UART_PC,"\ncmd:EO");
+            vUART_SendStr(UART_PC,"\ncmd:1EO");
             vUART_SendChr(UART_PC,',');
 #endif
             vUART_SendStr(LTE_UART_BASE, "ATE0\r");
@@ -700,7 +744,8 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         //gprs.module_status = NOT_AVBL;
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CPIN;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -732,7 +777,8 @@ con_status_t gprs_connect(void)
                             gprs_retry_count = 0;
                             //gprs.module_status = NOT_AVBL;
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CPIN;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -776,7 +822,8 @@ con_status_t gprs_connect(void)
                     if (gprs_retry_count >= GPRS_RETRY_CNT)
                     {
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CSQ;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         gprs_retry_count = 0;
@@ -822,7 +869,8 @@ con_status_t gprs_connect(void)
                             //gprs.module_status = NOT_AVBL;
 
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CSQ;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -864,7 +912,8 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         //gprs.module_status = NOT_AVBL;
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CREG;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -896,7 +945,8 @@ con_status_t gprs_connect(void)
                             gprs_retry_count = 0;
                             // gprs.module_status = NOT_AVBL;
                             // gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CREG;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -913,6 +963,7 @@ con_status_t gprs_connect(void)
 
         case GPRS_CONNCT_CMD_CGREG:
         {
+            flushRxBuffer(LTE_UART);    //PP added on 27-07-24
             vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+CGREG?\r");
 #ifdef DEBUG_GPRS_CONN
             vUART_SendStr(UART_PC,"cmd:CGREG");
@@ -937,7 +988,8 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         //  gprs.module_status = NOT_AVBL;
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGREG;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -969,7 +1021,8 @@ con_status_t gprs_connect(void)
                             gprs_retry_count = 0;
                             //  gprs.module_status = NOT_AVBL;
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGREG;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -986,6 +1039,7 @@ con_status_t gprs_connect(void)
 
         case GPRS_CONNCT_CMD_CPSI:
         {
+            flushRxBuffer(LTE_UART);    //PP added on 27-07-24
             vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+CPSI?\r");
 #ifdef DEBUG_GPRS_CONN
             vUART_SendStr(UART_PC,"cmd:CPSI");
@@ -1013,7 +1067,8 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         // gprs.module_status = NOT_AVBL;
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CPSI;
-                        sts = CON_FAIL;
+                        
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -1027,7 +1082,7 @@ con_status_t gprs_connect(void)
 #ifdef DEBUG_GPRS_CONN
                         vUART_SendStr(UART_PC,"CPSI:k\n");
 #endif
-//                        sts = CON_OK;
+                        // sts = CON_OK;
                         gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT;
                     }
                     else
@@ -1035,7 +1090,7 @@ con_status_t gprs_connect(void)
 #ifdef DEBUG_GPRS_CONN
                         vUART_SendStr(UART_PC,"CPSI:f2\n");
 #endif
-                        sts = CON_FAIL;
+                        // sts = CON_FAIL;
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                     }
                     //gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT;
@@ -1058,7 +1113,8 @@ con_status_t gprs_connect(void)
                             gprs_retry_count = 0;
                             //  gprs.module_status = NOT_AVBL;
                             // gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CPSI;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -1075,6 +1131,7 @@ con_status_t gprs_connect(void)
 
         case GPRS_CONNCT_CMD_CGDCONT:
         {
+            flushRxBuffer(LTE_UART);    //PP added on 27-07-24
             vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+CGDCONT\r");
 #ifdef DEBUG_GPRS_CONN
             vUART_SendStr(UART_PC,"cmd:CGD");
@@ -1099,7 +1156,8 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         // gprs.module_status = NOT_AVBL;
                         // gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -1136,7 +1194,8 @@ con_status_t gprs_connect(void)
                             gprs_retry_count = 0;
                             // gprs.module_status = NOT_AVBL;
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
-                            sts = CON_FAIL;
+                            
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -1152,6 +1211,7 @@ con_status_t gprs_connect(void)
         break;
         case GPRS_CONNCT_CMD_CTZU:
         {
+            flushRxBuffer(LTE_UART);    //PP added on 27-07-24
             vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+CTZU=1\r");
 #ifdef DEBUG_GPRS_CONN
             vUART_SendStr(UART_PC,"cmd:CTZU");
@@ -1176,7 +1236,9 @@ con_status_t gprs_connect(void)
                         gprs_retry_count = 0;
                         // gprs.module_status = NOT_AVBL;
                         // gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
-                        sts = CON_FAIL;
+
+                        // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
+
                         gprs.gprs_connect = GPRS_CONNCT_RESET;
                         timeout = 0;
                     }
@@ -1190,8 +1252,9 @@ con_status_t gprs_connect(void)
                     vUART_SendChr(UART_PC,',');
                     vUART_SendStr(UART_PC,"gprs_connect");
 #endif
-                    gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
-                    sts = CON_OK;
+                    gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;    //PP commented on 27-07-24 for testing CRESET cmd.
+                    // gprs.gprs_connect = GPRS_CONNCT_CMD_CRESET; //PP 27-07-24: to be commented after testing CRESET cmd. Only for testing.
+                    sts = CON_OK;    //PP commented on 27-07-24 for testing CRESET cmd.
                     gprs_retry_count = 0;
                     timeout = 0;
                 }
@@ -1203,16 +1266,19 @@ con_status_t gprs_connect(void)
                     vUART_SendStr(UART_PC,"CTZU:w\n");
 #endif
 
-                    if(timeout++ >= CGDCONT_TIMEOUT)
+                    // if(timeout++ >= CGDCONT_TIMEOUT) //PP on 27-07-24 to Khushal: copy-paste ke galat natije.
+                    if(timeout++ >= CCLK_TIMEOUT)   //PP added on 27-07-24
                     {
                         timeout = 0;
-                        gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT;
+                        // gprs.gprs_connect = GPRS_CONNCT_CMD_CGDCONT; //PP on 27-07-24 to Khushal: copy-paste ke galat natije.
+                        gprs.gprs_connect = GPRS_CONNCT_CMD_CTZU;   //PP added on 27-07-24
                         if (gprs_retry_count++ >= GPRS_RETRY_CNT)
                         {
                             gprs_retry_count = 0;
                             // gprs.module_status = NOT_AVBL;
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
-                            sts = CON_FAIL;
+
+                            // sts = CON_FAIL;  //PP commented on 01-08-24: CRESET won't work if we return FAIL and goto GPRS_IDLE
 
                             gprs.gprs_connect = GPRS_CONNCT_RESET;
                             gprs_retry_count = 0;
@@ -1233,9 +1299,104 @@ con_status_t gprs_connect(void)
 #ifdef DEBUG_GPRS_CONN
             vUART_SendStr(UART_PC,"CONN_RESET\n");
 #endif
+
+#ifdef SOFT_RST_GSM
+            gprs.gprs_connect = GPRS_CONNCT_CMD_CRESET;
+#else
             gprs.gprs_connect = GPRS_CONNCT_CMD_ECHO_OFF;
+#endif  //SOFT_RST_GSM
         }
         break;
+
+#ifdef SOFT_RST_GSM
+        case GPRS_CONNCT_CMD_CRESET:
+        {
+#ifdef DEBUG_GPRS_CONN
+            vUART_SendStr(UART_PC,"\nCRST");
+#endif           
+            flushRxBuffer(LTE_UART);    //PP added on 27-07-24
+            vUART_SendStr(LTE_UART_BASE, "AT+CRESET\r\n");
+            gprs.gprs_connect = GPRS_CONNCT_RSP_CRESET;
+        }
+        break;
+
+        case GPRS_CONNCT_RSP_CRESET:
+        {
+            switch(check_string_nobuf("OK"))
+            {
+                case GPRS_MATCH_FAIL:
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"\nCRST:f");
+#endif
+                    gprs.gprs_connect = GPRS_CONNCT_CMD_CRESET;
+                    if (gprs_retry_count++ >= GPRS_RETRY_CNT)
+                    {
+                        gprs_retry_count = 0;
+                        sts = CON_FAIL;
+                        // gprs.gprs_connect = GPRS_CONNCT_RESET;  //PP 27-07-24: to be changed to GPRS_CONNCT_WAIT_CRESET later
+                        gprs.gprs_connect = GPRS_CONNCT_WAIT_CRESET;
+                        timeout = 0;
+                    }
+                }
+                break;
+
+                case GPRS_MATCH_OK:
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"CRST:k");
+#endif
+                    // gprs.gprs_connect = GPRS_CONNCT_RESET;  //PP 27-07-24: to be changed to GPRS_CONNCT_WAIT_CRESET later
+                    gprs.gprs_connect = GPRS_CONNCT_WAIT_CRESET;
+                    // sts = CON_OK;
+                    gprs_retry_count = 0;
+                    timeout = 0;
+                }
+                break;
+
+                case GPRS_NO_NEW_MSG:
+                {
+#ifdef DEBUG_GPRS_CONN
+                    vUART_SendStr(UART_PC,"CRST:w\n");
+#endif
+                    if(timeout++ >= SOFT_RST_TIMEOUT)
+                    {
+                        timeout = 0;
+                        gprs.gprs_connect = GPRS_CONNCT_CMD_CRESET;
+                        if (gprs_retry_count++ >= GPRS_RETRY_CNT)
+                        {
+                            gprs_retry_count = 0;
+                            // gprs.module_status = NOT_AVBL;
+                            //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_CGDCONT;
+                            sts = CON_FAIL;
+
+                            gprs.gprs_connect = GPRS_CONNCT_RESET;
+                            gprs_retry_count = 0;
+                        }
+                    }
+                }
+                break;
+
+                default:
+                {
+                }
+                break;
+            }
+        }
+        break;
+
+        case GPRS_CONNCT_WAIT_CRESET:
+        {
+            if (timeout++ >= GSM_RST_SECS)		//not getting expected data,
+			{
+				flushRxBuffer(LTE_UART);
+				timeout = 0;
+				gprs.gprs_connect = GPRS_CONNCT_RESET;
+                sts = CON_FAIL;
+			}
+        }
+        break;
+#endif  //SOFT_RST_GSM
 
         default:
             gprs.gprs_connect = GPRS_CONNCT_RESET;
@@ -1262,6 +1423,24 @@ con_status_t gprs_connect_status(void)
 
     switch(gprs.gprs_connect_state)
     {
+        case GPRS_CONNCT_STATE_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.gprs_connect_state = GPRS_CONNCT_STATE_RSP_ECHO_OFF;
+#ifdef DEBUG_GPRS_CONN_STS
+            vUART_SendStr(UART_PC,"\ncmd:2EO");
+#endif
+        }
+        break;
+
+        case GPRS_CONNCT_STATE_RSP_ECHO_OFF:
+        {
+
+            gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+        }
+        break;
+
         case GPRS_CONNCT_CMD_CCLK:
         {
             flushRxBuffer(LTE_UART_BASE);
@@ -1294,6 +1473,10 @@ con_status_t gprs_connect_status(void)
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_RSP_CCLK;
                         //gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
                         gprs_retry_count = 0;
+
+                        //PP added on 29-07-24:
+                        gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
+                        sts = CON_FAIL;
                     }
                 }
                 break;
@@ -1344,8 +1527,12 @@ con_status_t gprs_connect_status(void)
                         {
                             //  gprs.module_status = NOT_AVBL;
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_RSP_CCLK;
-                            gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+
+                            // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;  //PP commented on 29-07-24
                             gprs_retry_count = 0;
+                            //PP added on 29-07-24:
+                            gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
+                            sts = CON_FAIL;
                         }
                     }
                 }
@@ -1359,6 +1546,7 @@ con_status_t gprs_connect_status(void)
 
         case GPRS_CONNCT_CMD_READ_NETOPEN:
         {
+            flushRxBuffer(LTE_UART);    //PP added on 29-07-24
             vUART_SendStr(LTE_UART_BASE,(const uint8_t *)"AT+NETOPEN?\r");
 #ifdef DEBUG_GPRS_CONN_STS
             vUART_SendStr(UART_PC,"cmd:NO?");
@@ -1388,7 +1576,11 @@ con_status_t gprs_connect_status(void)
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_READ_NETOPEN;
                         sts = CON_FAIL;
 
-                        gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+                        // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;  //PP commented on 29-07-24
+                        gprs_retry_count = 0;
+
+                        //PP added on 29-07-24:
+                        gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
                         gprs_retry_count = 0;
                     }
                 }
@@ -1398,7 +1590,8 @@ con_status_t gprs_connect_status(void)
                 {
                     if(tmpstr[0] == '1')
                     {
-                        gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+                        // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;  //PP commented on 29-07-24
+                        gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;   //PP added on 29-07-24
                         sts = CON_OK;
 #ifdef DEBUG_GPRS_CONN_STS
                         vUART_SendStr(UART_PC,"NO?:k\n");
@@ -1436,7 +1629,11 @@ con_status_t gprs_connect_status(void)
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_CMD_READ_NETOPEN;
                             sts = CON_FAIL;
 
-                            gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+                            // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;  //PP commented on 29-07-24
+                            gprs_retry_count = 0;
+
+                            //PP added on 29-07-24:
+                            gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
                             gprs_retry_count = 0;
                         }
                     }
@@ -1479,7 +1676,11 @@ con_status_t gprs_connect_status(void)
                         //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_RSP_NETOPEN;
                         sts = CON_FAIL;
 
-                        gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;          //
+                        // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK; //PP commented on 29-07-24
+                        gprs_retry_count = 0;
+
+                        //PP added on 29-07-24:
+                        gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
                         gprs_retry_count = 0;
                     }
                 }
@@ -1492,7 +1693,9 @@ con_status_t gprs_connect_status(void)
 #ifdef DEBUG_GPRS_CONN_STS
                         vUART_SendStr(UART_PC,"NO:k\n");
 #endif
-                        gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+                        // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK; //PP commented on 29-07-24
+                        gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;   //PP added on 29-07-24
+
                         // gprs.connect_sts = TRUE;
                         sts = CON_OK;
                     }
@@ -1518,7 +1721,11 @@ con_status_t gprs_connect_status(void)
                             //gprs.errcode = CON_ERR_OFFSET + GPRS_CONNCT_RSP_NETOPEN;
                             sts = CON_FAIL;
 
-                            gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;          //
+                            // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK; //PP commented on 29-07-24
+                            gprs_retry_count = 0;
+
+                            //PP added on 29-07-24:
+                            gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;
                             gprs_retry_count = 0;
                         }
                     }
@@ -1533,7 +1740,8 @@ con_status_t gprs_connect_status(void)
 
         default:
         {
-            gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;
+            // gprs.gprs_connect_state = GPRS_CONNCT_CMD_CCLK;  //PP commented on 29-07-24
+            gprs.gprs_connect_state = GPRS_CONNCT_STATE_CMD_ECHO_OFF;   //PP added on 29-07-24
         }
         break;
     }
@@ -1558,6 +1766,23 @@ tcp_status_t tcp_connect(void)
 
     switch(gprs.gprs_tcp_state)
     {
+        case GPRS_TCP_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.gprs_tcp_state = GPRS_TCP_RSP_ECHO_OFF;
+#ifdef DEBUG_TCP_CONN
+            vUART_SendStr(UART_PC,"\ncmd:3EO");
+#endif
+        }
+        break;
+
+        case GPRS_TCP_RSP_ECHO_OFF:
+        {
+            gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+        }
+        break;
+
         case GPRS_TCP_CMD_READ_CIPOPEN:
         {
             flushRxBuffer(LTE_UART);
@@ -1584,16 +1809,21 @@ tcp_status_t tcp_connect(void)
 #ifdef  DEBUG_TCP_CONN
                     vUART_SendStr(UART_PC,"CO?:f\n");
 #endif
-                    gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                    //PP commented on 30-07-24: CIOPEN QUERY FAIL RETRIES commented becoz we should just do cipopen at the 1st fail
+                    //when we know this cmd's going to fail here atleast 1 time at startup becoz we have'nt cipopened yet. Why 3 retries?
 
-                    if (tcp_retry_cnt++ >= TCP_RETRY_CNT)
-                    {
-                        // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_READ_CIPOPEN;
-                        //sts = TCP_FAIL;
+                    // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;     
+                    // 
+                    // if (tcp_retry_cnt++ >= TCP_RETRY_CNT)
+                    // {
+                    //     // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_READ_CIPOPEN;
+                    //     //sts = TCP_FAIL;
+                    //
+                    //     gprs.gprs_tcp_state = GPRS_TCP_CMD_CIPOPEN; //PP on 29-07-24: we're not doing TCP_FAIL here so we're also not resetting the state to echo off here.
+                    //     tcp_retry_cnt = 0;
+                    // }
 
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_CIPOPEN;
-                        tcp_retry_cnt = 0;
-                    }
+                    gprs.gprs_tcp_state = GPRS_TCP_CMD_CIPOPEN; //PP on 29-07-24: we're not doing TCP_FAIL here so we're also not resetting the state to echo off here.
                     flushRxBuffer(LTE_UART);
                 }
                 break;
@@ -1602,7 +1832,8 @@ tcp_status_t tcp_connect(void)
                 {
                     // gprs.tcp_sts = TRUE;
                     //sts = TCP_PASS;
-                    if(read_ip_port(tmpstr))
+                    // if(read_ip_port(tmpstr)) //PP commented on 30-07-24
+                    if(read_ip_port(tmpstr,num_bytes))  //PP added on 30-07-24. (Copied from EVSE 3.12)
                     {
 #ifdef  DEBUG_TCP_CONN
                         vUART_SendStr(UART_PC,"ip_port_matched\n");
@@ -1620,7 +1851,8 @@ tcp_status_t tcp_connect(void)
 #ifdef  DEBUG_TCP_CONN
                     vUART_SendStr(UART_PC,"CO?:k\n");
 #endif
-                    gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                    // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                    gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                 }
                 break;
 
@@ -1638,7 +1870,8 @@ tcp_status_t tcp_connect(void)
                             // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_CMD_READ_CIPOPEN;
                             sts = TCP_FAIL;
 
-                            gprs.gprs_tcp_state = GPRS_TCP_CMD_CIPOPEN;
+                            // gprs.gprs_tcp_state = GPRS_TCP_CMD_CIPOPEN;  //PP commented on 29-07-24
+                            gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -1699,7 +1932,8 @@ tcp_status_t tcp_connect(void)
                         tcp_retry_cnt = 0;
                         flushRxBuffer(LTE_UART);
                         sts = TCP_FAIL;
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                        // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                        gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                     }
                     else
                     {
@@ -1711,7 +1945,8 @@ tcp_status_t tcp_connect(void)
                             // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_CIPOPEN;
                             sts = TCP_FAIL; //PP uncommented on 30-04-24
 
-                            gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                            // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                            gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -1731,7 +1966,9 @@ tcp_status_t tcp_connect(void)
                         vUART_SendStr(DEBUG_UART_BASE, "\n1CO:k2");
 #endif                        
                         // LTEmodule.TCP_connct_states = GPRS_TCP_CMD_READ_CIPOPEN;
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+
+                        // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                        gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                         timeout = 0;
                         sts = TCP_PASS;
@@ -1748,7 +1985,7 @@ tcp_status_t tcp_connect(void)
                         timeout = 0;
                         //sts = TCP_PASS;
                     }
-                    gprs.gprs_tcp_state = GPRS_TCP_RSP_1_CIPOPEN;
+                    // gprs.gprs_tcp_state = GPRS_TCP_RSP_1_CIPOPEN;    //PP commented on 29-07-24
                     //sts = TCP_PASS;
                     flushRxBuffer(LTE_UART);
                     tcp_retry_cnt = 0;
@@ -1770,7 +2007,8 @@ tcp_status_t tcp_connect(void)
                             // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_CIPOPEN;
                             sts = TCP_FAIL;
 
-                            gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                            // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                            gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -1785,7 +2023,8 @@ tcp_status_t tcp_connect(void)
                         // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_CMD_READ_CIPOPEN;
                         sts = TCP_FAIL;
 
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                        // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                        gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -1810,7 +2049,8 @@ tcp_status_t tcp_connect(void)
                         // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_CIPOPEN;
                         sts = TCP_FAIL ;    //PP uncommented on 30-04-24
 
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                        // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                        gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24    
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -1822,7 +2062,8 @@ tcp_status_t tcp_connect(void)
 #ifdef  DEBUG_TCP_CONN
                     vUART_SendStr(UART_PC,"2CO:k\n");
 #endif
-                    gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                    // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                    gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                     sts = TCP_PASS;
                     flushRxBuffer(LTE_UART);
                     tcp_retry_cnt = 0;
@@ -1844,7 +2085,8 @@ tcp_status_t tcp_connect(void)
                             //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_CIPOPEN;
                             sts = TCP_FAIL;
 
-                            gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                            // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                            gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -1859,7 +2101,8 @@ tcp_status_t tcp_connect(void)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_CMD_READ_CIPOPEN;
                         sts = TCP_FAIL;
 
-                        gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+                        // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+                        gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -1874,7 +2117,8 @@ tcp_status_t tcp_connect(void)
             //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_CMD_READ_CIPOPEN;
             sts = TCP_FAIL;
 
-            gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN;
+            // gprs.gprs_tcp_state = GPRS_TCP_CMD_READ_CIPOPEN; //PP commented on 29-07-24
+            gprs.gprs_tcp_state = GPRS_TCP_CMD_ECHO_OFF;   //PP added on 29-07-24
             tcp_retry_cnt = 0;
         }
         break;
@@ -1899,6 +2143,23 @@ websckt_sts_t websckt_connect(void)
 
     switch(gprs.gprs_websocket_connect)
     {
+        case GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_RSP_ECHO_OFF;
+#ifdef DEBUG_WEBSOCKET_CONN
+            vUART_SendStr(UART_PC,"\ncmd:4EO");
+#endif
+        }
+        break;
+
+        case GPRS_WEBSOCKET_CONNCT_RSP_ECHO_OFF:
+        {
+            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+        }
+        break;
+
         case GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND:
         {
             //gprs.data_mode = FALSE;
@@ -1931,7 +2192,9 @@ websckt_sts_t websckt_connect(void)
                         sts = WEBSOCKET_FAIL;
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                        // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -1968,7 +2231,9 @@ websckt_sts_t websckt_connect(void)
                             sts = WEBSOCKET_FAIL;
                             vUART_SendChr(LTE_UART_BASE,0x1A);
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                            // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -1983,7 +2248,8 @@ websckt_sts_t websckt_connect(void)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_WEBSOCKET_PING_RSP_CIPSEND;
                         sts = WEBSOCKET_FAIL;
 
-                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                        // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2052,7 +2318,8 @@ websckt_sts_t websckt_connect(void)
                         // tcp.errcode = TCP_ERR_OFFSET + GPRS_WEBSOCKET_CONNCT_RSP;
                         sts = WEBSOCKET_FAIL;
 
-                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                        // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2066,7 +2333,8 @@ websckt_sts_t websckt_connect(void)
                     //vUART_SendBytes(UART_PC,(const uint8_t *)gprs_rx_buff.buffer,gprs_rx_buff.index);
 #endif
                     char *WS_upgrade_resp;
-                    WS_upgrade_resp = strstr(tmpstr, "HTTP/1.1 ");
+                    WS_upgrade_resp = strstr(tmpstr, "HTTP/1.1 101");   //PP added on 29-07-24
+                    // WS_upgrade_resp = strstr(tmpstr, "HTTP/1.1 ");   //PP commented on 29-07-24
                     // WS_upgrade_resp = strstr((char*)gprs_rx_buff.buffer, "HTTP/1.1 ");
                     if(WS_upgrade_resp)
                     {
@@ -2075,12 +2343,14 @@ websckt_sts_t websckt_connect(void)
                         vUART_SendStr(UART_PC, (uint8_t*)WS_upgrade_resp);
 #endif                        
                         // if((strstr((char*)gprs_rx_buff.buffer, "101"))||(strstr((char*)gprs_rx_buff.buffer, "connected")))
-                        if((strstr(tmpstr, "101"))||(strstr(tmpstr, "connected")))
+                        // if((strstr(tmpstr, "101"))||(strstr(tmpstr, "connected")))
+                        if(strstr(tmpstr, "connected"))
                         {
 #ifdef DEBUG_WEBSOCKET_CONN
                             vUART_SendStr(UART_PC,"\nWSUK");
 #endif
-                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                            // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                             sts = WEBSOCKET_PASS;
                         }
                         else
@@ -2127,7 +2397,9 @@ websckt_sts_t websckt_connect(void)
                             sts = WEBSOCKET_FAIL;
 
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                            // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2141,7 +2413,8 @@ websckt_sts_t websckt_connect(void)
                     // tcp.errcode = TCP_ERR_OFFSET + GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
                     sts = WEBSOCKET_FAIL;
 
-                    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                    // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                     tcp_retry_cnt = 0;
                 }
                 break;
@@ -2152,7 +2425,8 @@ websckt_sts_t websckt_connect(void)
         case GPRS_WEBSOCKET_CONNCT_RSP_1:
         {
             memset(tmpstr,0,sizeof(tmpstr));
-            char resp = check_string("HTTP/1.1 ",tmpstr,&num_byte);
+            char resp = check_string("HTTP/1.1 101",tmpstr,&num_byte);  //PP added on 29-07-24
+            // char resp = check_string("HTTP/1.1 ",tmpstr,&num_byte);  //PP commented on 29-07-24
             //switch(check_string_nobuf("HTTP/1.1 101"))
             switch(resp)
             {
@@ -2169,7 +2443,8 @@ websckt_sts_t websckt_connect(void)
                         // tcp.errcode = TCP_ERR_OFFSET + GPRS_WEBSOCKET_CONNCT_RSP;
                         sts = WEBSOCKET_FAIL;
 
-                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+                        // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2181,7 +2456,8 @@ websckt_sts_t websckt_connect(void)
                     //set_webconn_sts(TRUE);
                     // if((strstr(tmpstr, "connected")) || (strstr(tmpstr,"101")))  //PP should i use this conition instead? 30-04-24
                     // if(valid_code(tmpstr))
-                    if((strstr(tmpstr, "101"))||(strstr(tmpstr, "connected")))
+                    // if((strstr(tmpstr, "101"))||(strstr(tmpstr, "connected")))   //PP commented on 29-07-24
+                    if(strstr(tmpstr,"connected"))  //PP added on 29-07-24
                     {
 #ifdef DEBUG_WEBSOCKET_CONN
                         vUART_SendStr(UART_PC,"WC2:k\n");
@@ -2200,7 +2476,9 @@ websckt_sts_t websckt_connect(void)
                     // setServerStatus(AVBL);
 
                     //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                    // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                    gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                     //flushRxBuffer(LTE_UART);
 
                     tcp_retry_cnt = 0;
@@ -2224,7 +2502,9 @@ websckt_sts_t websckt_connect(void)
                             sts = WEBSOCKET_FAIL;
 
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                            // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                            gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2240,7 +2520,9 @@ websckt_sts_t websckt_connect(void)
                         sts = WEBSOCKET_FAIL;
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                        // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                        gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2257,7 +2539,9 @@ websckt_sts_t websckt_connect(void)
                 sts = WEBSOCKET_FAIL;
 
                 //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
-                gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
+
+                // gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND; //PP commented on 29-07-24
+                gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF;   //PP added on 29-07-24
                 tcp_retry_cnt = 0;
             }
         }
@@ -2285,6 +2569,23 @@ ping_status_t ping_send(void)
     // switch(ping_state)
     switch(gprs.tcp_ping_states)
     {
+        case PING_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.tcp_ping_states = PING_RSP_ECHO_OFF;
+#ifdef DEBUG_GPRS_PING
+            vUART_SendStr(UART_PC,"\ncmd:5EO");
+#endif
+        }
+        break;
+
+        case PING_RSP_ECHO_OFF:
+        {
+            gprs.tcp_ping_states = PING_CMD_CIPSEND;
+        }
+        break;
+
         case PING_CMD_CIPSEND:
         {
             //flushRxBuffer(LTE_UART);
@@ -2319,7 +2620,9 @@ ping_status_t ping_send(void)
                         sts = PING_FAIL;
 
                         // ping_state = PING_CMD_CIPSEND;
-                        gprs.tcp_ping_states = PING_CMD_CIPSEND;
+
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2362,7 +2665,9 @@ ping_status_t ping_send(void)
                             sts = PING_FAIL;
 
                             // ping_state = PING_CMD_CIPSEND;
-                            gprs.tcp_ping_states = PING_CMD_CIPSEND;
+
+                            // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                            gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2378,7 +2683,9 @@ ping_status_t ping_send(void)
                         sts = PING_FAIL;
 
                         // ping_state = PING_CMD_CIPSEND;
-                        gprs.tcp_ping_states = PING_CMD_CIPSEND;
+
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2431,7 +2738,9 @@ ping_status_t ping_send(void)
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                         // ping_state = PING_SEND_CMD;
-                        gprs.tcp_ping_states = PING_SEND_CMD;
+
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2446,7 +2755,7 @@ ping_status_t ping_send(void)
                     //if(pong_received(tmpstr))
                     //{
                         //set_webconn_sts(TRUE);
-
+                        //
                         //sts = WEBSOCKET_PASS;
                         // ping_state = PING_SEND_RSP_1;    //PP commented this line on 30-04-24
 //#ifdef DEBUG_GPRS_PING
@@ -2461,7 +2770,7 @@ ping_status_t ping_send(void)
 //#endif
                         //sts = WEBSOCKET_FAIL;
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
-
+                        //
                     //}
                     //flushRxBuffer(LTE_UART);
                     char *ping_resp;
@@ -2482,7 +2791,10 @@ ping_status_t ping_send(void)
 #endif
                             sts = PING_PASS;
                             // ping_state = PING_CMD_CIPSEND;
-                            gprs.tcp_ping_states = PING_CMD_CIPSEND;
+
+                            // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                            gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
+
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                             //ping_state = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
                         }
@@ -2539,7 +2851,9 @@ ping_status_t ping_send(void)
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                             //ping_state = PING_SEND_CMD;
                             // ping_state = PING_CMD_CIPSEND;
-                            gprs.tcp_ping_states = PING_CMD_CIPSEND;
+
+                            // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                            gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2574,7 +2888,8 @@ ping_status_t ping_send(void)
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                         // ping_state = PING_SEND_CMD;
-                        gprs.tcp_ping_states = PING_SEND_CMD;
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2591,7 +2906,8 @@ ping_status_t ping_send(void)
 #endif
                         sts = PING_PASS;
                         // ping_state = PING_CMD_CIPSEND;
-                        gprs.tcp_ping_states = PING_CMD_CIPSEND;
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                         //ping_state = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
                     }
@@ -2602,7 +2918,8 @@ ping_status_t ping_send(void)
 #endif
                         sts = PING_FAIL;
                         // ping_state = PING_CMD_CIPSEND;
-                        gprs.tcp_ping_states = PING_CMD_CIPSEND;
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND;
                     }
@@ -2626,7 +2943,8 @@ ping_status_t ping_send(void)
 
                             //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                             // ping_state = PING_SEND_CMD;
-                            gprs.tcp_ping_states = PING_SEND_CMD;
+                            // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                            gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2643,7 +2961,8 @@ ping_status_t ping_send(void)
 
                         //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                         // ping_state = PING_SEND_CMD;
-                        gprs.tcp_ping_states = PING_SEND_CMD;
+                        // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                        gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2661,7 +2980,8 @@ ping_status_t ping_send(void)
 
                 //gprs.gprs_websocket_connect = GPRS_WEBSOCKET_PING_CMD_CIPSEND;
                 // ping_state = PING_SEND_CMD;
-                gprs.tcp_ping_states = PING_SEND_CMD;
+                // gprs.tcp_ping_states = PING_CMD_CIPSEND; //PP commented on 27-07-24
+                gprs.tcp_ping_states = PING_CMD_ECHO_OFF;   //PP added on 27-07-24
                 tcp_retry_cnt = 0;
             }
         }
@@ -2688,6 +3008,23 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
 
     switch(gprs.tcp_packet_state)
     {
+        case TCP_CIPSEND_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.tcp_packet_state = TCP_CIPSEND_RSP_ECHO_OFF;
+#ifdef DEBUG_GPRS_DATA_UPLOAD
+            vUART_SendStr(UART_PC,"\ncmd:6EO");
+#endif
+        }
+        break;
+
+        case TCP_CIPSEND_RSP_ECHO_OFF:
+        {
+            gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+        }
+        break;
+
         case TCP_CIPSEND_CMD:
         {
             char buff_cmd_cipsend[20];
@@ -2721,7 +3058,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         // tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_SEND;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2757,7 +3095,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                             // tcp.errcode = TCP_ERR_OFFSET + TCP_CIPSEND_RSP;
                             sts = TCP_SEND_FAIL;
 
-                            gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                            // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                            gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2772,7 +3111,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         // tcp.errcode = TCP_ERR_OFFSET + TCP_CIPSEND_CMD;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2815,7 +3155,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2849,22 +3190,59 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                     vUART_SendStr(DEBUG_UART_BASE, "\n1KTS");
 #endif
 
-                    if(respos_recvd(tmpstr))
+//                     if(respos_recvd(tmpstr)) //PP commented on 30-07-24
+//                     {
+// #ifdef DEBUG_TCP_SEND
+//                         vUART_SendStr(UART_PC,"\n1TS:k2");
+// #endif
+//                         sts = TCP_SEND_PASS;
+//                         // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+//                         gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
+//                     }
+//                     else
+//                     {
+// #ifdef DEBUG_TCP_SEND
+//                         vUART_SendStr(UART_PC,"\n1TS:f2");
+// #endif
+//                         gprs.tcp_packet_state = TCP_SEND_PACKET_RSP_1;
+//                     }
+
+                    char *data_resp;
+                    int data_len = 0;
+
+                    data_resp = strstr(tmpstr,"+IPD");
+                    if(data_resp)
                     {
+                        data_len = strlen(data_resp);
+                        if(respos_recvd(&data_resp[4],data_len))    ////PP added on 30-07-24. (Copied from EVSE 3.12)
+                        {
 #ifdef DEBUG_TCP_SEND
-                        vUART_SendStr(UART_PC,"\n1TS:k2");
-#endif
-                        sts = TCP_SEND_PASS;
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                            vUART_SendStr(DEBUG_UART_BASE, "\nTRSP");
+#endif  
+                            sts = TCP_SEND_PASS;
+                            gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;
+                        }
+                        else
+                        {
+#ifdef DEBUG_TCP_SEND
+                            vUART_SendStr(DEBUG_UART_BASE, "\nnoRSP");
+#endif                     
+                            num_bytes = 0;
+                            memset(tmpstr,0,sizeof(tmpstr));
+
+                            gprs.tcp_packet_state = TCP_SEND_PACKET_RSP_1;
+                        }
                     }
                     else
                     {
 #ifdef DEBUG_TCP_SEND
-                        vUART_SendStr(UART_PC,"\n1TS:f2");
-#endif
+                        vUART_SendStr(DEBUG_UART_BASE, "\nnoTIPD");
+#endif                     
+                        num_bytes = 0;
+                        memset(tmpstr,0,sizeof(tmpstr));
+
                         gprs.tcp_packet_state = TCP_SEND_PACKET_RSP_1;
                     }
-
 
                     // gprs.tcp_packet_state = TCP_SEND_PACKET_RSP_1;
 
@@ -2888,7 +3266,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                            //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                             sts = TCP_SEND_FAIL;
 
-                            gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                            // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                            gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         flushRxBuffer(LTE_UART);
@@ -2903,7 +3282,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -2931,7 +3311,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                     flushRxBuffer(LTE_UART);
@@ -2940,7 +3321,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
 
                 case (GPRS_MATCH_OK):
                 {
-                    if(respos_recvd(tmpstr))
+                    // if(respos_recvd(tmpstr)) //PP commented on 30-07-24
+                    if(respos_recvd(tmpstr,num_bytes))  //PP added on 30-07-24. (Copied from EVSE 3.12)
                     {
 #ifdef DEBUG_TCP_SEND
                         vUART_SendStr(UART_PC,"\n2TS:k");
@@ -2948,7 +3330,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         // PP commented on 27-04-24: will uncomment these later. Some of these are from other EVSE files, will have to see what's redundant and what's not.
                         // GPRS_Server_Response();
                         sts = TCP_SEND_PASS;
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                     }
                     else
                     {
@@ -2957,7 +3340,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
 
 #endif
                         sts = TCP_SEND_FAIL;
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                     }
                     //sts = TCP_SEND_PASS;
                     // gprs.tcp_packet_state = TCP_CIPSEND_CMD;
@@ -2985,7 +3369,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                             //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                             sts = TCP_SEND_FAIL;
 
-                            gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                            // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                            gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                             tcp_retry_cnt = 0;
                         }
                         //flushRxBuffer(LTE_UART);
@@ -3000,7 +3385,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                         //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                         sts = TCP_SEND_FAIL;
 
-                        gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                        // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                        gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                         tcp_retry_cnt = 0;
                     }
                 }
@@ -3016,7 +3402,8 @@ tcp_packet_status_t tcp_send(char *data_str, int len)
                 //tcp.errcode = TCP_ERR_OFFSET + GPRS_TCP_RSP_DATA_SEND;
                 sts = TCP_SEND_FAIL;
 
-                gprs.tcp_packet_state = TCP_CIPSEND_CMD;
+                // gprs.tcp_packet_state = TCP_CIPSEND_CMD;    //PP commented on 29-07-24
+                gprs.tcp_packet_state = TCP_CIPSEND_CMD_ECHO_OFF;   //PP added on 29-07-24
                 tcp_retry_cnt = 0;
             }
         }
@@ -3044,6 +3431,23 @@ WS_discon_status_t websckt_disconnect(void)
     // switch(tcp_webskt_disconnect_states)
     switch(gprs.tcp_webskt_disconnect_states)
     {
+        case GPRS_WDISCONN_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_RSP_ECHO_OFF;
+#ifdef DEBUG_GPRS_DATA_UPLOAD
+            vUART_SendStr(UART_PC,"\ncmd:7EO");
+#endif
+        }
+        break;
+
+        case GPRS_WDISCONN_RSP_ECHO_OFF:
+        {
+            gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+        }
+        break;
+
         case GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND:
         {
 #ifdef DEBUG_WS_DISCONN
@@ -3085,7 +3489,8 @@ WS_discon_status_t websckt_disconnect(void)
 
                         sts = WS_DISCON_FAIL;
                         // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                        gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                        // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                        gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                     }
                     flushRxBuffer(LTE_UART);
                 }
@@ -3123,7 +3528,8 @@ WS_discon_status_t websckt_disconnect(void)
                             sts = WS_DISCON_FAIL;
 
                             // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                            gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                            // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                            gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                         }
                         flushRxBuffer(LTE_UART);
                     }
@@ -3205,7 +3611,8 @@ WS_discon_status_t websckt_disconnect(void)
                         sts = WS_DISCON_FAIL;
 
                         // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                        gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                        // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                        gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                     }
                     // flushRxBuffer(LTE_UART);         
                 }
@@ -3228,7 +3635,8 @@ WS_discon_status_t websckt_disconnect(void)
                         vUART_SendStr(DEBUG_UART_BASE, (uint8_t*)tmpstr);
 #endif                
                         // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                        gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                        // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                        gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                         conn_retry_cnt = 0;
                         conn_timeout = 0;
                         sts = WS_DISCON_PASS;        
@@ -3269,7 +3677,8 @@ WS_discon_status_t websckt_disconnect(void)
                             sts = WS_DISCON_FAIL;
 
                             // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                            gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                            // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                            gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                         }
                         flushRxBuffer(LTE_UART);
                     }  
@@ -3320,7 +3729,8 @@ WS_discon_status_t websckt_disconnect(void)
                         //ws_disconnct_timeout = 0;
 
                         sts = WS_DISCON_FAIL;
-                        gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                        // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                        gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                     }
                     flushRxBuffer(LTE_UART);
                 }
@@ -3333,7 +3743,8 @@ WS_discon_status_t websckt_disconnect(void)
                     vUART_SendStr(DEBUG_UART_BASE, "\n2WSDK");
 #endif 
                     // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                    gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                    // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                    gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                     ws_diconnct_retry = 0;
                     ws_disconnct_timeout = 0;
                     sts = WS_DISCON_PASS;
@@ -3360,7 +3771,8 @@ WS_discon_status_t websckt_disconnect(void)
                             sts = WS_DISCON_FAIL;
 
                             // LTEmodule.TCP_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
-                            gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;
+                            // gprs.tcp_webskt_disconnect_states = GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND;    //PP commented on 29-07-24
+                            gprs.tcp_webskt_disconnect_states = GPRS_WDISCONN_CMD_ECHO_OFF; //PP added on 29-07-24
                         }
                         flushRxBuffer(LTE_UART);
                     }
@@ -3403,6 +3815,23 @@ TCP_discon_status_t tcp_disconnect(void)
     // switch(tcp_disconnct_states)
     switch(gprs.tcp_disconnct_states)
     {
+        case GPRS_TCPCLOSE_CMD_ECHO_OFF:
+        {
+            flushRxBuffer(LTE_UART);
+            vUART_SendStr(LTE_UART_BASE, "ATE0\r\n");
+            gprs.tcp_disconnct_states = GPRS_TCPCLOSE_RSP_ECHO_OFF;
+#ifdef DEBUG_GPRS_DATA_UPLOAD
+            vUART_SendStr(UART_PC,"\ncmd:8EO");
+#endif
+        }
+        break;
+
+        case GPRS_TCPCLOSE_RSP_ECHO_OFF:
+        {
+            gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+        }
+        break;
+
         case GPRS_TCP_CMD_CIPCLOSE:
         {
 #ifdef DEBUG_TCP_DISCONN
@@ -3464,7 +3893,8 @@ TCP_discon_status_t tcp_disconnect(void)
 #else
                         sts = TCP_DISCON_FAIL;
                         // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                        gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                        // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                        gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
 #endif
                     }
                     flushRxBuffer(LTE_UART);
@@ -3491,7 +3921,9 @@ TCP_discon_status_t tcp_disconnect(void)
                         conn_timeout = 0;
 #else
                         // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                        gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+
+                        // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                        gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
                         conn_retry_cnt = 0;
                         conn_timeout = 0;
                         sts = TCP_DISCON_PASS;
@@ -3541,7 +3973,9 @@ TCP_discon_status_t tcp_disconnect(void)
 #else
                             sts = TCP_DISCON_FAIL;
                             // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                            gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+
+                            // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                            gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
 #endif  //USE_NETCLOSE
                         }
                         flushRxBuffer(LTE_UART);
@@ -3594,7 +4028,9 @@ TCP_discon_status_t tcp_disconnect(void)
                         gprs.tcp_disconnct_states = GPRS_TCP_CMD_NETCLOSE;
 #else
                         sts = TCP_DISCON_FAIL;
-                        gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                        
+                        // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                        gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
 #endif  //USE_NETCLOSE
                     }
                     flushRxBuffer(LTE_UART);
@@ -3615,7 +4051,8 @@ TCP_discon_status_t tcp_disconnect(void)
                     tcp_stop_timeout = 0;
 #else
                     // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                    gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                    // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                    gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
                     tcp_stop_retry = 0;
                     tcp_stop_timeout = 0;
                     sts = TCP_DISCON_PASS;
@@ -3653,7 +4090,8 @@ TCP_discon_status_t tcp_disconnect(void)
                             sts = TCP_DISCON_FAIL;
 
                             // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                            gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                            // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                            gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
 #endif  //USE_NETCLOSE
                         }
                         flushRxBuffer(LTE_UART);
@@ -3712,7 +4150,8 @@ TCP_discon_status_t tcp_disconnect(void)
 
                         sts = TCP_DISCON_FAIL;
                         // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                        gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                        // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                        gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
                     }
                     flushRxBuffer(LTE_UART);
                 }
@@ -3727,7 +4166,8 @@ TCP_discon_status_t tcp_disconnect(void)
                     if(strstr(tmpstr, "+NETCLOSE: 0"))
                     {
                         // LTEmodule.TCP_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
-                        gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                        // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                        gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
 
                         sts = TCP_DISCON_PASS;
                         
@@ -3763,7 +4203,8 @@ TCP_discon_status_t tcp_disconnect(void)
                             sts = TCP_DISCON_FAIL;
 
                             // LTEmodule.TCP_connct_states = GPRS_TCP_CMD_CIPCLOSE;
-                            gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;
+                            // gprs.tcp_disconnct_states = GPRS_TCP_CMD_CIPCLOSE;   //PP commented on 29-07-24
+                            gprs.tcp_disconnct_states = GPRS_TCPCLOSE_CMD_ECHO_OFF; //PP added on 29-07-24
                         }
                         flushRxBuffer(LTE_UART);
                     }
@@ -3791,20 +4232,101 @@ TCP_discon_status_t tcp_disconnect(void)
 }
 
 
-//modded by poorva for telecom_iot to avoid infinite loops. added protection conditions to break / return out of here.
-bool read_ip_port(char *tmpstr) 
+// //modded by poorva for telecom_iot to avoid infinite loops. added protection conditions to break / return out of here.
+// bool read_ip_port(char *tmpstr) 
+// {
+//     //int i=0,j=0,cnt=0;
+//     unsigned int i=0,j=0,cnt=0;
+//     char temp_buff[6];
+//     char ip_addr[20];
+//     char temp_port[6];
+    
+//     bool retVal = false;
+    
+// 	// cloud_config_t data;
+// 	// cloud_config_data(&data);
+// 	// memset(&data,0,sizeof(cloud_config_t));
+//     memset(ip_addr,0,sizeof(ip_addr));
+//     memset(temp_buff,0,sizeof(temp_buff));
+//     memset(temp_port,0,sizeof(temp_port));
+
+//     //gprs_read_config_data();
+
+//     while(tmpstr[i] != '"')
+//     {
+//         ip_addr[i]=(tmpstr[i] & 0xFF);
+//         i++;
+//         if(i > IP_ADDR_LEN)
+//         {
+// 	        retVal = false;
+// 		    break;
+//         }
+//     }
+// #ifdef DEBUG_QCIPOPEN_RESP_DECODE
+//     UWriteString((char *)"\nIP:",DBG_UART);
+//     UWriteBytes((unsigned char *)ip_addr,i,DBG_UART);
+//     UWriteData(',',DBG_UART);
+//     UWriteString((char *)cloud_config.ip_addr,DBG_UART);
+// #endif
+//     i = i+2;
+
+//     while(tmpstr[i] != ',')
+//     {
+//         temp_buff[j] = (tmpstr[i] & 0xFF);
+//         j++;
+//         i++;
+//         if(j > PORT_LEN)
+//         {
+// 	        break;
+//         }
+//     }
+    
+// #ifdef DEBUG_GPRS_OVERALL
+// UWriteData('G', DBG_UART);
+// #endif
+//     //port = atoi(temp_buff);
+//     ltoa(cloud_config.port_num,temp_port,10);
+//     // my_ltoa(cloud_config.port_num,temp_port,10); //PP commented on 26-04-24: maybe the built-in ltoa() works in this TI controller?
+// 	// my_ltoa(data.port_num,temp_port,10);
+// #ifdef DEBUG_GPRS_OVERALL
+// UWriteData('H', DBG_UART);
+// #endif
+// #ifdef DEBUG_QCIPOPEN_RESP_DECODE
+//     //UWriteString(DBG_UART,"\nIP:");
+//     //UWriteBytes(DBG_UART,ip_addr,i);
+//     UWriteString((char *)"\nPORT:",DBG_UART);
+//     UWriteBytes((unsigned char *)temp_buff,j,DBG_UART);
+//     UWriteData(',',DBG_UART);
+//     UWriteString(temp_port,DBG_UART);
+// #endif
+
+//     //if((!(strcmp(ip_addr,(const char*)TCP_IP))) && (!(strcmp(temp_buff,temp_port))))
+//     // if((!(strcmp(ip_addr,(const char *)data.ip_addr))) && (!(strcmp(temp_buff,temp_port))))
+//     if((!(strcmp(ip_addr,(const char *)cloud_config.ip_addr))) && (!(strcmp(temp_buff,temp_port))))
+//     {
+// #ifdef DEBUG_QCIPOPEN_RESP_DECODE
+//         UWriteString((char*)"\nIPK",DBG_UART);
+// #endif
+//         retVal = true;
+//     }
+//     else
+//     {
+// #ifdef DEBUG_QCIPOPEN_RESP_DECODE
+//         UWriteString((char*)"\nIPF",DBG_UART);
+// #endif
+//         retVal = false;
+//     }
+//     return retVal;
+// }   
+
+//PP added on 30-07-24 (Copied from EVSE 3.12)
+int read_ip_port(char *tmpstr,int length)
 {
-    //int i=0,j=0,cnt=0;
-    unsigned int i=0,j=0,cnt=0;
+    int i=0,j=0;
     char temp_buff[6];
     char ip_addr[20];
     char temp_port[6];
-    
-    bool retVal = false;
-    
-	// cloud_config_t data;
-	// cloud_config_data(&data);
-	// memset(&data,0,sizeof(cloud_config_t));
+
     memset(ip_addr,0,sizeof(ip_addr));
     memset(temp_buff,0,sizeof(temp_buff));
     memset(temp_port,0,sizeof(temp_port));
@@ -3813,70 +4335,54 @@ bool read_ip_port(char *tmpstr)
 
     while(tmpstr[i] != '"')
     {
-        ip_addr[i]=(tmpstr[i] & 0xFF);
-        i++;
-        if(i > IP_ADDR_LEN)
+        if(i > length)
         {
-	        retVal = false;
-		    break;
+            break;
         }
+        ip_addr[i]=tmpstr[i];
+        i++;
     }
 #ifdef DEBUG_QCIPOPEN_RESP_DECODE
-    UWriteString((char *)"\nIP:",DBG_UART);
-    UWriteBytes((unsigned char *)ip_addr,i,DBG_UART);
-    UWriteData(',',DBG_UART);
-    UWriteString((char *)cloud_config.ip_addr,DBG_UART);
+    vUART_SendStr(UART_PC,"\nIP:");
+    vUART_SendBytes(UART_PC,(const uint8_t *)ip_addr,i);
+    vUART_SendStr(UART_PC,"\ncc_ip:");
+    vUART_SendStr(UART_PC,(const uint8_t *)cloud_config.ip_addr);
+
 #endif
     i = i+2;
 
     while(tmpstr[i] != ',')
     {
-        temp_buff[j] = (tmpstr[i] & 0xFF);
+        if(i >= length)
+        {
+            break;
+        }
+        temp_buff[j] = tmpstr[i];
         j++;
         i++;
-        if(j > PORT_LEN)
-        {
-	        break;
-        }
     }
-    
-#ifdef DEBUG_GPRS_OVERALL
-UWriteData('G', DBG_UART);
-#endif
     //port = atoi(temp_buff);
     ltoa(cloud_config.port_num,temp_port,10);
-    // my_ltoa(cloud_config.port_num,temp_port,10); //PP commented on 26-04-24: maybe the built-in ltoa() works in this TI controller?
-	// my_ltoa(data.port_num,temp_port,10);
-#ifdef DEBUG_GPRS_OVERALL
-UWriteData('H', DBG_UART);
-#endif
+
 #ifdef DEBUG_QCIPOPEN_RESP_DECODE
-    //UWriteString(DBG_UART,"\nIP:");
-    //UWriteBytes(DBG_UART,ip_addr,i);
-    UWriteString((char *)"\nPORT:",DBG_UART);
-    UWriteBytes((unsigned char *)temp_buff,j,DBG_UART);
-    UWriteData(',',DBG_UART);
-    UWriteString(temp_port,DBG_UART);
+    //vUART_SendStr(UART_PC,"\nIP:");
+    //vUART_SendBytes(UART_PC,(const uint8_t *)ip_addr,i);
+    vUART_SendStr(UART_PC,"\nPORT:");
+    vUART_SendBytes(UART_PC,(const uint8_t *)temp_buff,j);
+    vUART_SendStr(UART_PC,"\ncc_port:");
+    vUART_SendStr(UART_PC,(const uint8_t *)temp_port);
 #endif
 
-    //if((!(strcmp(ip_addr,(const char*)TCP_IP))) && (!(strcmp(temp_buff,temp_port))))
-    // if((!(strcmp(ip_addr,(const char *)data.ip_addr))) && (!(strcmp(temp_buff,temp_port))))
-    if((!(strcmp(ip_addr,(const char *)cloud_config.ip_addr))) && (!(strcmp(temp_buff,temp_port))))
+    if(!(strcmp(ip_addr,(const char*)cloud_config.ip_addr)) && (!(strcmp(temp_buff,temp_port))))
     {
-#ifdef DEBUG_QCIPOPEN_RESP_DECODE
-        UWriteString((char*)"\nIPK",DBG_UART);
-#endif
-        retVal = true;
+        return 1;
     }
     else
     {
-#ifdef DEBUG_QCIPOPEN_RESP_DECODE
-        UWriteString((char*)"\nIPF",DBG_UART);
-#endif
-        retVal = false;
+        return 0;
     }
-    return retVal;
-}   
+    //gprs_write_config_data();
+}
 
 //modded by poorva for telecom_iot to avoid infinite loops. added protection conditions to break / return out of here.
 char match_cpsi_data(char *tmpstr)
@@ -3988,23 +4494,46 @@ char valid_code(char *tmpstr)
     }
 }
 
-char respos_recvd(char *buff)
-{
-    //int i = 0;
-    unsigned int i = 0;
+// char respos_recvd(char *buff)
+// {
+//     //int i = 0;
+//     unsigned int i = 0;
+// 
+//     while(buff[i] != '\n')  //might become an infinite loop, protection condition needed.
+//     {
+//         i++;
+//     }
+//     i++;
+//     if((buff[i] & 0xFF)== 0x81)
+//     {
+//         return true;
+//     }
+//     else
+//     {
+//         return false;
+//     }
+// }
 
-    while(buff[i] != '\n')  //might become an infinite loop, protection condition needed.
+char respos_recvd(char *buff,int len)   //PP added on 30-07-24 (copied from EVSE 3.12 FW version)
+{
+    int i = 0;
+
+    while(buff[i] != '\n')
     {
         i++;
+        if(i > len)
+        {
+            break;
+        }
     }
     i++;
-    if((buff[i] & 0xFF)== 0x81)
+    if(buff[i] == 0x81)
     {
-        return true;
+        return TRUE;
     }
     else
     {
-        return false;
+        return FALSE;
     }
 }
 

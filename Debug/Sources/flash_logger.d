@@ -50,6 +50,7 @@ Sources/flash_logger.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/flash_logger.obj: ../Sources/gprs.h
 Sources/flash_logger.obj: ../Sources/Telecom_Ethernet.h
 Sources/flash_logger.obj: ../Sources/Telecom_server_query.h
+Sources/flash_logger.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h
 
 ../Sources/flash_logger.cpp:
 
@@ -150,4 +151,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
 ../Sources/Telecom_Ethernet.h:
 
 ../Sources/Telecom_server_query.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h:
 

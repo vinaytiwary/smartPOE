@@ -30,7 +30,9 @@ e2p_config_time_t e2p_config_time;
 
 cloud_config_t cloud_config;
 
+#ifdef ENABLE_GPS
 extern gps_info_t gps_info;
+#endif  //ENABLE_GPS
 extern ram_data_t ram_data;
 
 void vPERIPH_E2PInit(void)

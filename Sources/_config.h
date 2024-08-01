@@ -21,6 +21,9 @@
 // #define NEW_BOARD
 #define WEB_COMMS_SCHEDULAR_TIME (50)
 
+#define LAT_LEN						(11)			// No NULL always use memcpy
+#define LONG_LEN					(12)			// No NULL always use memcpy
+
 //************************ CLOCK ********************//
 #define CLOCK_CONFIGURATION         (SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ)
 #define SYSTEM_CLOCK                SysCtlClockGet()
@@ -104,5 +107,11 @@
 
 // #define ODUVTG_SEL_SW       (PUSH_BUTTON_TYPE)
 #define ODUVTG_SEL_SW       (BCD_SW_TYPE_1)
+
+// #define ENABLE_GPS
+
+#define USE_AIN16_FOR_ODUV
+
+#define SOFT_RST_GSM
 
 #endif /* SOURCES__CONFIG_H_ */

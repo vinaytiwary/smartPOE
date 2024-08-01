@@ -744,6 +744,10 @@ void vEarthCheckInit(void)
 }
 void FREQDetIntHandler(void)
 {
+#ifdef ENABLE_CLI_SEI
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
+
     EXTI_cnt.freq_cnt++;
     GPIOIntClear(FREQ_MEAS_PIN_BASE, GPIOIntStatus(FREQ_MEAS_PIN_BASE, true));
 
@@ -774,7 +778,9 @@ void FREQDetIntHandler(void)
         IntEnable(INT_TIMER0B);
         TimerEnable(TIMER0_BASE, TIMER_B);
     }
-
+#ifdef ENABLE_CLI_SEI
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 // PP commented on 10-07-24

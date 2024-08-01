@@ -28,6 +28,8 @@
 #include "_debug.h"
 #include "Telecom_server_query.h"
 
+#ifdef ENABLE_GPS
+
 extern ram_data_t ram_data;
 extern e2p_location_info_t e2p_location_info;
 gps_info_t gps_info;
@@ -1845,4 +1847,6 @@ void set_loc_status(bool sts)
     gps.getLoc_sts = sts;
 }
 // #endif  // ifNOTdef ETHERNET_EN
+
+#endif  //ENABLE_GPS
 

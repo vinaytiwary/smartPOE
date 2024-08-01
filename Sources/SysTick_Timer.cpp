@@ -70,7 +70,9 @@ void vPERIPH_SystickInit(void)
 //*********************************************************************************//
 void SysTickIntHandler(void)
 {
-    // IntMasterDisable();
+#ifdef  ENABLE_CLI_SEI
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
 //    static uint16_t PN_ADC_RAW = 0;
 //    static uint16_t NE_ADC_RAW = 0;
 
@@ -184,7 +186,9 @@ void SysTickIntHandler(void)
         memcpy(&ram_data.ram_EXTI_cnt, (void*)&EXTI_cnt, sizeof(EXTI_cnt_t));
         memset((void*)&EXTI_cnt, 0, sizeof(EXTI_cnt_t));
     }
-    // IntMasterEnable();
+#ifdef ENABLE_CLI_SEI
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }   // End of SystickHandler
 
 //*********************************************************************************//

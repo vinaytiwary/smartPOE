@@ -69,6 +69,13 @@
 //#define TCP_DATA_SEND_TIMEOUT   (5000/TCP_STATE_MC_TIME)
 #define SESSION_IDLE_TIMEOUT    (4000/TCP_STATE_MC_TIME)
 
+#ifdef SOFT_RST_GSM
+// #define SOFT_RST_TIMEOUT	(3000/GPRS_STATE_MC_TIME)		// 5 sec    //PP 27-07-24: copied from JPNT
+#define SOFT_RST_TIMEOUT	(9000/GPRS_STATE_MC_TIME)		// 9 sec
+
+#define GSM_RST_SECS        (5000/GPRS_STATE_MC_TIME)       // 5 sec
+#endif
+
 //#define WEBSOCKET_CIPSEND_FIXED_CNT     (10)
 //#define WEBSOCKET_IPD_FIXED_CNT         (100)
 //#define WEBSOCKET_LEN_CNT               (3)
@@ -135,14 +142,6 @@ typedef enum
     TCP_DISCON_IN_PRG
 }TCP_discon_status_t;
 
-typedef enum
-{
-    TCP_CIPSEND_CMD,
-    TCP_CIPSEND_RSP,
-    TCP_SEND_PACKET_CMD,
-    TCP_SEND_PACKET_RSP,
-    TCP_SEND_PACKET_RSP_1
-}tcp_packet_state_t;
 
 typedef enum
 {
@@ -192,11 +191,16 @@ typedef enum
     GPRS_CONNCT_RSP_CGDCONT,
     GPRS_CONNCT_CMD_CTZU,
     GPRS_CONNCT_RSP_CTZU,
+    GPRS_CONNCT_CMD_CRESET,
+    GPRS_CONNCT_RSP_CRESET,
+    GPRS_CONNCT_WAIT_CRESET,
 }gprs_connect_t;
 
 
 typedef enum
 {
+    GPRS_CONNCT_STATE_CMD_ECHO_OFF,
+    GPRS_CONNCT_STATE_RSP_ECHO_OFF,
     GPRS_CONNCT_CMD_CCLK,
     GPRS_CONNCT_RSP_CCLK,
     GPRS_CONNCT_CMD_READ_NETOPEN,
@@ -207,6 +211,8 @@ typedef enum
 
 typedef enum
 {
+    GPRS_TCP_CMD_ECHO_OFF,
+    GPRS_TCP_RSP_ECHO_OFF,
     GPRS_TCP_CMD_READ_CIPOPEN,
     GPRS_TCP_RSP_READ_CIPOPEN,
     GPRS_TCP_CMD_CIPOPEN,
@@ -221,6 +227,8 @@ typedef enum
     GPRS_WEBSOCKET_PING_SEND_CMD,
     GPRS_WEBSOCKET_PING_SEND_RSP,
     GPRS_WEBSOCKET_PING_SEND_RSP_1,*/
+    GPRS_WEBSOCKET_CONNCT_CMD_ECHO_OFF,
+    GPRS_WEBSOCKET_CONNCT_RSP_ECHO_OFF,
     GPRS_WEBSOCKET_CONNCT_CMD_CIPSEND,
     GPRS_WEBSOCKET_CONNCT_RSP_CIPSEND,
     GPRS_WEBSOCKET_CONNCT_CMD,
@@ -230,6 +238,8 @@ typedef enum
 
 typedef enum
 {
+    GPRS_WDISCONN_CMD_ECHO_OFF,
+    GPRS_WDISCONN_RSP_ECHO_OFF,
     GPRS_WEBSOCKET_DISCONNCT_CMD_CIPSEND,
     GPRS_WEBSOCKET_DISCONNCT_RSP_CIPSEND,
     GPRS_WEBSOCKET_DISCONNCT_CMD,
@@ -239,6 +249,8 @@ typedef enum
 
 typedef enum
 {
+    GPRS_TCPCLOSE_CMD_ECHO_OFF,
+    GPRS_TCPCLOSE_RSP_ECHO_OFF,
     GPRS_TCP_CMD_CIPCLOSE,
 	GPRS_TCP_RSP_CIPCLOSE,
     GPRS_TCP_RSP_1_CIPCLOSE,
@@ -266,12 +278,25 @@ typedef enum
 
 typedef enum
 {
+    PING_CMD_ECHO_OFF,
+    PING_RSP_ECHO_OFF,
     PING_CMD_CIPSEND,
     PING_RSP_CIPSEND,
     PING_SEND_CMD,
     PING_SEND_RSP,
     PING_SEND_RSP_1
 }ping_state_t;
+
+typedef enum
+{
+    TCP_CIPSEND_CMD_ECHO_OFF,
+    TCP_CIPSEND_RSP_ECHO_OFF,
+    TCP_CIPSEND_CMD,
+    TCP_CIPSEND_RSP,
+    TCP_SEND_PACKET_CMD,
+    TCP_SEND_PACKET_RSP,
+    TCP_SEND_PACKET_RSP_1
+}tcp_packet_state_t;
 
 typedef enum
 {
@@ -379,13 +404,15 @@ char check_string_nobuf(const char *str);
 char pong_received(char *tmpstr);
 
 ping_status_t ping_send(void);
-bool read_ip_port(char *tmpstr);
+// bool read_ip_port(char *tmpstr);
+int read_ip_port(char *tmpstr,int length);
 char match_cpsi_data(char *tmpstr);
 char valid_code(char *tmpstr);
 
 void generateMaskKey(uint8_t maskKey[4]);
 
-char respos_recvd(char *tmpstr);
+// char respos_recvd(char *tmpstr);
+char respos_recvd(char *buff,int len);
 void set_webconn_sts(uint8_t sts);
 uint8_t get_webconn_sts(void);
 void GPRS_Server_Response(void);

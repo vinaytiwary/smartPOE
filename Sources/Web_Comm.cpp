@@ -19,6 +19,8 @@
 #include "main.h"
 #include "Telecom_server_query.h"
 
+#ifdef ENABLE_GPS
+
 extern gprs_t gprs;
 extern gps_t gps;
 
@@ -313,6 +315,8 @@ void manage_gps_gprs(void)
 
 
 #endif  //ifNOTdef ETHERNET_EN
+
+#endif  //ENABLE_GPS
 
 
 

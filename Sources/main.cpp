@@ -65,7 +65,11 @@ extern volatile gprs_rx_data_buff_t gprs_rx_buff;
 extern volatile gprs_tx_data_buff_t gprs_tx_buff;
 extern volatile gprs_rx_isr_handler_t gprs_rx_isr_handler;
 
+#ifdef ENABLE_GPS
 extern gps_data_t gps_data;
+extern gps_t gps;
+extern uint32_t cnt_gps_1sec;
+#endif  //ENABLE_GPS
 
 extern time_stamp_t time_stamp;
 extern measurements_t measurements;
@@ -84,13 +88,11 @@ extern sys_config_t sys_config;
 ram_data_t ram_data;
 Alarms_t Alarms;
 
-extern uint32_t cnt_gps_1sec;
 
 extern sys_mode_t System_mode;
 extern volatile double PN_ADC_RAW_MAX;
 extern volatile uint8_t g_bIntFlag;
 
-extern gps_t gps;
 
 char dummyDateBuff[7] = {0x18, 0x04, 0x19, 0x03, 0x13, 0x1F, 0x00};
 
@@ -257,8 +259,12 @@ int main(void)
             {
 #ifndef ETHERNET_EN
                 // TCP_Handler();
+#ifdef ENABLE_GPS
                 // gps_handler();
                 manage_gps_gprs();
+#else
+                TCP_Handler();
+#endif  //ENABLE_GPS
 #else 
                 ethernet_handler();
                 gps_handler();   //PP commented on 16-05-24 for WDISCONN testing
@@ -345,9 +351,9 @@ int main(void)
 
 #if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
-            get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
+            // get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
             // get_ADC_SIGarray(SIG_12V_IN_ADC, ADC_INDX_12VIN);
-            // get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
+            get_ADC_SIGarray(SIG_ODU_VOLTAGE_ADC, ADC_INDX_ODUV);
             // vUART_SendStr(UART_PC, "\nODUV_RAW=");
             // vUART_SendInt(UART_PC, readADC(SIG_ODU_VOLTAGE_ADC));
             // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
@@ -429,6 +435,8 @@ void update_ram_data(void)
 		get_present_time(&ram_data.ram_time);
 		// update_rtc(&dummyDateBuff[0], 0);
 #endif
+
+#ifdef ENABLE_GPS
         // ram_data.Latitude = gps_data.Latitude;
         // ram_data.Longitude = gps_data.Longitude;
 
@@ -450,6 +458,10 @@ void update_ram_data(void)
             ram_data.Latitude = gps_data.Latitude;
             ram_data.Longitude = gps_data.Longitude;
         }
+#else
+        ram_data.Latitude = e2p_location_info.latitude;  
+        ram_data.Longitude = e2p_location_info.longitude;
+#endif  //ENABLE_GPS
 
 #ifdef DEBUG_EPOCHTIME
     // uint32_t ET = 0;
@@ -498,9 +510,9 @@ void update_ram_data(void)
 // #ifdef DEBUG_GET_LOC
 //     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nGP1s:");
 //     vUART_SendInt(DEBUG_UART_BASE, cnt_gps_1sec);
+//     cnt_gps_1sec = 0;
 // #endif  //DEBUG_GET_LOC
     
-    cnt_gps_1sec = 0;
 
 }
 

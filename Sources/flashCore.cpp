@@ -23,6 +23,8 @@
 #include "UartCore.h"
 #include "SysTick_Timer.h"
 
+#include "driverlib/interrupt.h"    //PP added on 01-08-24
+
 // extern FL_char_data_t FL_char_data;  //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
 // extern totalizer_t totalizer;        //PP (24-04-24) commenting this till I have'nt made my own structs for flash for Telecom_IoT.
 
@@ -443,7 +445,10 @@ void SCK_Low()
 
 void readContToBuff(unsigned long Dst, unsigned int no_bytes, char* buff)
 {
+#ifdef ENABLE_CLI_SEI
     //cli();
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     unsigned long i = 0;
     CE_Low();               /* enable device */
 #ifdef HARD_FLASH_SPI
@@ -471,7 +476,11 @@ void readContToBuff(unsigned long Dst, unsigned int no_bytes, char* buff)
     }
 #endif
     CE_High();              /* disable device */
+
+#ifdef ENABLE_CLI_SEI
     //sei();
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 void flashEraseMaster(void)
@@ -576,9 +585,10 @@ void flashPacketProgram(char* buff, uint16_t size, unsigned long addr)      //Ad
 {
     unsigned long i;
     i=0;
-
+#ifdef ENABLE_CLI_SEI
     //cli();
-
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     CE_Low();               /* enable device */
 #ifdef HARD_FLASH_SPI
     SPI_transrecv(FLASH_SPI_BASE,0x02);            /* send Byte Program command */
@@ -600,13 +610,22 @@ void flashPacketProgram(char* buff, uint16_t size, unsigned long addr)      //Ad
     }
 #endif
     CE_High();              /* disable device */
+
+#ifdef ENABLE_CLI_SEI
     //sei();      //??
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 void Wait_Busy()
 {
   unsigned int timeout = 0;
+
+#ifdef ENABLE_CLI_SEI
   //cli();      //Anand 18-07-15
+  IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
+
   unsigned char temp = 0;
   SetSO_Input();
   CE_Low();
@@ -709,7 +728,11 @@ void Wait_Busy()
   SI_Low();
   ////////
   CE_High();
+
+#ifdef  ENABLE_CLI_SEI
   //sei();      //Anand 18-07-15
+  IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 void Sector_Erase(unsigned long Dst)
@@ -731,7 +754,9 @@ void Sector_Erase(unsigned long Dst)
 
 void remove_block_protection(void)
 {
-
+#ifdef ENABLE_CLI_SEI
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     WP_High();
     WREN();
     CE_Low();
@@ -745,7 +770,9 @@ void remove_block_protection(void)
     CE_High();
     WRDI();
     WP_Low();
-
+#ifdef ENABLE_CLI_SEI
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 void WBPR(char state)
@@ -756,7 +783,10 @@ void WBPR(char state)
     {
         data = 0xFF;
     }
+#ifdef ENABLE_CLI_SEI
    // cli();
+    IntMasterDisable();
+#endif  //ENABLE_CLI_SEI
     WP_High();
     WREN();
     //Send_Byte(0x98);  //Remove Write Protection from entire flash
@@ -797,7 +827,10 @@ void WBPR(char state)
     CE_High();              /* disable device */
     WRDI();
     WP_Low();
+#ifdef ENABLE_CLI_SEI
     //sei();
+    IntMasterEnable();
+#endif  //ENABLE_CLI_SEI
 }
 
 

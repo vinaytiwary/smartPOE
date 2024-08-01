@@ -263,7 +263,11 @@ void Data_Screen_lcd()
     if(get_system_state() != CONFIG_MODE)
     {
       earth = Alarms.ACEarth_fault ? 'X' : ' ';
+#ifdef ENABLE_GPS
       gps = get_gps_status() ? ' ' : 'X';
+#else
+    gps = 'X';
+#endif  //ENABLE_GPS
 
       GLCD_PrintNetworkSts();
       GLCD_PrintBatterySts();

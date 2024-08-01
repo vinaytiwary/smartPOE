@@ -35,7 +35,10 @@ time_stamp_t time_stamp;
 // extern OCPP_Data_t OCPP_Data;
 time_main_t time_main;
 
+#ifdef ENABLE_GPS
 extern gps_date_time_t gps_date_time;
+#endif  //ENABLE_GPS
+
 extern gprs_date_time_t gprs_date_time;
 void update_date_time(void)
 {
@@ -696,6 +699,7 @@ bool isDT_ok(void)
     return false;
 }
 
+#if 0
 #ifdef ETHERNET_EN
 void time_sync(void)
 {
@@ -905,146 +909,112 @@ void time_sync(void)
         }
     }
 }
-
 #endif  //ETHERNET_EN
+#endif  // if 0
 
-// void time_sync(void)
-// {
-//     get_ocpp_date_time();
-// #ifdef UTC_SERVER
-//     utcTOlocal(&OCPP_Data.time_stamp);
-// #endif
-//     if ((OCPP_Data.time_stamp.year <= time_main.year)
-//             && (OCPP_Data.time_stamp.month <= time_main.month)
-//             && (OCPP_Data.time_stamp.date <= time_main.date))
-// //            && OCPP_Data.time_stamp.hour <= time_main.hour
-// //            && OCPP_Data.time_stamp.min <= time_main.minute
-// //            && OCPP_Data.time_stamp.sec <= time_main.sec)
-//     {
-//         //UWriteString(" No Error in Date", UART0);
-//     }
-//     else
-//     {
-//         unsigned char data[8];
-// #ifdef DEBUG_TIME
-//         vUART_SendStr(UART_PC,"Enter Time:");
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.year);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.month);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.date);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.hour);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.min);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,OCPP_Data.time_stamp.sec);
-//         vUART_SendChr(UART_PC,'\n');
-//         vUART_SendInt(UART_PC,time_main.year);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,time_main.month);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,time_main.date);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,time_main.hour);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,time_main.minute);
-//         vUART_SendChr(UART_PC,',');
-//         vUART_SendInt(UART_PC,time_main.sec);
-// #endif
-//         time_main.year = OCPP_Data.time_stamp.year;
-//         time_main.month = OCPP_Data.time_stamp.month;
-//         time_main.date = OCPP_Data.time_stamp.date;
-//         time_main.hour = OCPP_Data.time_stamp.hour;
-//         time_main.minute = OCPP_Data.time_stamp.min;
-//         time_main.sec = OCPP_Data.time_stamp.sec;
-
-//         data[6] = (((OCPP_Data.time_stamp.year / 10) * 16) | (OCPP_Data.time_stamp.year % 10));
-//         //RTC_Write(0x06, data);        //Year
-//         data[5] = (((OCPP_Data.time_stamp.month / 10) * 16) | (OCPP_Data.time_stamp.month % 10));
-//         //RTC_Write(0x05, data & 0x1F);     //Month
-//         data[4] = (((OCPP_Data.time_stamp.date / 10) * 16) | (OCPP_Data.time_stamp.date % 10));
-//         //RTC_Write(0x04, data & 0x3F);     //Date
-//         //RTC_Write(0x03, 1 & 0x07);        //Day: 1-7, 1=Sunday
-// #ifdef RTC_DS3231
-//         //RTC_Write(0x03, (1 & 0x07));
-//         data[3] = (1 & 0x07);
-// #endif
-// #ifdef RTC_MCP79410
-//         //RTC_Write(0x03, ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT)));       //Day: 1-7, 1=Sunday
-//         data[3] = ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT));
-// #endif
-//         if(OCPP_Data.time_stamp.hour >= 12)
-//         {
-//             if(OCPP_Data.time_stamp.hour > 12)
-//             {
-//                 OCPP_Data.time_stamp.hour %= 12;
-//             }
-
-//             OCPP_Data.time_stamp.hour = ((OCPP_Data.time_stamp.hour/10)<<4) | (OCPP_Data.time_stamp.hour%10);       //hr
-//             OCPP_Data.time_stamp.hour |= (1<<5);
-//         }
-//         else
-//         {
-//             if(OCPP_Data.time_stamp.hour == 0)
-//             {
-//                 OCPP_Data.time_stamp.hour = 12;
-//             }
-//             OCPP_Data.time_stamp.hour = ((OCPP_Data.time_stamp.hour/10)<<4) | (OCPP_Data.time_stamp.hour%10);       //hr
-//         }
-//         OCPP_Data.time_stamp.hour |= (1<<6);        //Anand 02.07.2014
-//         data[2] = (OCPP_Data.time_stamp.hour & 0x7F);
-//         //RTC_Write(0x02, (gprs_date_time.hr & 0x7F));      //hr
-//         data[1] = (((OCPP_Data.time_stamp.min / 10) * 16) | (OCPP_Data.time_stamp.min % 10));
-//         //RTC_Write(0x01, (data & 0x7F)); //min
-//         //DS1307Write(0x00, 0);
-//         data[0] = (((OCPP_Data.time_stamp.sec / 10) * 16) | (OCPP_Data.time_stamp.sec % 10));
-//         //RTC_Write(0x00, (data & 0x7F)); //sec
-// #ifdef RTC_DS3231
-//         //RTC_Write(0x00, (data & 0x7F)); //sec
-//         data[0] = (data[0] & 0x7F);
-// #endif
-// #ifdef RTC_MCP79410
-//         data[0] = ((data[0] & 0x7F) | (1 << RTC_OSC_EN_BIT));
-// #endif
-//         //RTC_Write(0x00, data, 7)
-//         Write_RTC(data, 7);
-
-
-//         //diag.sys_error_status &= ~(1 << RTC_FAULT);
-
-//         //set_clk_fault_sts(FALSE);
-//         //gprs_date_time.update_time_aval = FALSE;
-// /*
-// #ifdef DEBUG_TIME
-//         UWriteString("Leave Time", UART_PC);
-//         UWriteInt(gprs_date_time.yy, UART_PC);
-//         UWriteInt(gprs_date_time.mm, UART_PC);
-//         UWriteInt(gprs_date_time.dd, UART_PC);
-//         UWriteInt(gprs_date_time.hr, UART_PC);
-//         UWriteInt(gprs_date_time.min, UART_PC);
-//         UWriteInt(gprs_date_time.sec, UART_PC);
-//         UWriteString("\n", UART_PC);
-//         UWriteInt(time_main.year, UART_PC);
-//         UWriteInt(time_main.month, UART_PC);
-//         UWriteInt(time_main.date, UART_PC);
-//         UWriteInt(time_main.hour, UART_PC);
-//         UWriteInt(time_main.minute, UART_PC);
-//         UWriteInt(time_main.sec, UART_PC);
-// #endif*/
-//     }
-// }
-
-/*void sync_time_gprs(void)
+void time_sync(void)
 {
-    if (get_error_sts() & (1 << RTC_FAULT))
+    if(!isDT_ok())
     {
-        if (getGPRSNWSts() == AVBL)
+        if(gprs_date_time.update_time_aval == true)
         {
-            getDateTime();
+            gprs_date_time.update_time_aval = false;
+#ifdef DEBUG_SYNC_MODEM
+                //printf("\nB2");
+#endif
+
+            if ((gprs_date_time.yy <= time_stamp.year) && (gprs_date_time.mm <= time_stamp.month) && (gprs_date_time.dd <= time_stamp.date) && (gprs_date_time.hr <= time_stamp.hour))
+            {
+#ifdef DEBUG_SYNC_MODEM
+                //printf("\nC2");
+#endif
+                //UWriteString(" No Error in Date", UART0);
+            }
+            else
+            {
+                unsigned char data[8];
+#ifdef DEBUG_RTC_SYNC
+    /*
+                UWriteString("\nmain_ts:\t",UART_PC);
+                UWriteInt(time_main.year, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.month, UART_PC);
+                UWriteData('-', UART_PC);
+                UWriteInt(time_main.date, UART_PC);
+                UWriteData(',',UART_PC);
+                UWriteInt(time_main.hour, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.minute, UART_PC);
+                UWriteData(':', UART_PC);
+                UWriteInt(time_main.sec, UART_PC);*/
+                vUART_SendStr(UART_PC,"\nRTCsync:\t");
+                vUART_SendInt(UART_PC,gprs_date_time.yy );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gprs_date_time.mm );
+                vUART_SendChr(UART_PC,'-' );
+                vUART_SendInt(UART_PC,gprs_date_time.dd);
+                vUART_SendChr(UART_PC,',');
+                vUART_SendInt(UART_PC,gprs_date_time.hr);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gprs_date_time.min);
+                vUART_SendChr(UART_PC,':');
+                vUART_SendInt(UART_PC,gprs_date_time.sec);
+#endif
+                data[6] = (((gprs_date_time.yy / 10) * 16) | (gprs_date_time.yy % 10));
+                //RTC_Write(0x06, data);        //Year
+                data[5] = (((gprs_date_time.mm / 10) * 16) | (gprs_date_time.mm % 10));
+                //RTC_Write(0x05, data & 0x1F);     //Month
+                data[4] = (((gprs_date_time.dd / 10) * 16) | (gprs_date_time.dd % 10));
+                //RTC_Write(0x04, data & 0x3F);     //Date
+                //RTC_Write(0x03, 1 & 0x07);        //Day: 1-7, 1=Sunday
+#ifdef RTC_DS3231
+                //RTC_Write(0x03, (1 & 0x07));
+                data[3] = (1 & 0x07);
+#endif
+#ifdef RTC_MCP79410
+                //RTC_Write(0x03, ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT)));       //Day: 1-7, 1=Sunday
+                data[3] = ((1 & 0x07) | (1 << RTC_VBAT_EN_BIT));
+#endif
+                if(gprs_date_time.hr >= 12)
+                {
+                    if(gprs_date_time.hr > 12)
+                    {
+                        gprs_date_time.hr %= 12;
+                    }
+
+                    gprs_date_time.hr = ((gprs_date_time.hr/10)<<4) | (gprs_date_time.hr%10);      //hr
+                    gprs_date_time.hr |= (1<<5);
+                }
+                else
+                {
+                    if(gprs_date_time.hr == 0)
+                    {
+                        gprs_date_time.hr = 12;
+                    }
+                    gprs_date_time.hr = ((gprs_date_time.hr/10)<<4) | (gprs_date_time.hr%10);      //hr
+                }
+                gprs_date_time.hr |= (1<<6);     //Anand 02.07.2014
+                data[2] = (gprs_date_time.hr & 0x7F);
+                //RTC_Write(0x02, (gprs_date_time.hr & 0x7F));      //hr
+                data[1] = (((gprs_date_time.min / 10) * 16) | (gprs_date_time.min % 10));
+                //RTC_Write(0x01, (data & 0x7F)); //min
+                //DS1307Write(0x00, 0);
+                data[0] = (((gprs_date_time.sec / 10) * 16) | (gprs_date_time.sec % 10));
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+#ifdef RTC_DS3231
+                //RTC_Write(0x00, (data & 0x7F)); //sec
+                data[0] = (data[0] & 0x7F);
+#endif
+#ifdef RTC_MCP79410
+                data[0] = ((data[0] & 0x7F) | (1 << RTC_OSC_EN_BIT));
+#endif
+                Write_RTC(data, 7);
+
+                gprs_date_time.update_time_aval = FALSE;
+            }
         }
     }
-}*/
+}
 
 void get_present_time(time_stamp_t *time_stamp)
 {
@@ -1113,54 +1083,6 @@ void update_rtc(char *arr, int indx)
         sei();
     }*/
 }
-// void get_ocpp_date_time(void)
-// {
-//     char temp[10];
-//     unsigned int index = 0;
-//     index += 2;   //skips 20
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //year
-//     OCPP_Data.time_stamp.year = atoi(temp);
-
-//     index += 3;
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //month
-//     OCPP_Data.time_stamp.month = atoi(temp);
-
-//     index += 3;
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //date
-//     OCPP_Data.time_stamp.date = atoi(temp);
-
-//     index += 3;
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //hour
-//     OCPP_Data.time_stamp.hour = atoi(temp);
-
-//     index += 3;
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //min
-//     OCPP_Data.time_stamp.min = atoi(temp);
-
-//     index += 3;
-//     memset(temp,0,sizeof(temp));
-//     memcpy(temp,&OCPP_Data.Time_stamp[index],2);    //sec
-//     OCPP_Data.time_stamp.sec = atoi(temp);
-// }
-
-// void update_ocpp_date_time(void)
-// {
-//     get_present_time(&OCPP_Data.time_stamp);
-//     //utcTOlocal(&OCPP_Data.time_stamp);
-//     //2022-10-13T15:18:42.089+05:30
-//     memset(&OCPP_Data.Time_stamp,0,sizeof(OCPP_Data.Time_stamp));
-//     //sprintf((char *)OCPP_Data.Time_stamp,"20%02d-%02d-%02dT%02d:%02d:%02d.000+05:30",OCPP_Data.time_stamp.year,OCPP_Data.time_stamp.month,OCPP_Data.time_stamp.date,OCPP_Data.time_stamp.hour,OCPP_Data.time_stamp.min,OCPP_Data.time_stamp.sec);
-// #ifdef DEBUG_SPRINTF
-//     vUART_SendStr(UART_PC,"1");
-// #endif
-//     my_sprintf((char *)OCPP_Data.Time_stamp,7,"20%02d-%02d-%02dT%02d:%02d:%02d.000+05:30",OCPP_Data.time_stamp.year,OCPP_Data.time_stamp.month,OCPP_Data.time_stamp.date,OCPP_Data.time_stamp.hour,OCPP_Data.time_stamp.min,OCPP_Data.time_stamp.sec);
-
-// }
 
 time_stamp_t StrToTimeStamp(uint8_t *str)
 {
