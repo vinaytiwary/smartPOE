@@ -114,4 +114,6 @@
 
 #define SOFT_RST_GSM
 
+// #define HARD_FLASH_SPI  //PP added on 05-08-24
+
 #endif /* SOURCES__CONFIG_H_ */

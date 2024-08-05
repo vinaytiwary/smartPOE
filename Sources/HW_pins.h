@@ -44,7 +44,7 @@
 #define LTE_TX_PIN                  GPIO_PIN_7
 #define LTE_RX_GPIO_CFG             GPIO_PC6_U3RX
 #define LTE_TX_GPIO_CFG             GPIO_PC7_U3TX
-#if   HW_BOARD == EVSE_ADC_TEST_PINS
+#if   HW_BOARD == EVSE_TEST_BOARD
 #define LTE_PWRKEY_PORT_BASE        GPIO_PORTB_BASE
 #define LTE_PWRKEY_PIN              GPIO_PIN_3
 #elif   HW_BOARD == TIOT_V2_00_BOARD

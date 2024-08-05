@@ -621,10 +621,10 @@ void Wait_Busy()
 {
   unsigned int timeout = 0;
 
-#ifdef ENABLE_CLI_SEI
-  //cli();      //Anand 18-07-15
-  IntMasterDisable();
-#endif  //ENABLE_CLI_SEI
+// #ifdef ENABLE_CLI_SEI    //PP commented on 05-08-24. This caused vMAIN_DelayMS() inside Wait_Busy() to not work as timer isr will never be triggered.
+//   //cli();      //Anand 18-07-15
+//   IntMasterDisable();
+// #endif  //ENABLE_CLI_SEI
 
   unsigned char temp = 0;
   SetSO_Input();
@@ -729,10 +729,10 @@ void Wait_Busy()
   ////////
   CE_High();
 
-#ifdef  ENABLE_CLI_SEI
-  //sei();      //Anand 18-07-15
-  IntMasterEnable();
-#endif  //ENABLE_CLI_SEI
+// #ifdef  ENABLE_CLI_SEI       //PP commented on 05-08-24. This caused vMAIN_DelayMS() inside Wait_Busy() to not work as timer isr will never be triggered.
+//   //sei();      //Anand 18-07-15
+//   IntMasterEnable();
+// #endif  //ENABLE_CLI_SEI
 }
 
 void Sector_Erase(unsigned long Dst)
