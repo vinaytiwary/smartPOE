@@ -12,6 +12,7 @@
 #include "stdlib.h"
 
 #include "driverlib/gpio.h"
+#include "inc/hw_types.h"       //PP shifted this above #include<interrupt.h> on 06-08-24
 #include "driverlib/interrupt.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/ssi.h"
@@ -20,7 +21,6 @@
 #include "driverlib/timer.h"
 #include "driverlib/uart.h"
 #include "inc/hw_uart.h"
-#include "inc/hw_types.h"
 
 #include "Sources/HW_pins.h"
 #include "UartCore.h"
@@ -616,23 +616,6 @@ static inline void U0_TxIntHandler(void)
 #endif  //UART_TX_IRQ_EN
 #endif  //if 0
 
-void vUART_SendChr(uint32_t ui32Base, uint8_t u8Val)
-{
-    UARTCharPutNonBlocking(ui32Base, u8Val);
-    while(UARTBusy(ui32Base)){};    
-}
-
-void vUART_SendStr(uint32_t ui32Base, const uint8_t *pui8Buffer)
-{
-    while(*pui8Buffer != '\0')
-    {
-        // Write the next character to the UART. //
-        UARTCharPutNonBlocking(ui32Base, *pui8Buffer++);
-        while(UARTBusy(ui32Base));
-
-    }
-}
-
 #ifdef UART_TX_IRQ_EN
 void vUART_SendStr_INT(uint32_t ui32Base, const uint8_t *pui8Buffer)
 {
@@ -746,16 +729,47 @@ void vUART_SendStr_INT(uint32_t ui32Base, const uint8_t *pui8Buffer)
 }
 #endif  //UART_TX_IRQ_EN
 
+void vUART_SendChr(uint32_t ui32Base, uint8_t u8Val)
+{
+#ifdef ENABLE_CLI_SEI
+    bool wereIntDisabled = IntMasterDisable();  //PP added on 06-08-24: returns 1 if INT were already disabled, 0 if INT were enabled prior to calling this.
+#endif  //ENABLE_CLI_SEI
+
+    UARTCharPutNonBlocking(ui32Base, u8Val);
+    while(UARTBusy(ui32Base)){}; 
+#ifdef ENABLE_CLI_SEI
+    if(!wereIntDisabled)    //PP added on 06-08-24
+    {
+        IntMasterEnable();
+    }
+#endif  //ENABLE_CLI_SEI  
+}
+
+void vUART_SendStr(uint32_t ui32Base, const uint8_t *pui8Buffer)
+{
+    while(*pui8Buffer != '\0')
+    {
+        // Write the next character to the UART.
+        vUART_SendChr(ui32Base, *pui8Buffer++);     //PP added on 06-08-24
+
+        // UARTCharPutNonBlocking(ui32Base, *pui8Buffer++); //PP commented on 06-08-24
+        // while(UARTBusy(ui32Base));
+
+    }
+}
+
 void vUART_SendBytes(uint32_t ui32Base, const uint8_t *pui8Buffer, uint32_t ui32Count)
 {
     while(ui32Count--)
     {
-        // Write the next character to the UART. //
-        UARTCharPutNonBlocking(ui32Base, *pui8Buffer++);
-        while(UARTBusy(ui32Base));
-        /*{
-            cnt_test++;
-        }*/
+        // Write the next character to the UART. 
+        vUART_SendChr(ui32Base, *pui8Buffer++);     //PP added on 06-08-24
+
+        // UARTCharPutNonBlocking(ui32Base, *pui8Buffer++); //PP commented on 06-08-24
+        // while(UARTBusy(ui32Base));
+        // /*{
+        //     cnt_test++;
+        // }*/
     }
 }
 

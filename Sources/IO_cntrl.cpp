@@ -177,6 +177,7 @@ void vGPIO_UnlockGPIO(uint32_t ui32Port, uint8_t ui8Pins)
 
 void vLEDGPIOInit(void)
 {
+#if HW_BOARD == TIOT_V2_00_BOARD
     GPIOPinTypeGPIOOutput(LED_PORT_BASE, (LED1_PIN | LED2_PIN));
     // GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), GPIO_LOW);
     GPIOPinWrite(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
@@ -185,7 +186,6 @@ void vLEDGPIOInit(void)
     //    GPIOPinWrite(LED_PORT_BASE, LED2_PIN, GPIO_LOW);
 
 #ifdef LEDS_ON_GLCD_PINS
-
     GPIOPinTypeGPIOOutput(LED_0VM_BASE, LED_0VM_PIN);
     GPIOPinTypeGPIOOutput(LED_12VM_BASE, LED_12VM_PIN);
     GPIOPinTypeGPIOOutput(LED_24VM_BASE, LED_24VM_PIN);
@@ -205,8 +205,34 @@ void vLEDGPIOInit(void)
 
     GPIOPinTypeGPIOOutput(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN);
     GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, LED_LOW_BATT_PIN);
-
 #endif  //LEDS_ON_GLCD_PINS
+
+#elif   HW_BOARD == TIOT_V3_00_BOARD
+
+#ifdef LEDS_ON_GLCD_PINS
+    GPIOPinTypeGPIOOutput(LED_0VM_BASE, LED_0VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_12VM_BASE, LED_12VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_24VM_BASE, LED_24VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_30VM_BASE, LED_30VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_48VM_BASE, LED_48VM_PIN);
+    GPIOPinTypeGPIOOutput(LED_56VM_BASE, LED_56VM_PIN);
+
+    GPIOPinWrite(LED_0VM_BASE, LED_0VM_PIN, LED_0VM_PIN);
+    GPIOPinWrite(LED_12VM_BASE, LED_12VM_PIN, LED_12VM_PIN);
+    GPIOPinWrite(LED_24VM_BASE, LED_24VM_PIN, LED_24VM_PIN);
+    GPIOPinWrite(LED_30VM_BASE, LED_30VM_PIN, LED_30VM_PIN);
+    GPIOPinWrite(LED_48VM_BASE, LED_48VM_PIN, LED_48VM_PIN);
+    GPIOPinWrite(LED_56VM_BASE, LED_56VM_PIN, LED_56VM_PIN);
+
+    GPIOPinTypeGPIOOutput(LED_ETH_DET_BASE, LED_ETH_DET_PIN);
+    GPIOPinWrite(LED_ETH_DET_BASE, LED_ETH_DET_PIN, LED_ETH_DET_PIN);
+
+    GPIOPinTypeGPIOOutput(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN);
+    GPIOPinWrite(LED_LOW_BATT_BASE, LED_LOW_BATT_PIN, LED_LOW_BATT_PIN);
+#endif  //LEDS_ON_GLCD_PINS
+
+#endif  //HW_BOARD
+
 }
 
 void vPERIPH_GPIOInit(void)
@@ -215,12 +241,14 @@ void vPERIPH_GPIOInit(void)
     vLEDGPIOInit();
     // vInit_InputTestpins();   //commenting this as I'm using these pins for ADC testing.
     
-#if HW_BOARD == TIOT_V2_00_BOARD
     init_ODU_Supplypins();
 	// // vFreqDetectInit();
     vEarthCheckInit();
 	
+#if HW_BOARD == TIOT_V2_00_BOARD
+#if ODUVTG_SEL_SW == BCD_SW_TYPE
 	GPIOPinTypeGPIOInput(BCD_SELECTOR_SW_BASE, (BCD_SELECTOR_S1|BCD_SELECTOR_S2|BCD_SELECTOR_S3|BCD_SELECTOR_S4));
+#endif  //ODUVTG_SEL_SW == BCD_SW_TYPE
 
     GPIOPinTypeGPIOOutput(RELAY_RTR_PORT, (RELAY_RTR | RELAY_RTR_SEL));
     GPIOPinTypeGPIOOutput(RELAY_ODU_PORT, RELAY_ODU );
@@ -235,16 +263,21 @@ void vPERIPH_GPIOInit(void)
     GPIOPinTypeGPIOOutput(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN);
     // GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, INVERTER_CTRL_PIN);
     GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
-#endif  //HW_BOARD == TIOT_V2_00_BOARD  
 
 #ifdef LEDS_ON_GLCD_PINS
 #if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
-    GPIOPinTypeGPIOInput(SW_ODUVTG_SEL_BASE,SW_ODUVTG_SEL_PIN);
+    GPIOPinTypeGPIOInput(SW_ODUVTG_SEL_A_BASE,SW_ODUVTG_SEL_A_PIN);
 #endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
 #endif  //LEDS_ON_GLCD_PINS
+
+#elif HW_BOARD == TIOT_V3_00_BOARD
+    GPIOPinTypeGPIOOutput(BATT_CTRL_PORT, BATT_CTRL_PIN);
+    GPIOPinWrite(BATT_CTRL_PORT, BATT_CTRL_PIN, BATT_CTRL_PIN);
+#endif  //HW_BOARD
 }
 
 #if HW_BOARD == TIOT_V2_00_BOARD
+#if ODUVTG_SEL_SW == BCD_SW_TYPE
 void readBCD_SelectorSW(void)
 {
     //uint8_t BCD_code = 0;
@@ -294,7 +327,8 @@ void readBCD_SelectorSW(void)
 
     ram_data.supply_mode_R2 = (BCD_MODE.BCD_code == MODE_36V)? 30 : (BCD_MODE.BCD_code == MODE_56V)? 56 : ((BCD_MODE.BCD_code) * 12);
 }
-#endif  //#if HW_BOARD == TIOT_V2_00_BOARD
+#endif  //ODUVTG_SEL_SW == BCD_SW_TYPE
+#endif  //HW_BOARD
 
 void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val)
 {
@@ -367,17 +401,18 @@ void vEXTIpinInit(void)
 
 void ToggleLEDs(void)
 {
+#if HW_BOARD == TIOT_V2_00_BOARD
     // vGPIO_Toggle(LED_PORT_BASE, (LED1_PIN | LED2_PIN), (LED1_PIN | LED2_PIN));
     vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
-    //#ifndef ETHERNET_EN
-    //            vGPIO_Toggle(ETHERNET_SPI_PORT_BASE, (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN), (ETHERNET_CLK_PIN | ETHERNET_MISO_PIN | ETHERNET_MOSI_PIN));
-    //#endif
+#elif HW_BOARD == TIOT_V3_00_BOARD
+    vGPIO_Toggle(LED_SYS_STSA_BASE, LED_SYS_STSA_PIN, LED_SYS_STSA_PIN);
+    vGPIO_Toggle(LED_SYS_STSB_BASE, LED_SYS_STSB_PIN, LED_SYS_STSB_PIN);
+#endif  //HW_BOARD
 }
-
-#if HW_BOARD == TIOT_V2_00_BOARD
 
 void init_ODU_Supplypins(void)
 {
+#if HW_BOARD == TIOT_V2_00_BOARD
     GPIOPinTypeGPIOOutput(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN);
     GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, GPIO_LOW);    //Turn OFF ODU relay at startup
     // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
@@ -397,6 +432,32 @@ void init_ODU_Supplypins(void)
     GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN);
     GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW);    //Turn OFF 56V mode @ startup
     // GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+#elif HW_BOARD == TIOT_V3_00_BOARD
+
+    GPIOPinTypeGPIOOutput(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN);
+    GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, GPIO_LOW); //Turn OFF ODU relay at startup
+    // GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, BUCK_BOOSTER_EN1_PIN); //Turn OFF XL6019 A startup by setting 12V + EN pin HIGH.
+    // GPIOPinWrite(BUCK_BOOSTER_EN1_BASE, BUCK_BOOSTER_EN1_PIN, GPIO_LOW);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, GPIO_LOW); //Turn OFF 24V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN2_BASE, BUCK_BOOSTER_EN2_PIN, BUCK_BOOSTER_EN2_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, GPIO_LOW); //Turn OFF 30V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN3_BASE, BUCK_BOOSTER_EN3_PIN, BUCK_BOOSTER_EN3_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, GPIO_LOW); //Turn OFF 48V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN4_BASE, BUCK_BOOSTER_EN4_PIN, BUCK_BOOSTER_EN4_PIN);
+
+    GPIOPinTypeGPIOOutput(BUCK_BOOSTER_EN5_BASE, BUCK_BOOSTER_EN5_PIN);
+    GPIOPinWrite(BUCK_BOOSTER_EN5_BASE, BUCK_BOOSTER_EN5_PIN, GPIO_LOW); //Turn OFF 56V mode @ startup
+    // GPIOPinWrite(BUCK_BOOSTER_EN5_BASE, BUCK_BOOSTER_EN5_PIN, BUCK_BOOSTER_EN5_PIN);
+#endif //HW_BOARD
 }
 
 void SetODU_Mode(voltage_mode_t BCD_SW)
@@ -485,7 +546,6 @@ void SetODU_Mode(voltage_mode_t BCD_SW)
 #endif  //DEBUG_GPIO
 }
 
-#endif  // HW_BOARD == TIOT_V2_00_BOARD
 void controlRelays(void)
 {
     static bool mid_hysteresis_ODUrelay_state = false, mid_hysteresis_RTRrelay_state = false;
@@ -493,13 +553,14 @@ void controlRelays(void)
     {
         case EARTH_FAULT:
         {
-            set_router_state(RELAY_OFF);
-            set_router_selection_state(RELAY_OFF);
-            //set_ODU_state(RELAY_OFF);
-
+#if HW_BOARD == TIOT_V2_00_BOARD
+            // set_router_state(RELAY_OFF);
+            // set_router_selection_state(RELAY_OFF);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
             if(my_millis() - relay_startup_time >= 10000)
             {
                 ControlODU_Relay(OFF);
+                set_ODU_state(RELAY_OFF);   //PP added on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
             }
 #ifdef DEBUG_RELAY_STATE_LCD
             GLCD_GoTo(0,7);                      //ONLY FOR TEST
@@ -508,12 +569,14 @@ void controlRelays(void)
 #endif
 #ifdef DEBUG_RELAY
             vUART_SendStr(UART_PC, "\nEF:");
+#if HW_BOARD == TIOT_V2_00_BOARD
             vUART_SendInt(UART_PC, get_router_state());
             vUART_SendChr(UART_PC, ',');
             vUART_SendInt(UART_PC, get_router_selection_state());
             vUART_SendChr(UART_PC, ',');
             vUART_SendInt(UART_PC, OFF);
-#endif
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
+#endif  //DEBUG_RELAY
             ram_data.ram_ADC.DC_current_router2 = 0;
             ram_data.ram_ADC.DC_Voltage_router2 = 0;
             ram_data.ram_ADC.DC_current_router1 = 0;
@@ -522,8 +585,11 @@ void controlRelays(void)
 
         case MAINS_MODE:
         {
-            set_router_selection_state(RELAY_OFF);
-            set_router_state(RELAY_ON);
+#if HW_BOARD == TIOT_V2_00_BOARD
+            // set_router_selection_state(RELAY_OFF);
+            // set_router_state(RELAY_ON);
+#endif //#if HW_BOARD == TIOT_V2_00_BOARD
+
 #ifdef DEBUG_RELAY_STATE_LCD
             GLCD_GoTo(0,7);                  //ONLY FOR TEST
             GLCD_Clear_Line(7);                  //ONLY FOR TEST
@@ -531,15 +597,20 @@ void controlRelays(void)
 #endif
 #ifdef DEBUG_RELAY
             vUART_SendStr(UART_PC, "\nMM:");
+#if HW_BOARD == TIOT_V2_00_BOARD
             vUART_SendInt(UART_PC, get_router_state());
             vUART_SendChr(UART_PC, ',');
             vUART_SendInt(UART_PC, get_router_selection_state());
-#endif
-            if(isSupplyStable() && (my_millis() - relay_startup_time >= 10000))
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
+#endif  //DEBUG_RELAY
+            if(isSupplyStable() /* && (my_millis() - relay_startup_time >= 10000) */)   //PP commented the && RHS condition on 05-08-24
             {
-                //GPIOPinWrite(RELAY_ODU_PORT,RELAY_ODU, RELAY_ODU);
-                //set_ODU_state(RELAY_ON);
-                ControlODU_Relay(ON);
+                if((my_millis() - relay_startup_time) >= 10000) //PP added the && RHS condition here instead on 05-08-24
+                {
+                    //GPIOPinWrite(RELAY_ODU_PORT,RELAY_ODU, RELAY_ODU);
+                    set_ODU_state(RELAY_ON);    //PP uncommented on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
+                    ControlODU_Relay(ON);
+                }
 #ifdef DEBUG_RELAY
                 vUART_SendStr(UART_PC, "\nMM:ODU_ON");
 #endif
@@ -548,7 +619,7 @@ void controlRelays(void)
             {
                 if(my_millis() - relay_startup_time >= 10000)
                 {
-                    //set_ODU_state(RELAY_OFF);
+                    set_ODU_state(RELAY_OFF);   //PP uncommented on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
                     ControlODU_Relay(OFF);
                 }
                 ram_data.ram_ADC.DC_current_router2 = 0;
@@ -563,13 +634,15 @@ void controlRelays(void)
 
         case BATT_MODE:
         {
-            if(my_millis() - relay_startup_time >= 10000)
-            {
-                //set_router_selection_state(RELAY_ON);
-                //set_router_state(RELAY_ON);
-                ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
-                // ControlRouter_Relay(ON);    //PP: ONLY FOR TEST
-            }
+#if HW_BOARD == TIOT_V2_00_BOARD
+            // if(my_millis() - relay_startup_time >= 10000)
+            // {
+            //     //set_router_selection_state(RELAY_ON);
+            //     //set_router_state(RELAY_ON);
+            //     ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
+            //     // ControlRouter_Relay(ON);    //PP: ONLY FOR TEST
+            // }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_RELAY_STATE_LCD
             GLCD_GoTo(0,7);                  //ONLY FOR TEST
             GLCD_Clear_Line(7);                  //ONLY FOR TEST
@@ -586,12 +659,14 @@ void controlRelays(void)
 #endif
                 if((my_millis() - relay_startup_time >= 10000))
                 {
-                    //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
-                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
-                    ControlRouter_Relay(OFF);
                     ControlODU_Relay(OFF);
-                    //set_router_state(RELAY_OFF);
-                    //set_ODU_state(RELAY_OFF);
+                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+                    set_ODU_state(RELAY_OFF);   //PP uncommented on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
+#if HW_BOARD == TIOT_V2_00_BOARD
+                    // //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR, 0);
+                    // ControlRouter_Relay(OFF);
+                    // //set_router_state(RELAY_OFF);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
                 }
                 
                 ram_data.ram_ADC.DC_current_router2 = 0;
@@ -611,18 +686,24 @@ void controlRelays(void)
 #ifdef DEBUG_RELAY
                 vUART_SendStr(UART_PC, "\n1BH:");
 #endif
-                if(my_millis() - relay_startup_time >= 10000)
-                {
-                    //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
-                    //set_relay_state(RELAY_ON);
-                    ControlRouter_Relay(ON);
-                }
 
-                if(isSupplyStable() && (my_millis() - relay_startup_time >= 10000))
+#if HW_BOARD == TIOT_V2_00_BOARD
+                // if(my_millis() - relay_startup_time >= 10000)
+                // {
+                //     //GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
+                //     //set_relay_state(RELAY_ON);
+                //     ControlRouter_Relay(ON);
+                // }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
+
+                if(isSupplyStable() /* && (my_millis() - relay_startup_time >= 10000) */)   //PP commented the && RHS condition on 05-08-24
                 {
-                    //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
-                    ControlODU_Relay(ON);
-                    //set_ODU_state(RELAY_ON);
+                    if((my_millis() - relay_startup_time) >= 10000) //PP added the && RHS condition here instead on 05-08-24
+                    {
+                        //GPIOPinWrite(RELAY_ODU_PORT,RELAY_ODU, RELAY_ODU);
+                        set_ODU_state(RELAY_ON);    //PP uncommented on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
+                        ControlODU_Relay(ON);
+                    }
 
                     mid_hysteresis_ODUrelay_state = true;
 #ifdef DEBUG_RELAY
@@ -639,7 +720,7 @@ void controlRelays(void)
                     {
                         //GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
                         ControlODU_Relay(OFF);
-                        //set_ODU_state(RELAY_OFF);
+                        set_ODU_state(RELAY_OFF);   //PP uncommented on 05-08-24: get_ODU_state() will be usefull for LED 0VM STS.
                     }
 
                     ram_data.ram_ADC.DC_current_router2 = 0;
@@ -751,29 +832,30 @@ void FREQDetIntHandler(void)
     EXTI_cnt.freq_cnt++;
     GPIOIntClear(FREQ_MEAS_PIN_BASE, GPIOIntStatus(FREQ_MEAS_PIN_BASE, true));
 
-   if((get_router_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
-   {
-       set_router_state(RELAY_DEFAULT);
-       ControlRouter_Relay(ON);
-   }
-   else if((get_router_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
-   {
-       set_router_state(RELAY_DEFAULT);
-       ControlRouter_Relay(OFF);
-   }
-
-   if((get_router_selection_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
-   {
-       set_router_selection_state(RELAY_DEFAULT);
-       ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
-   }
-   else if((get_router_selection_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
-   {
-       set_router_selection_state(RELAY_DEFAULT);
-       ControlRouterSelection_Relay(RTR_MAIN_SUPPLY);
-   }
-   
-   if(!(EXTI_cnt.freq_cnt%5))
+#if HW_BOARD == TIOT_V2_00_BOARD
+    // if((get_router_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
+    // {
+    //     set_router_state(RELAY_DEFAULT);
+    //     ControlRouter_Relay(ON);
+    // }
+    // else if((get_router_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
+    // {
+    //     set_router_state(RELAY_DEFAULT);
+    //     ControlRouter_Relay(OFF);
+    // }
+    //
+    // if((get_router_selection_state()==RELAY_ON) && (my_millis() - relay_startup_time >= 10000))
+    // {
+    //     set_router_selection_state(RELAY_DEFAULT);
+    //     ControlRouterSelection_Relay(RTR_INVERTER_SUPPLY);
+    // }
+    // else if((get_router_selection_state()==RELAY_OFF) && (my_millis() - relay_startup_time >= 10000))
+    // {
+    //     set_router_selection_state(RELAY_DEFAULT);
+    //     ControlRouterSelection_Relay(RTR_MAIN_SUPPLY);
+    // }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD 
+    if(!(EXTI_cnt.freq_cnt%5))
     {
         IntEnable(INT_TIMER0B);
         TimerEnable(TIMER0_BASE, TIMER_B);
@@ -818,14 +900,18 @@ void ControlODU_Relay(uint8_t val)
     if(val)
     {
         set_ODU_state(RELAY_ON);
-        GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, RELAY_ODU);
+        // GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, RELAY_ODU);
+        GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, ODU_SUPPLY_RELAY_PIN);
     }
     else
     {
         set_ODU_state(RELAY_OFF);
-        GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+        // GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU, 0);
+        GPIOPinWrite(ODU_SUPPLY_RELAY_BASE, ODU_SUPPLY_RELAY_PIN, 0);
     }
 }
+
+#if HW_BOARD == TIOT_V2_00_BOARD
 void ControlRouter_Relay(uint8_t val)
 {
     if(val)
@@ -849,6 +935,7 @@ void ControlRouterSelection_Relay(uint8_t val)
         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL, 0);
     }
 }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 void set_ODU_state(relay_ctrl_state_t state)
 {
@@ -859,6 +946,7 @@ relay_ctrl_state_t get_ODU_state(void)
     return  relay_state.ODU;
 }
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 void set_router_state(relay_ctrl_state_t state)
 {
     relay_state.router = state;
@@ -876,6 +964,7 @@ relay_ctrl_state_t get_router_selection_state(void)
 {
     return relay_state.router_selection;
 }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 void control_battery_charging(bool sts)
 {
@@ -890,6 +979,7 @@ void control_battery_charging(bool sts)
     }
 }
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 void control_inverter_input(bool sts)
 {
     if(sts)
@@ -901,6 +991,7 @@ void control_inverter_input(bool sts)
         GPIOPinWrite(INVERTER_CTRL_PORT_BASE, INVERTER_CTRL_PIN, LOW);
     }
 }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 #ifdef LEDS_ON_GLCD_PINS
 
@@ -1035,7 +1126,7 @@ sw_press_event_t readODUVTG_SelSWpin(void)
     uint8_t swState;//,lastswState = 1;
     static int debounce_counter = 0;
     static int switch_press_count = 0;
-    swState = GPIOPinRead(SW_ODUVTG_SEL_BASE,SW_ODUVTG_SEL_PIN)/SW_ODUVTG_SEL_PIN;
+    swState = GPIOPinRead(SW_ODUVTG_SEL_A_BASE,SW_ODUVTG_SEL_A_PIN)/SW_ODUVTG_SEL_A_PIN;
 
 
     switch(ODUVTGSEL_switch_state)
@@ -1135,8 +1226,44 @@ sw_press_event_t readODUVTG_SelSWpin(void)
 //    lastswState = swState;
     return event;
 }
-
-
-
 #endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
 #endif  //LEDS_ON_GLCD_PINS
+
+void get_detection_parameters(void)
+{
+    ram_data.ram_EXTI_cnt.earth_cnt = vEarthDetect();
+
+#ifdef DEBUG_EARTH_CHECK
+        vUART_SendStr(DEBUG_UART_BASE,"\nERT:");
+        vUART_SendInt(DEBUG_UART_BASE, ram_data.ram_RXTI_cnt.earth_cnt);
+#endif
+
+#ifdef DEBUG_FREQ_MEAS
+    vUART_SendStr(DEBUG_UART_BASE,"\nfreq:");
+    vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
+#endif
+
+    // vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
+
+#if ODUVTG_SEL_SW == BCD_SW_TYPE
+    readBCD_SelectorSW();
+#endif  //ODUVTG_SEL_SW == BCD_SW_TYPE
+
+// PP commented on 10-07-24. (BOARD E:) We finally got a situation where frequency detection optocoupler 
+// is slightly damaged so it won't detect it, but earth is there, but not getting detected because Vinay 
+// only called it when there is frequency detected. Now calling this in update_ram_data().
+// 			if(ram_data.ram_EXTI_cnt.freq_cnt)
+// 			{
+//                 if(vEarthDetect())
+//                 {
+//                     ram_data.ram_EXTI_cnt.earth_cnt = true;
+// #ifdef DEBUG_EARTHDETECT
+//                     vUART_SendStr(UART_PC,"\nisEARTH!");
+// #endif
+//                 }
+//                 else
+//                 {
+//                     ram_data.ram_EXTI_cnt.earth_cnt = false;
+//                 }
+// 			}
+}

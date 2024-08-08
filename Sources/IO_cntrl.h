@@ -34,8 +34,10 @@ typedef enum
 
 typedef struct
 {
+#if HW_BOARD == TIOT_V2_00_BOARD
   relay_ctrl_state_t router;
   relay_ctrl_state_t router_selection;
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
   relay_ctrl_state_t ODU;
 }relay_state_t;
 
@@ -91,18 +93,14 @@ void vGPIOPortEnable(void);
 void vGPIO_UnlockGPIO(uint32_t ui32Port, uint8_t ui8Pins);
 void vLEDGPIOInit(void);
 void vPERIPH_GPIOInit(void);
-#if HW_BOARD == TIOT_V2_00_BOARD
 void readBCD_SelectorSW(void);
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
 void vInit_InputTestpins(void);
 void vGPIO_Toggle(uint32_t ui32Port, uint8_t ui8Pins, uint8_t ui8Val);
 void vInput_PollingRead(void);
 void vEXTIpinInit(void);
 void ToggleLEDs(void);
 
-#if HW_BOARD == TIOT_V2_00_BOARD
 void init_ODU_Supplypins(void);
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 void SetODU_Mode(voltage_mode_t BCD_SW);
 void controlRelays(void);
@@ -137,8 +135,9 @@ void LowBattIndicationLED(bool val);
 
 #if ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
 sw_press_event_t readODUVTG_SelSWpin(void);
-#endif  //ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
-
+#endif // ODUVTG_SEL_SW == PUSH_BUTTON_TYPE
 #endif // LEDS_ON_GLCD_PINS
+
+void get_detection_parameters(void);
 
 #endif /* SOURCES_IO_CNTRL_H_ */

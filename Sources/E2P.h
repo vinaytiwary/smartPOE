@@ -16,7 +16,11 @@
 #include "_config.h"
 #include "IO_cntrl.h"
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 #define FIRMWARE_VERSION    "V2.00"
+#elif HW_BOARD == TIOT_V3_00_BOARD
+#define FIRMWARE_VERSION    "V3.00"
+#endif  //HW_BOARD
 
 #define DEVICE_ID_MAX_LEN	(15)
 #define CLOUD_URL_MAX_LEN	(127)

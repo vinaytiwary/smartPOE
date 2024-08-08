@@ -746,49 +746,55 @@ void response(cmd_t cmd, int uart_no)
 		}
 		break;
 #endif	//FLASH_EN
-		case  SET_RTR_RELAY :
-        {
-            if(pc_uart_rx.rx_buffer[CMD_INDX+1])
-            {
-                GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
-                //set_router_state(RELAY_ON);
-            }
-            else
-            {
-                GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,0);
-                //set_router_state(RELAY_OFF);
-            }
-        }
-		break;
-		case  SET_ODU_RELAY :
-        {
-           // GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
-            if(pc_uart_rx.rx_buffer[CMD_INDX+1])
-            {
-                GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
-                //set_ODU_state(RELAY_ON);
-            }
-            else
-            {
-                GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,0);
-                //set_ODU_state(RELAY_OFF);
-            }
-        }
-        break;
-		case  SET_RTR_SEL_RELAY :
-        {
-            if(pc_uart_rx.rx_buffer[CMD_INDX+1])
-            {
-                GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL,RELAY_RTR_SEL);
-                //set_router_selection_state(RELAY_ON);
-            }
-            else
-            {
-                GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL,0);
-                //set_router_selection_state(RELAY_OFF);
-            }
-        }
-        break;
+
+#if HW_BOARD == TIOT_V2_00_BOARD
+		// case  SET_RTR_RELAY :	//PP to vinay 05-08-24: Whys is there no condition to check whether the SYSTEM is in CFG MODE or not? Plus no response either?
+        // {
+        //     if(pc_uart_rx.rx_buffer[CMD_INDX+1])	
+        //     {
+        //         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,RELAY_RTR);
+        //         //set_router_state(RELAY_ON);
+        //     }
+        //     else
+        //     {
+        //         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR,0);
+        //         //set_router_state(RELAY_OFF);
+        //     }
+        // }
+		// break;
+		// 
+		// case  SET_ODU_RELAY :	//PP to vinay 05-08-24: Whys is there no condition to check whether the SYSTEM is in CFG MODE or not? Plus no response either?
+        // {
+        //    // GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
+        //     if(pc_uart_rx.rx_buffer[CMD_INDX+1])
+        //     {
+        //         GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,RELAY_ODU);
+        //         //set_ODU_state(RELAY_ON);
+        //     }
+        //     else
+        //     {
+        //         GPIOPinWrite(RELAY_ODU_PORT, RELAY_ODU,0);
+        //         //set_ODU_state(RELAY_OFF);
+        //     }
+        // }
+        // break;
+		// 
+		// case  SET_RTR_SEL_RELAY :	//PP to vinay 05-08-24: Whys is there no condition to check whether the SYSTEM is in CFG MODE or not? Plus no response either?
+        // {
+        //     if(pc_uart_rx.rx_buffer[CMD_INDX+1])
+        //     {
+        //         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL,RELAY_RTR_SEL);
+        //         //set_router_selection_state(RELAY_ON);
+        //     }
+        //     else
+        //     {
+        //         GPIOPinWrite(RELAY_RTR_PORT, RELAY_RTR_SEL,0);
+        //         //set_router_selection_state(RELAY_OFF);
+        //     }
+        // }
+        // break;
+#endif //HW_BOARD == TIOT_V2_00_BOARD
+
         default:
         {
             resp[0] = ERROR_INVALID_CMD;

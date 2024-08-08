@@ -80,7 +80,9 @@
 // #define DEBUG_EARTHDETECT
 // // // // #define DEBUG_FREQ_MEAS
 // // // #define DEBUG_MAINS_FAULT
-// // // // #define DEBUG_RELAY_STATE_LCD
+#ifdef ENABLE_GLCD
+// #define DEBUG_RELAY_STATE_LCD
+#endif  //ENABLE_GLCD
 // // // #define DEBUG_RELAY_STATE
 
 #define DEBUG_ALARMS

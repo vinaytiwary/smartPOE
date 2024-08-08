@@ -22,7 +22,11 @@
 
 #define NUM_OF_SAMPLES		(10)				//10
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 #define TOTAL_ADC_SIGNALS	(7)
+#elif HW_BOARD == TIOT_V3_00_BOARD
+#define TOTAL_ADC_SIGNALS	(5)
+#endif	//HW_BOARD
 
 // #define BATT_RANGE_LOW  (10600)
 // #define BATT_RANGE_HIGH  (11200)
@@ -56,12 +60,11 @@
 #define BATT_HYSTERESIS_LOW		(10800)	//(10600)	//10.60V
 #define BATT_HYSTERESIS_HIGH	(11200)	//11.20V
 
-
-#if (TARGET_ADC_PINS == EVSE_ADC_TEST_PINS)
-#define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH8|ADC_CTL_CH9|ADC_CTL_CH13|ADC_CTL_CH14|ADC_CTL_CH15)
-#elif (TARGET_ADC_PINS == TIOT_ADC_PINS)
+#if HW_BOARD == TIOT_V2_00_BOARD
 #define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH0|ADC_CTL_CH1|ADC_CTL_CH2|ADC_CTL_CH3|ADC_CTL_CH4|ADC_CTL_CH5|ADC_CTL_CH6)
-#endif	//TARGET_ADC_PINS == TIOT_ADC_PINS
+#elif HW_BOARD == TIOT_V3_00_BOARD
+#define REQUIRED_ADC_CHANNELS   (ADC_CTL_CH1|ADC_CTL_CH3|ADC_CTL_CH4|ADC_CTL_CH5|ADC_CTL_CH7)
+#endif	//HW_BOARD
 
 #define RESISTOR1_SMPS_12VIN (10)
 #define RESISTOR2_SMPS_12VIN (3.3)
@@ -82,6 +85,7 @@
 
 #define INVERTER_IDLE_CURRENT	(560)
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 enum	//ADC indexes Used for adc raw array queue sampling
 {
 	ADC_INDX_ACV = 0,	//0
@@ -93,20 +97,6 @@ enum	//ADC indexes Used for adc raw array queue sampling
 	ADC_INDX_ERTHV,		//6
 };
 
-
-#if (TARGET_ADC_PINS == EVSE_ADC_TEST_PINS)
-typedef enum	//used for adc channel number of the gpio pin
-{
-	SIG_AC_VOLTAGE_ADC	= 2,			    //ADC_AIN2
-	SIG_ODU_CURRENT_ADC,		    //ADC_AIN3
-	SIG_RTR_CURRENT_ADC = 8,		//ADC_AIN8
-	MCU_ADC_VCC_POE_1,		        //ADC_AIN9
-	SIG_ODU_VOLTAGE_ADC = 13,		    //ADC_AIN13
-	SIG_BATTERY_VOLT_ADC,			    //ADC_AIN14
-	SIG_12V_IN_ADC					    //ADC_AIN15
-}ADC_Channels_t;
-
-#elif (TARGET_ADC_PINS == TIOT_ADC_PINS)
 typedef enum	//used for adc channel number of the gpio pin
 {
 	// MCU_VAC_ADC	= 2,			    //ADC_AIN2
@@ -125,7 +115,28 @@ typedef enum	//used for adc channel number of the gpio pin
 	SIG_EARTH_VTG_ADC,			//ADC_AIN5
 	SIG_RTR_CURRENT_ADC,		//ADC_AIN6
 }ADC_Channels_t;
-#endif
+
+#elif	HW_BOARD == TIOT_V3_00_BOARD
+
+enum	//ADC indexes Used for adc raw array queue sampling
+{
+	ADC_INDX_ACV = 0,	//0
+	ADC_INDX_ODUC,		//1
+	ADC_INDX_ODUV,		//2
+	ADC_INDX_BATTV,		//3
+	ADC_INDX_12VIN,		//4
+};
+
+typedef enum	//used for adc channel number of the gpio pin
+{
+	SIG_ODU_VOLTAGE_ADC = 1,		//ADC_AIN1
+	SIG_BATTERY_VOLT_ADC,			//ADC_AIN3
+	SIG_AC_VOLTAGE_ADC,				//ADC_AIN4
+	SIG_ODU_CURRENT_ADC,			//ADC_AIN5
+	SIG_12V_IN_ADC = 7,				//ADC_AIN7
+}ADC_Channels_t;
+
+#endif	//HW_BOARD
 
 typedef struct
 {
@@ -185,11 +196,9 @@ uint32_t calculate_NE_AC_ADC(void);
 void GetAdcData(void);
 void readACVoltage();
 
-#if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
 void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx);
 #endif	//DEBUG_ADC_SIG
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 #endif /* SOURCES_ADC_CORE_H_ */
 

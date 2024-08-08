@@ -17,6 +17,7 @@ Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/inc
 Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/sys/_stdint.h
 Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h
 Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h
+Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h
 Sources/ADC_Core.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/timer.h
 Sources/ADC_Core.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/math.h
@@ -82,6 +83,8 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/sys/_stdint.h:
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdbool.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdbool.h:
+
+C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h:
 

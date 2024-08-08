@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <inc/hw_types.h>           //PP added on 06-08-24
 #include <driverlib/interrupt.h>
 #include <driverlib/timer.h>
 #include <math.h>
@@ -209,16 +210,17 @@ void vADC0Init(void)
 
     ADC_PortInit(SIG_AC_VOLTAGE_ADC);
     ADC_PortInit(SIG_ODU_CURRENT_ADC);
+#if HW_BOARD == TIOT_V2_00_BOARD
     ADC_PortInit(SIG_RTR_CURRENT_ADC);
 #if 0
     ADC_PortInit(MCU_ADC_VCC_POE_1);
 #endif  //if 0
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
     ADC_PortInit(SIG_ODU_VOLTAGE_ADC);
     ADC_PortInit(SIG_BATTERY_VOLT_ADC);
     ADC_PortInit(SIG_12V_IN_ADC);
-#if HW_BOARD == TIOT_V2_00_BOARD
-//    ADC_PortInit(SIG_EARTH_VTG_ADC);
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
+    // ADC_PortInit(SIG_EARTH_VTG_ADC);
+
 
     // Enable sample sequence 3 with a processor signal trigger.  Sequence 3
     // will do a single sample when the processor sends a signal to start the
@@ -263,7 +265,7 @@ void vADC0Init(void)
 uint32_t readADC(uint8_t seqno)
 {
 #ifdef ENABLE_CLI_SEI
-    IntMasterDisable();
+    bool wereIntDisabled = IntMasterDisable();  //PP added on 06-08-24: returns 1 if INT were already disabled, 0 if INT were enabled prior to calling this.
 #endif  //ENABLE_CLI_SEI
 
     uint32_t adc_value,pui32ADC0Value[1];
@@ -328,7 +330,10 @@ uint32_t readADC(uint8_t seqno)
 #endif  //DEBUG_MAIN_ADC
 
 #ifdef ENABLE_CLI_SEI
-    IntMasterEnable();
+    if(!wereIntDisabled)    //PP added on 06-08-24
+    {
+        IntMasterEnable();
+    }
 #endif//ENABLE_CLI_SEI
 
     return adc_value;
@@ -464,6 +469,7 @@ uint32_t getODUCurrent(void)
     return measurements.DC_current_router2;
 }
 
+#if HW_BOARD == TIOT_V2_00_BOARD
 uint32_t getRouter1_DC_current(void)
 {
     uint32_t adc_avg = 0;
@@ -490,7 +496,7 @@ uint32_t getRouter1_DC_current(void)
 //     // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE5=");
 //     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD5=");
 //     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);   
-// #endif
+// #endif   //DEBUG_ADC
 
     return measurements.DC_current_router1;
 }
@@ -519,11 +525,12 @@ uint32_t getRouter1_DCvoltage(void)
     vUART_SendInt(DEBUG_UART_BASE,adc_avg);
     vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE4=");
     vUART_SendInt(DEBUG_UART_BASE,/* (int32_t) */analog_vtg);   
-#endif
+#endif  //DEBUG_ADC
 
     return measurements.DC_Voltage_router1;
 }
 #endif //if 0
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 uint32_t getODUVoltage(void)
 {
@@ -705,8 +712,6 @@ void readACVoltage()
 //    uint32_t measurements_count = 0;
 //    uint32_t t_start = my_millis();
 //    double readingVoltage = 0.0f;
-//#if HW_BOARD == TIOT_V2_00_BOARD
-
 //    if(my_millis() - ACVoltReadMillis >= 5)
     //if(g_bIntFlag)
 //    {
@@ -759,10 +764,8 @@ void readACVoltage()
 ////        if (PN_ADC_RAW > current_adc_val)
 //        {
 //            PN_ADC_RAW_MAX = PN_ADC_RAW;
-//#if HW_BOARD == TIOT_V2_00_BOARD
 //         calculate_PN_AC_ADC();
 //        // calculate_NE_AC_ADC();
-//#endif  //HW_BOARD == TIOT_V2_00_BOARD
 //#ifdef DEBUG_MAIN_ADC
 //            vUART_SendStr(DEBUG_UART_BASE,"\nV:");
 //            vUART_SendInt(DEBUG_UART_BASE,readingVoltage);
@@ -770,15 +773,12 @@ void readACVoltage()
 ////            vUART_SendInt(DEBUG_UART_BASE,measurements_count);
 ////            vUART_SendChr(DEBUG_UART_BASE,',');
 ////            vUART_SendInt(DEBUG_UART_BASE,Vsum);
-//
-//#endif
+//#endif    //DEBUG_MAIN_ADC
 //        }
 //        IntDisable(INT_TIMER0B);
 //        TimerIntDisable(TIMER0_BASE, TIMER_TIMB_TIMEOUT);
 //        ACVoltReadMillis = my_millis();
         /*PN_ADC_RAW_MAX */
-
-
 //    }
 //    if(millis_cnt % 2 == 0)
 //    {
@@ -799,29 +799,30 @@ void readACVoltage()
         //     NE_ADC_RAW = 0;
         // }
 //    }
-//#endif  //HW_BOARD == TIOT_V2_00_BOARD
 //    calculate_PN_AC_ADC();
 }
 void GetAdcData(void)
 {
    //getACvoltage();
+#ifdef DEBUG_MAIN_ADC
+    vUART_SendStr(DEBUG_UART_BASE,"\nmain_adc:");
+    vUART_SendInt(DEBUG_UART_BASE,PN_ADC_RAW_MAX);
+    //PN_ADC_RAW_MAX = 0;
+    // vUART_SendStr(DEBUG_UART_BASE,",");
+    // vUART_SendInt(DEBUG_UART_BASE,measurements.PN_AC_Voltage);
+#endif  //DEBUG_MAIN_ADC
 
-#ifdef DEBUG_AC_ADC
-    // vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PE1=");
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD7=");
-    vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.PN_AC_Voltage);
-    vUART_SendStr(DEBUG_UART_BASE,(uint8_t*)"\nV@ PD6=");
-    vUART_SendInt(DEBUG_UART_BASE,(int32_t)measurements.NE_AC_Voltage);
-#endif
-//    measurements.PN_AC_Voltage = 0;
+    calculate_PN_AC_ADC();
+    // readACVoltage();
 
+#if HW_BOARD == TIOT_V2_00_BOARD
    getRouter1_DC_current();
-
-   getODUCurrent();
-
 #if 0
    getRouter1_DCvoltage();
 #endif  // if 0
+#endif //HW_BOARD == TIOT_V2_00_BOARD
+
+   getODUCurrent();
 
    getODUVoltage();
 
@@ -848,7 +849,6 @@ void GetAdcData(void)
 #endif
 }
 
-#if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
 void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx)
 {
@@ -899,6 +899,7 @@ void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx)
     {
         vUART_SendInt(UART_PC, measurements.PN_AC_Voltage);
     }
+#if HW_BOARD == TIOT_V2_00_BOARD
     else if(ch == SIG_EARTH_VTG_ADC)
     {
         vUART_SendInt(UART_PC, measurements.NE_AC_Voltage);
@@ -907,9 +908,9 @@ void get_ADC_SIGarray(ADC_Channels_t ch, uint8_t indx)
     {
         vUART_SendInt(UART_PC, measurements.DC_current_router1);
     }
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
 }
 #endif  //DEBUG_ADC_SIG
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 #endif  //ADC_EN
 

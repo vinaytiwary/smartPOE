@@ -73,6 +73,7 @@
 
 #define ADC_EN
 
+#if 0
 #define EVSE_TEST_BOARD         (0)
 #define TIOT_V2_00_BOARD        (1)
 #define HW_BOARD                (TIOT_V2_00_BOARD)
@@ -80,12 +81,17 @@
 
 #define EVSE_ADC_TEST_PINS      (0)
 #define TIOT_ADC_PINS           (1)
-
 #if HW_BOARD == TIOT_V2_00_BOARD
 #define TARGET_ADC_PINS         (TIOT_ADC_PINS)
 #elif   HW_BOARD == EVSE_ADC_TEST_PINS
 #define TARGET_ADC_PINS      (EVSE_ADC_TEST_PINS)
-#endif
+#endif  //HW_BOARD
+#endif  //if 0
+
+#define TIOT_V2_00_BOARD        (0)
+#define TIOT_V3_00_BOARD        (1)
+// #define HW_BOARD                (TIOT_V3_00_BOARD)
+#define HW_BOARD                (TIOT_V2_00_BOARD)
 
 #define ENABLE_GLCD
 
@@ -102,11 +108,11 @@
 #define LEDS_ON_GLCD_PINS
 #endif  //ENABLE_GLCD
 
-#define BCD_SW_TYPE_1       (0)
+#define BCD_SW_TYPE         (0)
 #define PUSH_BUTTON_TYPE    (1)
 
 // #define ODUVTG_SEL_SW       (PUSH_BUTTON_TYPE)
-#define ODUVTG_SEL_SW       (BCD_SW_TYPE_1)
+#define ODUVTG_SEL_SW       (BCD_SW_TYPE)
 
 // #define ENABLE_GPS
 

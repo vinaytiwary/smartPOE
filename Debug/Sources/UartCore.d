@@ -32,13 +32,13 @@ Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/i2c.h
 Sources/UartCore.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/_debug.h
 Sources/UartCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h
 Sources/UartCore.obj: C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdlib.h
+Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/ssi.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/systick.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/uart.h
 Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_uart.h
-Sources/UartCore.obj: C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h
 Sources/UartCore.obj: D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/HW_pins.h
 Sources/UartCore.obj: ../Sources/UartCore.h
 Sources/UartCore.obj: ../Sources/gprs.h
@@ -110,6 +110,8 @@ C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/libcxx/stdlib.h:
 
 C:/ti/ccs1110/ccs/tools/compiler/ti-cgt-arm_20.2.6.LTS/include/stdlib.h:
 
+C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h:
+
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/interrupt.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/pin_map.h:
@@ -121,8 +123,6 @@ C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/systick.h:
 C:/ti/TivaWare_C_Series-2.2.0.295/driverlib/uart.h:
 
 C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_uart.h:
-
-C:/ti/TivaWare_C_Series-2.2.0.295/inc/hw_types.h:
 
 D:/Poorva_PC/CCS_Projects2/Telecom_IoT_v2_00/Sources/HW_pins.h:
 

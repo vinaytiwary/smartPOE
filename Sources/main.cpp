@@ -253,8 +253,6 @@ int main(void)
         {
             scheduler.flg50ms = LOW;
 
-			//vInput_PollingRead();
-            // if(!System_mode)
             if(get_system_state() != CONFIG_MODE)
             {
 #ifndef ETHERNET_EN
@@ -276,7 +274,12 @@ int main(void)
         {
             scheduler.flg100ms = LOW;
             // ToggleLEDs();
+#if HW_BOARD == TIOT_V2_00_BOARD
             vGPIO_Toggle(LED_PORT_BASE, LED1_PIN, LED1_PIN );
+#elif HW_BOARD == TIOT_V3_00_BOARD
+            vGPIO_Toggle(LED_SYS_STSA_BASE, LED_SYS_STSA_PIN, LED_SYS_STSA_PIN);
+            vGPIO_Toggle(LED_SYS_STSB_BASE, LED_SYS_STSB_PIN, LED_SYS_STSB_PIN);
+#endif  //HW_BOARD
             decodeMsgPC_Uart();
 #ifdef ENABLE_GLCD
             updateGlcd();
@@ -291,65 +294,20 @@ int main(void)
 
 		if(scheduler.flg1sec == HIGH)
         {
-#ifdef DEBUG_MAIN_ADC
-            vUART_SendStr(DEBUG_UART_BASE,"\nmain_adc:");
-            vUART_SendInt(DEBUG_UART_BASE,PN_ADC_RAW_MAX);
-		        //PN_ADC_RAW_MAX = 0;
-//            vUART_SendStr(DEBUG_UART_BASE,",");
-//            vUART_SendInt(DEBUG_UART_BASE,measurements.PN_AC_Voltage);
-#endif
             scheduler.flg1sec = LOW;
-            calculate_PN_AC_ADC();
-//            readACVoltage();
-
-#ifdef DEBUG_FREQ_MEAS
-            vUART_SendStr(DEBUG_UART_BASE,"\nfreq:");
-            vUART_SendInt(DEBUG_UART_BASE,ram_data.ram_EXTI_cnt.freq_cnt);
-#endif
-
 			// vGPIO_Toggle(GPIO_PORTD_BASE, GPIO_PIN_0, GPIO_PIN_0);
-			if(vEarthDetect())
-			{
-#ifdef DEBUG_EARTH_CHECK
-                vUART_SendStr(DEBUG_UART_BASE,",");
-                vUART_SendStr(DEBUG_UART_BASE,"isEARTH!");
-#endif
-			}
-			// vInput_PollingRead();	//commenting this as I'm using these pins for ADC testing.
 
-#if HW_BOARD == TIOT_V2_00_BOARD
-            readBCD_SelectorSW();
-#endif
-
+            get_detection_parameters();
 #ifdef ADC_EN
-            GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LOW );
+            // GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LOW );
 			GetAdcData();
-            GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN );
+            // GPIOPinWrite(LED_PORT_BASE, LED2_PIN, LED2_PIN );
 #endif  //ADC_EN
-
-            // PP commented on 10-07-24. (BOARD E:) We finally got a situation where frequency detection optocoupler 
-            // is slightly damaged so it won't detect it, but earth is there, but not getting detected because Vinay 
-            // only called it when there is frequency detected. Now calling this in update_ram_data().
-// 			if(ram_data.ram_EXTI_cnt.freq_cnt)
-// 			{
-//                 if(vEarthDetect())
-//                 {
-//                     ram_data.ram_EXTI_cnt.earth_cnt = true;
-// #ifdef DEBUG_EARTHDETECT
-//                     vUART_SendStr(UART_PC,"\nisEARTH!");
-// #endif
-//                 }
-//                 else
-//                 {
-//                     ram_data.ram_EXTI_cnt.earth_cnt = false;
-//                 }
-// 			}
 			update_ram_data();
 #if 0
 			Data_Screen_lcd();
 #endif  //if 0
 
-#if HW_BOARD == TIOT_V2_00_BOARD
 #ifdef DEBUG_ADC_SIG
             // get_ADC_SIGarray(SIG_BATTERY_VOLT_ADC, ADC_INDX_BATTV);
             // get_ADC_SIGarray(SIG_12V_IN_ADC, ADC_INDX_12VIN);
@@ -359,7 +317,6 @@ int main(void)
             // vUART_SendStr(UART_PC, "\nBATTV_RAW=");
             // vUART_SendInt(UART_PC, readADC(SIG_BATTERY_VOLT_ADC));
 #endif  // DEBUG_ADC_SIG
-#endif  //HW_BOARD == TIOT_V2_00_BOARD
 
 
             if(get_system_state() != CONFIG_MODE)
@@ -428,7 +385,7 @@ void update_ram_data(void)
 
 	memset(&ram_data.ram_time, 0, sizeof(time_stamp_t));    //PP added on 23-02-24.
 
-    ram_data.ram_EXTI_cnt.earth_cnt = vEarthDetect();
+    // ram_data.ram_EXTI_cnt.earth_cnt = vEarthDetect();
 #if RTC_SIMULATOR
 		//update_date_time();
 #elif defined(RTC_ENABLE)
@@ -486,7 +443,9 @@ void update_ram_data(void)
 //        ram_data.supply_mode_R2 = readBCD_SelectorSW();
 //    }
 
+#if ODUVTG_SEL_SW == BCD_SW_TYPE
         readBCD_SelectorSW();
+#endif  //ODUVTG_SEL_SW == BCD_SW_TYPE
         update_alarm_status();
         controlRelays();
 #ifdef DEBUG_ADC
@@ -953,7 +912,9 @@ void update_alarm_status(void)
 #endif
         setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
 
+#if HW_BOARD == TIOT_V2_00_BOARD
         control_inverter_input(ON);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
     }
     else
     {
@@ -964,8 +925,9 @@ void update_alarm_status(void)
         vUART_SendStr(UART_PC, "\nMAINS OK");
 #endif
         setRAM_Alarm(MAINS_FAULT, Alarms.Supply_mode);
-
+#if HW_BOARD == TIOT_V2_00_BOARD
         control_inverter_input(OFF);
+#endif  //HW_BOARD == TIOT_V2_00_BOARD
     }
 
     if(Alarms.Supply_mode)
